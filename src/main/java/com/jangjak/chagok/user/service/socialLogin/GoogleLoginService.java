@@ -74,6 +74,7 @@ public class GoogleLoginService {
 
         return GoogleCallResDto.builder()
                 .oauthId(oauthResDto.getOauthId())
+                .userId(oauthResDto.getUserId())
                 .name(googleDetailResDto.getName())
                 .email(googleDetailResDto.getEmail())
                 .picture(googleDetailResDto.getPicture())

@@ -104,6 +104,7 @@ public class SocialLoginService {
         String html;
         if (!res.isNew()) {
             UserLoginResDto loginDto = generateAuthLoginResDto(res.getUserId());
+            log.info("loginDto: {}", loginDto);
             html = String.format("""
                             <!DOCTYPE html>
                             <html>
