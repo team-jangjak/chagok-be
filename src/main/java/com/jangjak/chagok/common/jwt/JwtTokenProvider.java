@@ -50,7 +50,7 @@ public class JwtTokenProvider {
                     .setExpiration(expiryDate)
                     .setIssuedAt(now)
                     .setSubject(userId.toString())
-                    .claim("role","USER")
+                    .claim("role", "USER")
                     .compact();
         } catch (InvalidKeyException e) {
             log.error("액세스 토큰 생성 중 문제가 발생했습니다.");
@@ -120,12 +120,14 @@ public class JwtTokenProvider {
                         remainingTime,
                         TimeUnit.MILLISECONDS // 블랙리스트 항목의 만료시간 (액세스 토큰 유효기간이 남는동안만 동작하도록)
                 );
-                log.info("액세스 토큰을 블랙리스트에 추가. 남은시간: {}ms" ,remainingTime);
+                log.info("액세스 토큰을 블랙리스트에 추가. 남은시간: {}ms", remainingTime);
             }
         } catch (Exception e) {
             log.error("로그아웃 처리 중 액세스 토큰을 블랙리스트에 추가하는데 실패");
         }
     }
 
-
+    public static String getRefreshTokenKey() {
+        return REFRESH_TOKEN_KEY;
+    }
 }

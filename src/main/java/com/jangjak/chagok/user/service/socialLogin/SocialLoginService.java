@@ -1,6 +1,7 @@
 package com.jangjak.chagok.user.service.socialLogin;
 
 
+import com.jangjak.chagok.common.jwt.CookieUtil;
 import com.jangjak.chagok.common.jwt.JwtTokenProvider;
 import com.jangjak.chagok.user.dto.UserLoginResDto;
 import com.jangjak.chagok.user.dto.social.OauthResDto;
@@ -13,6 +14,8 @@ import com.jangjak.chagok.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,13 +92,16 @@ public class SocialLoginService {
         // 토큰 저장
         jwtTokenProvider.saveRefreshToken(userId, refreshToken);
 
+        // 쿠키 생성
+        ResponseCookie accessCookie = CookieUtil.httpOnlyCookie("access_token", accessToken, 60L, "/");       // 15분
+        ResponseCookie refreshCookie = CookieUtil.httpOnlyCookie("refresh_token", refreshToken, 60L * 60 * 24 * 7, "/"); // 7일
+
         log.info("로그인 성공 : {}", userId);
 
         return UserLoginResDto.builder()
                 .id(userId)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .recoveryTarget(false)
+                .accessCookie(accessCookie)
+                .refreshCookie(refreshCookie)
                 .build();
     }
 
@@ -105,31 +111,31 @@ public class SocialLoginService {
         if (!res.isNew()) {
             UserLoginResDto loginDto = generateAuthLoginResDto(res.getUserId());
             log.info("loginDto: {}", loginDto);
+            // 쿠키를 응답에 세팅
+            response.addHeader(HttpHeaders.SET_COOKIE, loginDto.getAccessCookie().toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, loginDto.getRefreshCookie().toString());
+
             html = String.format("""
-                            <!DOCTYPE html>
-                            <html>
-                            <head><title>%s 로그인 완료</title></head>
-                            <body>
-                                <script>
-                                    if (window.opener) {
-                                        window.opener.postMessage({
-                                            type: 'OAUTH_SUCCESS',
-                                            accessToken: '%s',
-                                            refreshToken: '%s',
-                                            id: '%s',
-                                            recoveryTarget: '%s',
-                                            provider: '%s'
-                                        }, 'http://localhost:5173');
-                                        window.close();
-                                    } else {
-                                        window.location.href = 'http://localhost:5173';
-                                    }
-                                </script>
-                                <p>%s 로그인 처리 중...</p>
-                            </body>
-                            </html>
-                            """, provider, loginDto.getAccessToken(), loginDto.getRefreshToken(), loginDto.getId(),
-                    loginDto.isRecoveryTarget(), provider, provider);
+                    <!DOCTYPE html>
+                    <html>
+                    <head><title>%s 로그인 완료</title></head>
+                    <body>
+                        <script>
+                            if (window.opener) {
+                                window.opener.postMessage({
+                                    type: 'OAUTH_SUCCESS',
+                                    id: '%s',
+                                    provider: '%s'
+                                }, 'http://localhost:5173');
+                                window.close();
+                            } else {
+                                window.location.href = 'http://localhost:5173';
+                            }
+                        </script>
+                        <p>%s 로그인 처리 중...</p>
+                    </body>
+                    </html>
+                    """, provider, loginDto.getId(), provider, provider);
         } else {
             String encodedNickname = URLEncoder.encode(res.getName(), StandardCharsets.UTF_8);
             String encodedEmail = URLEncoder.encode(res.getEmail(), StandardCharsets.UTF_8);

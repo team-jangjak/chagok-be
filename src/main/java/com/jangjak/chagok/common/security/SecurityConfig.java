@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/user/kakao-login", "/user/google-login", "/user/google-login-view",
-                                "/user/sign-up"
+                                "/user/sign-up", "/user/reissue"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -42,17 +42,17 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RedisTemplate<String, String> redisTemplate;
 
     List<String> whiteList = List.of(
-            "/user/sign-up", "/user/kakao-login", "/user/google-login", "/user/google-login-view"
+            "/user/sign-up", "/user/kakao-login", "/user/google-login", "/user/google-login-view", "/user/reissue"
     );
 
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("요청이 발생했습니다.");
-
         // Path 점검
         String path = request.getRequestURI();
         AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+        log.info("{} 요청이 발생했습니다.", path);
 
         // 허용 url 리스트를 순회하면서 지금 들어온 요청 url과 하나라도 일치하면 true 리턴
         boolean isAllowed = whiteList.stream()
@@ -75,6 +75,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             // 토큰에서 사용자 정보 추출
             Claims claims = getClaims(token);
+            log.info("claims: {}", claims);
 
             // 토큰에서 정보 추출
             long id = Long.parseLong(claims.getSubject());

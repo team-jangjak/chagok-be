@@ -1,6 +1,7 @@
 package com.jangjak.chagok.user.dto;
 
 import lombok.*;
+import org.springframework.http.ResponseCookie;
 
 @Data
 @Builder
@@ -8,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 public class UserLoginResDto {
     Long id;
-    String accessToken;
-    String refreshToken;
-    boolean recoveryTarget;
+    ResponseCookie accessCookie;
+    ResponseCookie refreshCookie;
 }
