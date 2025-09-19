@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,7 +94,7 @@ public class SocialLoginService {
         jwtTokenProvider.saveRefreshToken(userId, refreshToken);
 
         // 쿠키 생성
-        ResponseCookie accessCookie = CookieUtil.httpOnlyCookie("access_token", accessToken, 60L, "/");       // 15분
+        ResponseCookie accessCookie = CookieUtil.httpOnlyCookie("access_token", accessToken, 60L * 60, "/");       // 60분
         ResponseCookie refreshCookie = CookieUtil.httpOnlyCookie("refresh_token", refreshToken, 60L * 60 * 24 * 7, "/"); // 7일
 
         log.info("로그인 성공 : {}", userId);

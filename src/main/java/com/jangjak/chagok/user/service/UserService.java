@@ -13,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -29,6 +30,9 @@ public class UserService {
     private final OauthRepository oauthRepository;
     private final RedisTemplate<String, String> redisStringTemplate;
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
 
     /**
@@ -70,10 +74,10 @@ public class UserService {
      * 토큰 재발급
      */
     public ReissueResDto reissue(String refreshToken) {
-        // 리프레시 토큰 검증
+        // 리프레시 토큰 검증 (서명 검증)
         Claims claims;
         try {
-            claims = jwtTokenProvider.getClaims(refreshToken, getRefreshTokenKey());
+            claims = jwtTokenProvider.getClaims(refreshToken, secretKey);
         } catch (Exception e) {
             throw new CustomException("리프레시 토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED);
         }
@@ -96,10 +100,11 @@ public class UserService {
 
         // 쿠키 생성
         ResponseCookie accessCookie =
-                CookieUtil.httpOnlyCookie("access_token", newAccess, 60L * 15, "/");
+                CookieUtil.httpOnlyCookie("access_token", newAccess, 60L * 60, "/");
         ResponseCookie refreshCookie =
                 CookieUtil.httpOnlyCookie("refresh_token", newRefresh, 60L * 60 * 24 * 7, "/");
 
+        log.info("토큰 재발급 완료");
         return new ReissueResDto(accessCookie, refreshCookie);
     }
 }
