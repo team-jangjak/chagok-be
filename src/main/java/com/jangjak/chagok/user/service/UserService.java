@@ -5,6 +5,7 @@ import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.jwt.CookieUtil;
 import com.jangjak.chagok.common.jwt.JwtTokenProvider;
 import com.jangjak.chagok.user.dto.ReissueResDto;
+import com.jangjak.chagok.user.dto.UserCookieResDto;
 import com.jangjak.chagok.user.dto.UserReqDto;
 import com.jangjak.chagok.user.dto.UserResDto;
 import com.jangjak.chagok.user.entity.User;
@@ -65,10 +66,14 @@ public class UserService {
     /**
      * 로그아웃
      */
-    public void logout(TokenUserInfo userInfo, String accessToken) {
+    public UserCookieResDto logout(TokenUserInfo userInfo, String accessToken) {
         redisStringTemplate.delete(getRefreshTokenKey() + userInfo.getId().toString());
         jwtTokenProvider.logout(accessToken, userInfo.getId());
+        ResponseCookie delAccess = CookieUtil.deleteCookie("access_token", "/");
+        ResponseCookie delRefresh = CookieUtil.deleteCookie("refresh_token", "/");
+
         log.info("{}번 사용자의 로그아웃 성공", userInfo.getId());
+        return new UserCookieResDto(delAccess, delRefresh);
     }
 
     /**
@@ -109,6 +114,9 @@ public class UserService {
         return new ReissueResDto(accessCookie, refreshCookie);
     }
 
+    /**
+     * 회원 정보 조회
+     */
     public UserResDto getInfo(TokenUserInfo userInfo) {
         User user = userRepository.findById(userInfo.getId()).orElseThrow(() ->
                 new CustomException("해당하는 사용자가 없습니다.", HttpStatus.NOT_FOUND));
