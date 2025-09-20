@@ -6,6 +6,7 @@ import com.jangjak.chagok.common.jwt.CookieUtil;
 import com.jangjak.chagok.common.jwt.JwtTokenProvider;
 import com.jangjak.chagok.user.dto.ReissueResDto;
 import com.jangjak.chagok.user.dto.UserReqDto;
+import com.jangjak.chagok.user.dto.UserResDto;
 import com.jangjak.chagok.user.entity.User;
 import com.jangjak.chagok.user.repository.OauthRepository;
 import com.jangjak.chagok.user.repository.UserRepository;
@@ -106,5 +107,18 @@ public class UserService {
 
         log.info("토큰 재발급 완료");
         return new ReissueResDto(accessCookie, refreshCookie);
+    }
+
+    public UserResDto getInfo(TokenUserInfo userInfo) {
+        User user = userRepository.findById(userInfo.getId()).orElseThrow(() ->
+                new CustomException("해당하는 사용자가 없습니다.", HttpStatus.NOT_FOUND));
+
+        return UserResDto.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .birthDate(user.getBirthDate())
+                .profileImage(user.getProfileImage())
+                .tendency(user.getTendency())
+                .build();
     }
 }

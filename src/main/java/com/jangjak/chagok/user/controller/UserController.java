@@ -3,14 +3,17 @@ package com.jangjak.chagok.user.controller;
 import com.jangjak.chagok.common.dto.CommonResponse;
 import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.common.jwt.CookieUtil;
+import com.jangjak.chagok.common.jwt.SessionUtil;
 import com.jangjak.chagok.user.dto.ReissueResDto;
 import com.jangjak.chagok.user.dto.UserReqDto;
+import com.jangjak.chagok.user.dto.UserResDto;
 import com.jangjak.chagok.user.dto.google.GoogleCallResDto;
 import com.jangjak.chagok.user.dto.kakao.KakaoCallResDto;
 import com.jangjak.chagok.user.service.UserService;
 import com.jangjak.chagok.user.service.socialLogin.GoogleLoginService;
 import com.jangjak.chagok.user.service.socialLogin.KakaoLoginService;
 import com.jangjak.chagok.user.service.socialLogin.SocialLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ public class UserController {
     private final GoogleLoginService googleLoginService;
     private final SocialLoginService socialLoginService;
     private final KakaoLoginService kakaoLoginService;
+    private final SessionUtil sessionUtil;
 
     /**
      * user 회원가입
@@ -52,9 +56,9 @@ public class UserController {
     }
 
     @GetMapping("/google-login")
-    public void googleCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
+    public void googleCallback(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         GoogleCallResDto googleCallResDto = googleLoginService.googleCallback(code);
-        socialLoginService.writeSocialLoginResponse(googleCallResDto, "GOOGLE", response);
+        socialLoginService.writeSocialLoginResponse(googleCallResDto, "GOOGLE", request, response);
     }
 
     /**
@@ -62,26 +66,32 @@ public class UserController {
      */
     // 카카오 콜백 요청 처리
     @GetMapping("/kakao-login")
-    public void kakaoCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
+    public void kakaoCallback(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         KakaoCallResDto kakaoCallResDto = kakaoLoginService.kakaoCallback(code);
-        socialLoginService.writeSocialLoginResponse(kakaoCallResDto, "KAKAO", response);
+        socialLoginService.writeSocialLoginResponse(kakaoCallResDto, "KAKAO", request, response);
     }
 
-    /**
-     * 로그아웃
-     */
+//    /**
+//     * 로그아웃
+//     */
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(
+//            @AuthenticationPrincipal TokenUserInfo userInfo,
+//            @CookieValue(name = "access_token", required = false) String accessToken) {
+//
+//        userService.logout(userInfo, accessToken);
+//
+//        ResponseCookie delAccess = CookieUtil.deleteCookie("access_token", "/");
+//        ResponseCookie delRefresh = CookieUtil.deleteCookie("refresh_token", "/");
+//
+//        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, delAccess.toString(), delRefresh.toString())
+//                .body(CommonResponse.ok(userInfo.getId(), "로그아웃이 완료되었습니다."));
+//    }
+
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(
-            @AuthenticationPrincipal TokenUserInfo userInfo,
-            @CookieValue(name = "access_token", required = false) String accessToken) {
-
-        userService.logout(userInfo, accessToken);
-
-        ResponseCookie delAccess = CookieUtil.deleteCookie("access_token", "/");
-        ResponseCookie delRefresh = CookieUtil.deleteCookie("refresh_token", "/");
-
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, delAccess.toString(), delRefresh.toString())
-                .body(CommonResponse.ok(userInfo.getId(), "로그아웃이 완료되었습니다."));
+    public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+        sessionUtil.logout(request, response); // 세션 invalidate + context clear
+        return ResponseEntity.ok().build();    // 프론트는 200 OK 처리
     }
 
     /**
@@ -95,8 +105,12 @@ public class UserController {
                 .body(CommonResponse.ok("토큰이 재발급되었습니다."));
     }
 
-    @PostMapping("/test")
-    public String test() {
-        return "test";
+    /**
+     * 회원 정보 조회
+     */
+    @GetMapping("/info")
+    public ResponseEntity<?> getInfo(@AuthenticationPrincipal TokenUserInfo userInfo) {
+        UserResDto userResDto = userService.getInfo(userInfo);
+        return ResponseEntity.ok().body(CommonResponse.ok(userResDto, "회원 정보가 조회되었습니다."));
     }
 }
