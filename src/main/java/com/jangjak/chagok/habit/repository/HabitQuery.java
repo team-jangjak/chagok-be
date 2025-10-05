@@ -29,7 +29,7 @@ public class HabitQuery {
     }
 
     public Long saveUserHabit(UserHabit userHabit) {
-        return userHabitRepository.save(userHabit).getHabitId();
+        return userHabitRepository.save(userHabit).getId();
     }
 
     public Habit saveHabit(Habit habit) {
