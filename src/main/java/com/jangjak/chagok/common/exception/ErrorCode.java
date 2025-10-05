@@ -8,6 +8,8 @@ public enum ErrorCode {
     UNAUTHORIZED("인증되지 않은 사용자입니다.", HttpStatus.UNAUTHORIZED),
     FORBIDDEN("잘못된 접근입니다.", HttpStatus.FORBIDDEN),
     INTERNAL_SERVER_ERROR("서버 내부 오류입니다. 관리자에게 문의하세요.", HttpStatus.INTERNAL_SERVER_ERROR),
+    DATE_FORMAT_ERROR("잘못된 날짜 형식입니다. 날짜는 yyyyMMdd 형식으로 전달해주세요.", HttpStatus.BAD_REQUEST),
+    DATASET_ERROR("유효한 요청이지만 데이터를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     final String message;
