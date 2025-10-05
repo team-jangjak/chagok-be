@@ -2,15 +2,9 @@ package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.entity.Action;
-import com.jangjak.chagok.habit.entity.Habit;
-import com.jangjak.chagok.habit.entity.UserAction;
-import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.jdbc.JdbcDataProperties;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,6 +17,7 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
+    private final HabitCategoryRepository habitCategoryRepository;
 
     public Habit getHabitById(Long habitId) {
         return habitRepository.findById(habitId)
@@ -34,7 +29,7 @@ public class HabitQuery {
     }
 
     public Long saveUserHabit(UserHabit userHabit) {
-       return userHabitRepository.save(userHabit).getHabitId();
+        return userHabitRepository.save(userHabit).getHabitId();
     }
 
     public Habit saveHabit(Habit habit) {
@@ -48,5 +43,11 @@ public class HabitQuery {
 
     public void saveActionList(List<Action> actions) {
         actionRepository.saveAll(actions);
+    }
+
+    public HabitCategory getHabitCategoryById(Long categoryId) {
+        return habitCategoryRepository.findById(categoryId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND)
+        );
     }
 }

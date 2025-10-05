@@ -5,6 +5,7 @@ import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.Habit;
+import com.jangjak.chagok.habit.entity.HabitCategory;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,8 @@ public class HabitCreationCustom extends HabitCreationBase{
     @Override
     public HabitCreationInfo createHabit(CustomHabitRequestDto reqDto) {
         // === 2-2: 새로운 습관 생성 케이스 ===
+        // Category 존재 여부 검증
+        habitQuery.getHabitCategoryById(reqDto.getCategoryId());
 
         // 요청 데이터를 기반으로 새로운 Habit 엔티티 생성
         Habit rawHabit = Habit.builder()
