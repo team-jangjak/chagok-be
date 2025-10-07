@@ -3,6 +3,7 @@ package com.jangjak.chagok.common.dto;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Builder
 @Getter
@@ -11,6 +12,14 @@ public class CommonResponse<T> {
     private final T data;
     private final String message;
     private final int status;
+
+    public static <T> ResponseEntity<CommonResponse<T>> toRes(HttpStatus status, T data, String message) {
+        return ResponseEntity.status(status).body(CommonResponse.ok(data, message));
+    }
+
+    public static <T> ResponseEntity<CommonResponse<T>> toRes(T data, String message) {
+        return ResponseEntity.ok().body(CommonResponse.ok(data, message));
+    }
 
     // ------------------------------------------ 성공 ---------------------------------------------------------
     public static <T> CommonResponse<T> ok(T data) {
