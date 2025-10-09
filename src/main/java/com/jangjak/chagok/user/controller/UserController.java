@@ -98,6 +98,17 @@ public class UserController {
     @GetMapping("/info")
     public ResponseEntity<?> getInfo(@AuthenticationPrincipal TokenUserInfo userInfo) {
         UserResDto userResDto = userService.getInfo(userInfo);
-        return ResponseEntity.ok().body(CommonResponse.ok(userResDto, "회원 정보가 조회되었습니다."));
+        return CommonResponse.toRes(userResDto,"회원 정보가 조회되었습니다.");
+
+    }
+
+    /**
+     * 이메일 중복 확인
+     */
+    @GetMapping("/email-check")
+    public ResponseEntity<?> emailCheck(String email){
+        userService.emailCheck(email);
+        return CommonResponse.toRes(null,"이메일 중복 확인이 완료되었습니다.");
+
     }
 }

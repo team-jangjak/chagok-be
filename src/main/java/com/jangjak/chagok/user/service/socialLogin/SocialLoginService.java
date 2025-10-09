@@ -14,9 +14,9 @@ import com.jangjak.chagok.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +29,13 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class SocialLoginService {
+
+    @Value("${jwt.expiration}")
+    private long accessTokenExpiration;
+    @Value("${jwt.refresh-expiration}")
+    private long refreshTokenExpiration;
+    @Value("${app.frontend-base-url}")
+    private String frontendBaseUrl;
 
     private final OauthRepository oauthRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -94,8 +101,8 @@ public class SocialLoginService {
         jwtTokenProvider.saveRefreshToken(userId, refreshToken);
 
         // 쿠키 생성
-        ResponseCookie accessCookie = CookieUtil.httpOnlyCookie("access_token", accessToken, 60L * 60, "/");       // 60분
-        ResponseCookie refreshCookie = CookieUtil.httpOnlyCookie("refresh_token", refreshToken, 60L * 60 * 24 * 7, "/"); // 7일
+        ResponseCookie accessCookie = CookieUtil.httpOnlyCookie("access_token", accessToken, accessTokenExpiration, "/");
+        ResponseCookie refreshCookie = CookieUtil.httpOnlyCookie("refresh_token", refreshToken, refreshTokenExpiration, "/");
 
         log.info("로그인 성공 : {}", userId);
 
@@ -127,23 +134,24 @@ public class SocialLoginService {
                                     type: 'OAUTH_SUCCESS',
                                     id: '%s',
                                     provider: '%s'
-                                }, 'http://localhost:5173');
+                                }, '%s');
                                 window.close();
                             } else {
-                                window.location.href = 'http://localhost:5173';
+                                window.location.href = '%s';
                             }
                         </script>
                         <p>%s 로그인 처리 중...</p>
                     </body>
                     </html>
-                    """, provider, loginDto.getId(), provider, provider);
+                    """, provider, loginDto.getId(), provider, frontendBaseUrl, frontendBaseUrl, provider);
         } else {
             String encodedNickname = URLEncoder.encode(res.getName(), StandardCharsets.UTF_8);
             String encodedEmail = URLEncoder.encode(res.getEmail(), StandardCharsets.UTF_8);
             String redirectUrl = String.format(
-                    "http://localhost:5173/auth/signup/social-user-signup?provider=%s&oauthId=%s&nickname=%s&email=%s",
-                    provider, res.getOauthId(), encodedNickname, encodedEmail
+                    "%s/auth/signup/social-user-signup?provider=%s&oauthId=%s&nickname=%s&email=%s",
+                    frontendBaseUrl, provider, res.getOauthId(), encodedNickname, encodedEmail
             );
+
             html = String.format("""
                     <!DOCTYPE html>
                     <html>
@@ -155,7 +163,7 @@ public class SocialLoginService {
                                     type: 'NEW_USER_SIGNUP',
                                     oauthId: '%s',
                                     provider: '%s'
-                                }, 'http://localhost:5173');
+                                }, '%s');
                                 window.close();
                             } else {
                                 window.location.href = '%s';
@@ -164,7 +172,7 @@ public class SocialLoginService {
                         <p>회원가입 페이지로 이동 중...</p>
                     </body>
                     </html>
-                    """, res.getOauthId(), provider, redirectUrl);
+                    """, res.getOauthId(), provider, frontendBaseUrl, redirectUrl);
         }
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().write(html);
