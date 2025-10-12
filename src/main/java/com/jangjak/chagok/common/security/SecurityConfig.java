@@ -42,6 +42,7 @@ public class SecurityConfig {
                 // 허용 URI 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/swagger-ui/**", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/user/kakao-login", "/user/google-login", "/user/google-login-view",
                                 "/user/sign-up", "/user/reissue", "/habit/popular-habit-category"
                         ).permitAll()

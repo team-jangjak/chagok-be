@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .anyMatch(url -> antPathMatcher.match(url, path));
 
         // 허용 path라면 Filter 동작하지 않고 넘기기
-        if (isAllowed || path.contains("swagger")) {
+        if (isAllowed || path.contains("swagger") || path.contains("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }
