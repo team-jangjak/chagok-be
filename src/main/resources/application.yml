@@ -2,9 +2,26 @@ spring:
   application:
     name: chagok
 
-  jpa:
-    properties:
-      hibernate.jdbc.batch_size: 50
-
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?rewriteBatchedInserts=true
+    hikari:
+      password: chagok
+      username: chagok
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      hibernate.jdbc.batch_size: 50
+
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 30m
+
+app:
+  frontend-base-url: http://localhost:5173
