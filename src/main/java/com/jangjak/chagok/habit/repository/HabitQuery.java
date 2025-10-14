@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
+import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ public class HabitQuery {
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
     private final HabitCategoryRepository habitCategoryRepository;
+    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
 
     public Habit getHabitById(Long habitId) {
         return habitRepository.findById(habitId)
@@ -49,5 +51,12 @@ public class HabitQuery {
         return habitCategoryRepository.findById(categoryId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
+    }
+
+    /**
+     * 인기 습관 카테고리 정보 조회
+     */
+    public List<PopularCategoryDto> getPopularHabitCategory() {
+        return popularHabitCategoryRepository.findAllWithCategoryName();
     }
 }
