@@ -2,6 +2,7 @@ package com.jangjak.chagok.user.service;
 
 import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.common.exception.CustomException;
+import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.common.jwt.CookieUtil;
 import com.jangjak.chagok.common.jwt.JwtTokenProvider;
 import com.jangjak.chagok.user.dto.ReissueResDto;
@@ -35,18 +36,21 @@ public class UserService {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
-
+    @Value("${jwt.expiration}")
+    private long accessTokenExpiration;
+    @Value("${jwt.refresh-expiration}")
+    private long refreshTokenExpiration;
 
     /**
      * user 회원가입
      */
     public Long userCreate(@Valid UserReqDto userReqDto) {
         userRepository.findByOauthId(userReqDto.getOauthId()).ifPresent(user -> {
-            throw new CustomException("이미 가입된 사용자입니다.", HttpStatus.BAD_REQUEST);
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         });
 
         if (oauthRepository.findById(userReqDto.getOauthId()).isEmpty()) {
-            throw new CustomException("존재하지 않는 oauth", HttpStatus.BAD_REQUEST);
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
         User user = User.builder()
@@ -106,9 +110,9 @@ public class UserService {
 
         // 쿠키 생성
         ResponseCookie accessCookie =
-                CookieUtil.httpOnlyCookie("access_token", newAccess, 60L * 60, "/");
+                CookieUtil.httpOnlyCookie("access_token", newAccess, accessTokenExpiration, "/");
         ResponseCookie refreshCookie =
-                CookieUtil.httpOnlyCookie("refresh_token", newRefresh, 60L * 60 * 24 * 7, "/");
+                CookieUtil.httpOnlyCookie("refresh_token", newRefresh, refreshTokenExpiration, "/");
 
         log.info("토큰 재발급 완료");
         return new ReissueResDto(accessCookie, refreshCookie);
@@ -119,7 +123,7 @@ public class UserService {
      */
     public UserResDto getInfo(TokenUserInfo userInfo) {
         User user = userRepository.findById(userInfo.getId()).orElseThrow(() ->
-                new CustomException("해당하는 사용자가 없습니다.", HttpStatus.NOT_FOUND));
+                new CustomException(ErrorCode.NOT_FOUND));
 
         return UserResDto.builder()
                 .name(user.getName())
@@ -128,5 +132,15 @@ public class UserService {
                 .profileImage(user.getProfileImage())
                 .tendency(user.getTendency())
                 .build();
+    }
+
+    public void emailCheck(String email) {
+        String emailRegex = "^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        if (!email.matches(emailRegex)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
     }
 }

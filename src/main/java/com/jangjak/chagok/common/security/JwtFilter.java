@@ -42,7 +42,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RedisTemplate<String, String> redisTemplate;
 
     List<String> whiteList = List.of(
-            "/user/sign-up", "/user/kakao-login", "/user/google-login", "/user/google-login-view", "/user/reissue"
+            "/user/sign-up", "/user/kakao-login", "/user/google-login", "/user/google-login-view", "/user/reissue",
+            "/user/email-check",
+            "/habit/popular-habit-category"
     );
 
 
