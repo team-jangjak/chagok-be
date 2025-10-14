@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.controller;
 
 import com.jangjak.chagok.common.dto.CommonResponse;
 import com.jangjak.chagok.common.dto.TokenUserInfo;
+import com.jangjak.chagok.habit.controller.docs.HabitControllerDocs;
 import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.service.creation.HabitCreateService;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/habit")
 @RequiredArgsConstructor
 @Slf4j
-public class HabitController {
+public class HabitController implements HabitControllerDocs {
     private final HabitCreateService habitCreateService;
     private final HabitReadService habitReadService;
 

@@ -2,6 +2,7 @@ package com.jangjak.chagok.user.controller;
 
 import com.jangjak.chagok.common.dto.CommonResponse;
 import com.jangjak.chagok.common.dto.TokenUserInfo;
+import com.jangjak.chagok.user.controller.docs.UserControllerDocs;
 import com.jangjak.chagok.user.dto.ReissueResDto;
 import com.jangjak.chagok.user.dto.UserCookieResDto;
 import com.jangjak.chagok.user.dto.UserReqDto;
@@ -27,7 +28,7 @@ import java.io.IOException;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
+public class UserController implements UserControllerDocs {
 
     private final UserService userService;
     private final GoogleLoginService googleLoginService;
@@ -106,9 +107,8 @@ public class UserController {
      * 이메일 중복 확인
      */
     @GetMapping("/email-check")
-    public ResponseEntity<?> emailCheck(String email){
+    public ResponseEntity<?> emailCheck(@RequestParam String email){
         userService.emailCheck(email);
-        return CommonResponse.toRes(null,"이메일 중복 확인이 완료되었습니다.");
-
+        return CommonResponse.toRes(null,"사용 가능한 이메일입니다.");
     }
 }
