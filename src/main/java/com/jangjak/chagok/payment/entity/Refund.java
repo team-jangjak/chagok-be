@@ -1,14 +1,11 @@
-package com.jangjak.chagok.habit.entity;
+package com.jangjak.chagok.payment.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
-import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,18 +13,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
-public class UserAction extends BaseTimeEntity {
+public class Refund extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userHabitId;
+    private Integer amount;
 
-    private Long actionId;
-
-    private LocalDate actionDate;
-
-    @Enumerated(EnumType.STRING)
-    private YN isCompleted;
-
-    private Integer delayCount;
+    private String reason;
 }

@@ -1,29 +1,23 @@
 package com.jangjak.chagok.habit.entity;
 
-import com.jangjak.chagok.common.enums.YN;
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Entity
+@Table
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
-public class UserHabit {
+public class CheckMethod extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userId;
-    private Long habitId;
-    private LocalDate startDate;
-    private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
-    private YN isPublic;
+    private String title;
 }
