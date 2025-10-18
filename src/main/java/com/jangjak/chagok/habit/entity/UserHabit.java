@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,4 +23,5 @@ public class UserHabit {
     private Long habitId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private YN isPublic;
 }

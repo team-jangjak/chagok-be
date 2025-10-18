@@ -1,5 +1,6 @@
 package com.jangjak.chagok.user.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 @Entity
 @Builder
 @Table(name = "users")
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

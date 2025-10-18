@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "category")
-public class HabitCategory {
+public class HabitCategory extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
+    private String image;
 }

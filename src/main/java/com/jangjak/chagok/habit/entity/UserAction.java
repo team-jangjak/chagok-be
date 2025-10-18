@@ -1,5 +1,7 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
+import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
-public class UserAction {
+public class UserAction extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -24,5 +26,7 @@ public class UserAction {
 
     private LocalDate actionDate;
 
-    private String isCompleted;
+    private YN isCompleted;
+
+    private Integer delayCount;
 }
