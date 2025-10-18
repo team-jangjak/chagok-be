@@ -1,5 +1,7 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
+import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Habit {
+public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -27,5 +29,6 @@ public class Habit {
     private Integer freqUnit;
 
     // Y: 공개, N: 비공개
-    private String isPublic;
+    @Enumerated(EnumType.STRING)
+    private YN isPublic;
 }

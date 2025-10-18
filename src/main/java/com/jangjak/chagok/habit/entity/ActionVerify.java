@@ -1,29 +1,27 @@
 package com.jangjak.chagok.habit.entity;
 
-import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
+@Table
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
-public class UserHabit {
+public class ActionVerify {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
-    private Long habitId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private Long checkMethodId;
 
-    @Enumerated(EnumType.STRING)
-    private YN isPublic;
+    private LocalDateTime verifyDate;
+
+    // 얘는 진짜 LOB 자료형 해야될수도
+    private String value;
 }

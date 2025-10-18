@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.entity;
+package com.jangjak.chagok.payment.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -12,12 +12,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "category")
-public class HabitCategory extends BaseTimeEntity {
+@Table
+public class Payment extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private Long userHabitId;
 
-    private String image;
+    private Integer price;
+
+    // Enum으로 관리
+    private String payMethod;
+
+    private String paymentKey;
+
+    private String orderId;
+
+    // Enum으로 관리
+    private String orderState;
 }

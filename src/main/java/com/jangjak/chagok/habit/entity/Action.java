@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,18 +13,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
-public class Action {
+public class Action extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long habitId;
+
+    private Long checkMethodId;
 
     private Integer sequence;
 
     private String content;
 
     private Integer freqSeq;
-
-    // Enum으로 관리
-    private String checkMethod;
 }

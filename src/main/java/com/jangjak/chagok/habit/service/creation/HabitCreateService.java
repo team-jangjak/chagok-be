@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.service.creation;
 
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.value.HabitDateInfo;
@@ -98,7 +99,7 @@ public class HabitCreateService {
                     UserAction.builder()
                             .userHabitId(userHabitId)    // 사용자 습관과 연결
                             .actionId(action.getId())    // 원본 액션과 연결
-                            .isCompleted("N")            // 초기 완료 상태: 미완료
+                            .isCompleted(YN.N)            // 초기 완료 상태: 미완료
                             .build()
             );
         }

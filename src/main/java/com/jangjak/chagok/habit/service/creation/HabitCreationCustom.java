@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.service.creation;
 
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.dto.request.ActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
@@ -31,7 +32,7 @@ public class HabitCreationCustom extends HabitCreationBase{
                 .categoryId(reqDto.getCategoryId())          // 카테고리 ID
                 .frequency(reqDto.getFrequency())            // 빈도 (횟수)
                 .freqUnit(reqDto.getFrequencyUnit())         // 빈도 단위 (일/주/월)
-                .isPublic(reqDto.getIsPublic() ? "Y" : "N")  // 공개 여부 (Boolean → String 변환)
+                .isPublic(reqDto.getIsPublic() ? YN.Y : YN.N)  // 공개 여부 (Boolean → String 변환)
                 .build();
 
         // 생성된 습관을 DB에 저장하고 생성된 ID 반환
@@ -45,7 +46,7 @@ public class HabitCreationCustom extends HabitCreationBase{
                         .sequence(value.getSequence())       // 액션 순서
                         .content(value.getContent())         // 액션 내용
                         .freqSeq(value.getFreqSeq())         // 빈도 순서
-                        .checkMethod(value.getCheckMethod()) // 체크 방법
+//                        .checkMethod(value.getCheckMethod()) // 체크 방법
                         .build()
                 )
                 .toList();

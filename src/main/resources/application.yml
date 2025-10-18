@@ -17,6 +17,11 @@ spring:
         format_sql: true
       hibernate.jdbc.batch_size: 50
 
+  # DB 날린 경우 (혹은 배치 처음 실행할 경우) 주석 해제
+#  batch:
+#    jdbc:
+#      initialize-schema: always
+
 server:
   port: 8080
   servlet:
