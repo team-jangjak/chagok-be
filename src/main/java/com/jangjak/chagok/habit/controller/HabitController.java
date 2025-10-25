@@ -20,9 +20,10 @@ public class HabitController implements HabitControllerDocs {
     private final HabitCreateService habitCreateService;
     private final HabitReadService habitReadService;
 
-    @PostMapping("/custom")
+    @PostMapping()
     public ResponseEntity<?> createCustomHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody CustomHabitRequestDto reqDto) {
         Long userHabitId = habitCreateService.createCustomHabit(reqDto, userInfo.getId());
+        habitCreateService.createHabit(userInfo, reqDto);
         return CommonResponse.toRes(userHabitId,"습관 생성이 완료되었습니다.");
     }
 

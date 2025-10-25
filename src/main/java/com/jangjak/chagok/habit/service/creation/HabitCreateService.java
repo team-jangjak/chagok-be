@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.service.creation;
 
+import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
@@ -10,6 +11,7 @@ import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.UserAction;
 import com.jangjak.chagok.habit.entity.UserHabit;
 import com.jangjak.chagok.habit.repository.HabitQuery;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -152,5 +154,47 @@ public class HabitCreateService {
         // - 공휴일/주말 제외 옵션 등
         
         return new HabitDateInfo(startDate, endDate);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Transactional
+    public void createHabit(TokenUserInfo userInfo, CustomHabitRequestDto reqDto) {
+        // 입력값 검증
+        Long userId = userInfo.getId();
+
+
+        // 습관 및 액션 생성
+
+
+        // 인증 방식 생성
+
+
+        // 사용자 습관 및 액션 생성
+
+
+        // 결제 생성
+
+
     }
 }

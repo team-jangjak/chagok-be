@@ -44,7 +44,8 @@ public class JwtFilter extends OncePerRequestFilter {
     List<String> whiteList = List.of(
             "/user/sign-up", "/user/kakao-login", "/user/google-login", "/user/google-login-view", "/user/reissue",
             "/user/email-check",
-            "/habit/popular-habit-category"
+            "/habit/popular-habit-category", "/habit/test"
+
     );
 
 
