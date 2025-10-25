@@ -10,6 +10,7 @@ import com.jangjak.chagok.habit.entity.UserHabit;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import com.jangjak.chagok.payment.entity.Payment;
 import com.jangjak.chagok.payment.enums.OrderState;
+import com.jangjak.chagok.payment.mapper.PaymentMapper;
 import com.jangjak.chagok.payment.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 public class HabitCreationTxService {
-    private final HabitQuery habitQuery;
     private final PaymentRepository paymentRepository;
 
     @Transactional
@@ -35,14 +35,12 @@ public class HabitCreationTxService {
         // 습관 및 액션 생성
         HabitCreationInfo habitInfo = manager.createHabit(reqDto);
 
-        // === 공통 로직 ===
         // 사용자 습관 및 액션 생성
         Long userHabitId = manager.createUserHabit(userId, reqDto, habitInfo);
 
         // 결제 생성
-        paymentRepository.save(
-                Payment.builder().userHabitId(userHabitId).orderState(OrderState.CREATED).build()
-        );
+        Payment payment = PaymentMapper.toEntity(userHabitId, OrderState.CREATED);
+        paymentRepository.save(payment);
 
         return userHabitId;
     }
