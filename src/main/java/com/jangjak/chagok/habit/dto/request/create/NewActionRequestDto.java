@@ -13,6 +13,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class NewActionRequestDto {
+    boolean isModified;
+
     Integer sequence;
     String content;
     Integer freqSeq;

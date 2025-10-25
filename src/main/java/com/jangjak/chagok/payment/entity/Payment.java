@@ -1,6 +1,7 @@
 package com.jangjak.chagok.payment.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
+import com.jangjak.chagok.payment.enums.OrderState;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,5 +30,6 @@ public class Payment extends BaseTimeEntity {
     private String orderId;
 
     // Enum으로 관리
-    private String orderState;
+    @Enumerated(EnumType.STRING)
+    private OrderState orderState;
 }

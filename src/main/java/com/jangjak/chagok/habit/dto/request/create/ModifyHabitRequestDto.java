@@ -1,19 +1,21 @@
 package com.jangjak.chagok.habit.dto.request.create;
 
+import com.jangjak.chagok.common.anotation.DateFormatter;
 import com.jangjak.chagok.common.anotation.DateTimeFormatter;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class ModifyHabitRequestDto {
+public class ModifyHabitRequestDto implements CreateHabitRequestDto {
     // ==== 공통 ====
-    @DateTimeFormatter
-    private LocalDateTime startDate;
-    @DateTimeFormatter
-    private LocalDateTime endDate;
+    @DateFormatter
+    private LocalDate startDate;
+    @DateFormatter
+    private LocalDate endDate;
 
     private List<ModifyActionRequestDto> actions;
 

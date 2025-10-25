@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.entity;
 
 import com.jangjak.chagok.common.enums.YN;
+import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

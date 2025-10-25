@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class NewHabitRequestDto {
+public class NewHabitRequestDto implements CreateHabitRequestDto {
     @DateFormatter
     private LocalDate startDate;
     @DateFormatter
