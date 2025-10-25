@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.dto.request;
 
+import com.jangjak.chagok.habit.dto.request.create.NewActionRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class CustomHabitRequestDto {
     Integer frequency;
     Integer frequencyUnit;
     Boolean isPublic;
-    List<ActionRequestDto> actions;
+    List<NewActionRequestDto> actions;
 
     // Non-null 필드
     String startDate;

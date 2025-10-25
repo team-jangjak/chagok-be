@@ -1,12 +1,11 @@
 package com.jangjak.chagok.habit.service.creation;
 
 import com.jangjak.chagok.common.enums.YN;
-import com.jangjak.chagok.habit.dto.request.ActionRequestDto;
+import com.jangjak.chagok.habit.dto.request.create.NewActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.Habit;
-import com.jangjak.chagok.habit.entity.HabitCategory;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class HabitCreationCustom extends HabitCreationBase{
         Long habitId = habitQuery.saveHabit(rawHabit).getId();
 
         // 요청에 포함된 액션 목록을 Action 엔티티로 변환
-        List<ActionRequestDto> actionReqList = reqDto.getActions();
+        List<NewActionRequestDto> actionReqList = reqDto.getActions();
         List<Action> actions = actionReqList.stream()
                 .map(value -> Action.builder()
                         .habitId(habitId)                    // 방금 생성된 습관 ID 연결
