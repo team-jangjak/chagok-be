@@ -3,7 +3,6 @@ package com.jangjak.chagok.habit.controller;
 import com.jangjak.chagok.common.dto.CommonResponse;
 import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.habit.controller.docs.HabitControllerDocs;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
@@ -22,13 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class HabitController implements HabitControllerDocs {
     private final HabitCreateService habitCreateService;
     private final HabitReadService habitReadService;
-
-    @PostMapping()
-    public ResponseEntity<?> createCustomHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody CustomHabitRequestDto reqDto) {
-//        Long userHabitId = habitCreateService.createCustomHabit(reqDto, userInfo.getId());
-//        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
-        return CommonResponse.toRes("", "습관 생성이 완료되었습니다.");
-    }
 
     @PostMapping("/new")
     public ResponseEntity<?> createNewHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody NewHabitRequestDto reqDto) {

@@ -1,19 +1,12 @@
 package com.jangjak.chagok.habit.service.creation;
 
-import com.jangjak.chagok.common.dto.TokenUserInfo;
-import com.jangjak.chagok.common.exception.CustomException;
-import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
-import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @Slf4j

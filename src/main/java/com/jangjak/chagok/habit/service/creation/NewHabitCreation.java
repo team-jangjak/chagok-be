@@ -1,11 +1,7 @@
 package com.jangjak.chagok.habit.service.creation;
 
-import com.jangjak.chagok.common.dto.TokenUserInfo;
-import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
-import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.*;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.mapper.ActionMapper;

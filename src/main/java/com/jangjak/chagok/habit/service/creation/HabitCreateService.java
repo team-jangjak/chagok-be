@@ -1,31 +1,12 @@
 package com.jangjak.chagok.habit.service.creation;
 
 import com.jangjak.chagok.common.dto.TokenUserInfo;
-import com.jangjak.chagok.common.enums.YN;
-import com.jangjak.chagok.common.exception.CustomException;
-import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
-import com.jangjak.chagok.habit.dto.value.HabitDateInfo;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
-import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
-import com.jangjak.chagok.habit.entity.Action;
-import com.jangjak.chagok.habit.entity.UserAction;
-import com.jangjak.chagok.habit.entity.UserHabit;
-import com.jangjak.chagok.habit.enums.HabitCreationType;
-import com.jangjak.chagok.habit.repository.HabitQuery;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * 습관 관련 비즈니스 로직을 처리하는 서비스 클래스

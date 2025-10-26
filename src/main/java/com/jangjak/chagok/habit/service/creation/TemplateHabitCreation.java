@@ -1,12 +1,8 @@
 package com.jangjak.chagok.habit.service.creation;
 
-import com.jangjak.chagok.common.dto.TokenUserInfo;
-import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
-import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
@@ -22,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

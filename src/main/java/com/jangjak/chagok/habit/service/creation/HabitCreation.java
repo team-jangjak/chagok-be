@@ -1,7 +1,5 @@
 package com.jangjak.chagok.habit.service.creation;
 
-import com.jangjak.chagok.common.dto.TokenUserInfo;
-import com.jangjak.chagok.habit.dto.request.CustomHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 
