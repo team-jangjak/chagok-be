@@ -7,7 +7,7 @@ import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 
 public interface HabitCreation {
     // 입력값 검증
-    boolean validateRequest(CreateHabitRequestDto reqDto);
+    boolean validateRequest(Long userId, CreateHabitRequestDto reqDto);
 
     // 습관 및 액션 생성
     HabitCreationInfo createHabit(CreateHabitRequestDto reqDto);

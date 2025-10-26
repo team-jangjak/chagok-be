@@ -3,7 +3,10 @@ package com.jangjak.chagok.habit.mapper;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.UserHabit;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserHabitMapper {
     public static UserHabit toEntity(HabitCreationInfo info, Long userId, boolean isPublic) {
         return UserHabit.builder()

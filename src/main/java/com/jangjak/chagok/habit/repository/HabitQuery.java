@@ -20,6 +20,7 @@ public class HabitQuery {
     private final UserActionRepository userActionRepository;
     private final HabitCategoryRepository habitCategoryRepository;
     private final PopularHabitCategoryRepository popularHabitCategoryRepository;
+    private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
         return habitRepository.findById(habitId)
@@ -51,6 +52,17 @@ public class HabitQuery {
         return habitCategoryRepository.findById(categoryId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
+    }
+
+    public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
+        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdIn(checkMethodIdList);
+        for (CheckMethod method : methodList) {
+            if(!method.getUserId().equals(userId)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

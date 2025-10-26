@@ -50,7 +50,7 @@ public class ModifyHabitCreation implements HabitCreation {
     }
 
     @Override
-    public boolean validateRequest(CreateHabitRequestDto reqDto) {
+    public boolean validateRequest(Long userId, CreateHabitRequestDto reqDto) {
         return false;
     }
 

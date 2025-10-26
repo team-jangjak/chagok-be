@@ -28,7 +28,7 @@ public class HabitCreationTxService {
         Long userId = userInfo.getId();
 
         // 입력값 검증
-        if (!manager.validateRequest(reqDto)) {
+        if (!manager.validateRequest(userId, reqDto)) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 

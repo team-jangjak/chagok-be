@@ -34,7 +34,7 @@ public class TemplateHabitCreation implements HabitCreation {
     private final HabitQuery habitQuery;
 
     @Override
-    public boolean validateRequest(CreateHabitRequestDto reqDto) {
+    public boolean validateRequest(Long userId, CreateHabitRequestDto reqDto) {
         TemplateHabitRequestDto request = convertRequest(reqDto);
 
         LocalDate start = request.getStartDate();
@@ -71,7 +71,7 @@ public class TemplateHabitCreation implements HabitCreation {
 
         // action 오름차 정렬 (오래된 순)
         List<Action> actions = habitInfo.getActions().stream()
-                .sorted(Comparator.comparingLong(Action::getId))
+                .sorted(Comparator.comparing(action -> action.getSequence() * 100 + action.getFreqSeq()))
                 .toList();
 
         // UserHabit을 DB에 저장하고 생성된 ID 반환
