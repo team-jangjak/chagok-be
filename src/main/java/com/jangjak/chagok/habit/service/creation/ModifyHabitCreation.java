@@ -1,7 +1,10 @@
 package com.jangjak.chagok.habit.service.creation;
 
+import com.jangjak.chagok.common.exception.CustomException;
+import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,9 @@ public class ModifyHabitCreation implements HabitCreation {
     }
 
     private ModifyHabitRequestDto convertRequest(CreateHabitRequestDto reqDto) {
-        return reqDto instanceof ModifyHabitRequestDto ? (ModifyHabitRequestDto) reqDto : null;
+        if (!(reqDto instanceof ModifyHabitRequestDto)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        return (ModifyHabitRequestDto) reqDto;
     }
 }

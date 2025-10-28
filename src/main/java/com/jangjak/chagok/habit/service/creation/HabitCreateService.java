@@ -4,6 +4,7 @@ import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.enums.HabitCreationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

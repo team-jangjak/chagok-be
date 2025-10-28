@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.service.creation;
 
 import com.jangjak.chagok.common.exception.CustomException;
+import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.*;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.*;
@@ -119,7 +120,10 @@ public class NewHabitCreation implements HabitCreation {
     }
 
     private NewHabitRequestDto convertRequest(CreateHabitRequestDto reqDto) {
-        return reqDto instanceof NewHabitRequestDto ? (NewHabitRequestDto) reqDto : null;
+        if (!(reqDto instanceof NewHabitRequestDto)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        return (NewHabitRequestDto) reqDto;
     }
 
     //        // === 2-2: 새로운 습관 생성 케이스 ===

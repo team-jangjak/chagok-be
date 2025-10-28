@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.service.creation;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
@@ -93,6 +94,9 @@ public class TemplateHabitCreation implements HabitCreation {
     }
 
     private TemplateHabitRequestDto convertRequest(CreateHabitRequestDto reqDto) {
-        return reqDto instanceof TemplateHabitRequestDto ? (TemplateHabitRequestDto) reqDto : null;
+        if (!(reqDto instanceof TemplateHabitRequestDto)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        return (TemplateHabitRequestDto) reqDto;
     }
 }
