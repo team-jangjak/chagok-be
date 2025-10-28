@@ -146,7 +146,7 @@ public class OpenAIService {
                             "당신은 사용자의 나이, 직업, 성향 점수, 그리고 습관 주제(habit_title)를 기반으로 현실적으로 지속 가능한 루틴을 설계하는 습관 코치입니다.")
                     .user(prompt)
                     .options(OpenAiChatOptions.builder()
-                            .model(nz(actionToAIReqDto.getModel(), "gpt-4.1-mini"))
+                            .model("gpt-4.1-mini")
                             .temperature(0.3)
                             .topP(0.9)
                             .frequencyPenalty(0.2)
@@ -159,34 +159,23 @@ public class OpenAIService {
 
             if (content == null || content.isBlank()) {
                 log.warn("AI 응답이 비어 있음");
-                throw new IllegalStateException("AI 응답이 비어 있습니다.");
+                throw new CustomException(ErrorCode.AI_RESPONSE_ERROR);
             }
 
             ActionDto plan = objectMapper.readValue(content.trim(), ActionDto.class);
 
             // DTO 검증
             if (plan.getWeeks() == null || plan.getWeeks().isEmpty()) {
-                throw new IllegalStateException("AI 계획 생성 실패: 결과가 비어 있습니다.");
+                throw new CustomException(ErrorCode.AI_RESPONSE_MAPPING_ERROR);
             }
 
             return plan;
 
         } catch (Exception e) {
             log.error("AI 계획 생성 중 오류 발생", e);
-            throw new RuntimeException("AI 계획 생성 중 오류 발생: " + e.getMessage(), e);
+            throw new CustomException(ErrorCode.AI_REQUEST_ERROR);
         }
     }
 
 
-    private static int n(Integer v) {
-        return v == null ? 0 : v;
-    }
-
-    private static String nz(String s) {
-        return s == null ? "" : s;
-    }
-
-    private static String nz(String s, String d) {
-        return (s == null || s.isBlank()) ? d : s;
-    }
 }
