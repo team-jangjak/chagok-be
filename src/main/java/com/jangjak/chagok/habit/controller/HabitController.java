@@ -33,4 +33,10 @@ public class HabitController implements HabitControllerDocs {
     public ResponseEntity<?> getPopularHabitCategory() {
         return CommonResponse.toRes(habitReadService.getPopularHabitCategory(),"인기 습관 카테고리가 조회되었습니다.");
     }
+
+    @GetMapping("/habit-dashboard")
+    public ResponseEntity<?> getHabitDashboard(@AuthenticationPrincipal TokenUserInfo userInfo) {
+        habitReadService.getHabitDashboard(userInfo.getId());
+        return CommonResponse.toRes(null,"습관 대시보드가 조회되었습니다.");
+    }
 }

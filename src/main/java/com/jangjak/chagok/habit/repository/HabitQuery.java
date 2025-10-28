@@ -2,8 +2,10 @@ package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
+import com.jangjak.chagok.habit.dto.response.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -58,5 +60,17 @@ public class HabitQuery {
      */
     public List<PopularCategoryDto> getPopularHabitCategory() {
         return popularHabitCategoryRepository.findAllWithCategoryName();
+    }
+
+    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState){
+        return userHabitRepository.findByUserIdAndState(userId, habitState);
+    }
+
+    public List<Habit> findAllById(List<Long> habitIds){
+        return habitRepository.findAllById(habitIds);
+    }
+
+    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds, List<Long> habitIds){
+        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds, habitIds);
     }
 }
