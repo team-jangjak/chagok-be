@@ -23,8 +23,8 @@ public class HabitForActionReqDto {
     @Schema(description = "빈도 수 (freq_unit 단위 안에서 몇 번 실행할지)", example = "3")
     private Integer frequency;
 
-    @Schema(description = "인증 방식(사진/이미지 | 글 작성)", example = "이미지")
-    private String verificationMethod;
+//    @Schema(description = "인증 방식(사진/이미지 | 글 작성)", example = "이미지")
+//    private String verificationMethod;
 
     @Schema(description = "목표 기간", example = "8")
     private Integer weeksCount = 8;     // 기본 8주

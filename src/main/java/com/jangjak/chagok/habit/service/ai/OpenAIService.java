@@ -36,7 +36,6 @@ public class OpenAIService {
             - frequency: 주당 실행 횟수 (예: 주 3회)
             - propensity_score: 사용자의 성향 점수 (0~100, 낮을수록 계획 실행이 어려움)
             - age: 사용자의 나이
-            - verification_method: 인증 방식 ("이미지" 또는 "글")
             - weeks_count: 생성할 주차 수
             - etc: 추가 조건 또는 사용자의 선호 사항 (예: '주말 위주', '대학생 수준의 계획')
             
@@ -47,7 +46,6 @@ public class OpenAIService {
             - propensity_score: %d
             - age: %d
             - etc: %s
-            - verification_method: %s
             - weeks_count: %d
             
             [주기 설정 규칙]
@@ -65,11 +63,7 @@ public class OpenAIService {
             [행동 일관성 규칙]
             - tasks는 category에 해당하는 행동만 포함해야 합니다.
             - habit_title의 핵심 동사(예: 읽기, 걷기, 쓰기, 달리기 등)를 중심으로 실제 실행 가능한 행동으로 구체화합니다.
-            - 실행 불가능하거나 과도하게 세세한 지시(예: 장소, 구도, 카메라 각도 등)는 피하세요.
-            
-            [인증 방식 규칙]
-            - verification_method가 "이미지"면 각 task 끝에 "사진 인증 1장"만 추가하세요.
-            - verification_method가 "글"이면 각 task 끝에 "기록 남기기"만 추가하세요.
+            - 실행 불가능하거나 과도하게 세세한 지시(예: 장소, 구도 등)는 피하세요.
             
             [구성 규칙]
             - 모든 주의 freq = frequency이며, 1~7 사이의 정수로 유지해야 합니다.
@@ -93,10 +87,8 @@ public class OpenAIService {
             
             [검증 조건]
             - tasks 내용이 category에 부합하는가?
-            - 인증 문구가 정확히 "사진 인증 1장" 또는 "기록 남기기"로 끝나는가?
             - reason이 비어 있지 않고, 사용자의 propensity_score나 etc 조건을 반영했는가?
             - 모든 텍스트가 자연스러운 한국어로 작성되었는가?
-            
             
             """;
 
@@ -135,7 +127,7 @@ public class OpenAIService {
                     Objects.requireNonNullElse(actionToAIReqDto.getTendency(), 0),
                     Objects.requireNonNullElse(actionToAIReqDto.getAge(), 20),
                     Objects.requireNonNullElse(dto.getEtc(), ""),
-                    Objects.requireNonNullElse(dto.getVerificationMethod(), ""),
+//                    Objects.requireNonNullElse(dto.getVerificationMethod(), ""),
                     Objects.requireNonNullElse(dto.getWeeksCount(), 8)
 
             );

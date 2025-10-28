@@ -26,4 +26,6 @@ public class OpenAIController {
         ActionDto actionDto = openAIService.actionSuggest(userInfo, request);
         return CommonResponse.toRes(actionDto, "계획이 생성되었습니다.");
     }
+
+    // 인증방식 추천 요청
 }
