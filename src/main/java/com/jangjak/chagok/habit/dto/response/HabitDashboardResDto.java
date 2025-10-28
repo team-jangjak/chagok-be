@@ -20,12 +20,13 @@ public class HabitDashboardResDto {
 
     // action
     Long actionId; // 액션 id
-    String ActionContent; // 액션 내용
+    String actionContent; // 액션 내용
     Long checkMethodId; // 인증 방식 id
-    Integer ActionSequence;  // 묶음 순서
-    Integer ActionFreqSeq;  // 묶음 내부 행위 순서
+    Integer actionSequence;  // 묶음 순서
+    Integer actionFreqSeq;  // 묶음 내부 행위 순서
 
     // user_action
+    Long userActionId;
     LocalDate actionDate; // 실행 일자
     Integer delayCount; // 미룬 횟수
     YN isCompleted; // 완료 여부
