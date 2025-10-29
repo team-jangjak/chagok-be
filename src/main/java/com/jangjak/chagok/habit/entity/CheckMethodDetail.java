@@ -19,7 +19,7 @@ public class CheckMethodDetail {
 
     private Long checkMethodId;
 
-    private Integer order;
+    private Long methodOrder; // order가 postgresql 예약어라 이름 바꿈
 
     @Enumerated(EnumType.STRING)
     private CheckMethodType type;

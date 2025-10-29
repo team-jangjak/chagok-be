@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/user/kakao-login", "/user/google-login", "/user/google-login-view",
                                 "/user/sign-up", "/user/reissue", "/user/email-check",
-                                "/habit/popular-habit-category"
+                                "/habit/popular-habit-category", "/habit/test"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
