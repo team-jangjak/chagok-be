@@ -33,6 +33,9 @@ public class TemplateHabitCreation implements HabitCreation {
     public boolean validateRequest(Long userId, CreateHabitRequestDto reqDto) {
         TemplateHabitRequestDto request = convertRequest(reqDto);
 
+        // 템플릿 습관이 실제 존재하는 지 확인
+        if (!habitQuery.isTemplateHabit(request.getHabitId())) return false;
+
         LocalDate start = request.getStartDate();
         LocalDate end = request.getEndDate();
         List<TemplateActionRequestDto> actions = request.getActions();

@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.mapper;
 
 
+import com.jangjak.chagok.habit.dto.request.create.ModifyActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.entity.Action;
@@ -19,5 +20,26 @@ public class ActionMapper {
                         .build()
                 )
                 .toList();
+    }
+
+    public static Action toEntity(Long habitId, ModifyActionRequestDto reqAction, Action action) {
+        return Action.builder()
+                .habitId(habitId)
+                .sequence(reqAction.getSequence() != null ? reqAction.getSequence() : action.getSequence())
+                .content(reqAction.getContent()  != null ? reqAction.getContent() : action.getContent())
+                .freqSeq(reqAction.getFreqSeq()  != null ? reqAction.getFreqSeq() : action.getFreqSeq())
+                .checkMethodId(reqAction.getCheckMethodId() != null ? reqAction.getCheckMethodId() : action.getCheckMethodId())
+                .build();
+    }
+
+    public static Action toEntity(Long habitId, Action action) {
+        return Action.builder()
+                .habitId(habitId)
+                .sequence(action.getSequence())
+                .content(action.getContent())
+                .freqSeq(action.getFreqSeq())
+                .checkMethodId(action.getCheckMethodId())
+                .build();
+
     }
 }

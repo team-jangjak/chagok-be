@@ -47,20 +47,16 @@ public class NewHabitCreation implements HabitCreation {
         if(!habitQuery.isUserCheckMethod(userId, checkMethodIdList)) return false;
 
         // 카테고리 검증
-        Long categoryId = request.getCategoryId();
-        try {
-            // 존재하는 지 확인
-            habitQuery.getHabitCategoryById(categoryId);
-        } catch (CustomException e) {
-            return false;
-        }
+        if (!habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
 
         // frequency 검증
         int frequency = request.getFrequency();
         int freqUnit = request.getFreqUnit();
+
         switch (freqUnit) {
             case 1:
                 // TODO Habit FreqUnit에 따른 Frequency 기준
+                break;
             case 2:
                 if (frequency > 7 || frequency < 1) return false;
             case 3:
@@ -125,38 +121,4 @@ public class NewHabitCreation implements HabitCreation {
         }
         return (NewHabitRequestDto) reqDto;
     }
-
-    //        // === 2-2: 새로운 습관 생성 케이스 ===
-//        // Category 존재 여부 검증
-//        habitQuery.getHabitCategoryById(reqDto.getCategoryId());
-//
-//        // 요청 데이터를 기반으로 새로운 Habit 엔티티 생성
-//        Habit rawHabit = Habit.builder()
-//                .title(reqDto.getTitle())                    // 습관 제목
-//                .categoryId(reqDto.getCategoryId())          // 카테고리 ID
-//                .frequency(reqDto.getFrequency())            // 빈도 (횟수)
-//                .freqUnit(reqDto.getFrequencyUnit())         // 빈도 단위 (일/주/월)
-//                .isPublic(reqDto.getIsPublic() ? YN.Y : YN.N)  // 공개 여부 (Boolean → String 변환)
-//                .build();
-//
-//        // 생성된 습관을 DB에 저장하고 생성된 ID 반환
-//        Long habitId = habitQuery.saveHabit(rawHabit).getId();
-//
-//        // 요청에 포함된 액션 목록을 Action 엔티티로 변환
-//        List<NewActionRequestDto> actionReqList = reqDto.getActions();
-//        List<Action> actions = actionReqList.stream()
-//                .map(value -> Action.builder()
-//                        .habitId(habitId)                    // 방금 생성된 습관 ID 연결
-//                        .sequence(value.getSequence())       // 액션 순서
-//                        .content(value.getContent())         // 액션 내용
-//                        .freqSeq(value.getFreqSeq())         // 빈도 순서
-////                        .checkMethod(value.getCheckMethod()) // 체크 방법
-//                        .build()
-//                )
-//                .toList();
-//
-//        // Action DB 저장
-//        habitQuery.saveActionList(actions);
-//
-//        return new HabitCreationInfo(habitId, actions);
 }

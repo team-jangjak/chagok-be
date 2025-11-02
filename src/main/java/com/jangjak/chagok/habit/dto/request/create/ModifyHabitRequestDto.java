@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.dto.request.create;
 import com.jangjak.chagok.common.anotation.DateFormatter;
 import com.jangjak.chagok.common.anotation.DateTimeFormatter;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public class ModifyHabitRequestDto implements CreateHabitRequestDto {
 
     private List<ModifyActionRequestDto> actions;
 
-    @Positive
+    @PositiveOrZero
     private Long habitId;
 
     // 추후 소셜 공유 기능 고려 진행 중 습관 공개 가능 여부
@@ -28,9 +29,11 @@ public class ModifyHabitRequestDto implements CreateHabitRequestDto {
     // === null 가능 ===
     private String title;
 
-    private int frequency;
+    private Long categoryId;
 
-    private int freqUnit;
+    private Integer frequency;
+
+    private Integer freqUnit;
 
 
 }
