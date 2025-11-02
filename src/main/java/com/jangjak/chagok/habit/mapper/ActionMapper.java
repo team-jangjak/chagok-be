@@ -42,4 +42,14 @@ public class ActionMapper {
                 .build();
 
     }
+
+    public static Action toEntity(Long habitId, ModifyActionRequestDto reqAction) {
+        return Action.builder()
+                .habitId(habitId)                    // 방금 생성된 습관 ID 연결
+                .sequence(reqAction.getSequence())       // 액션 순서
+                .content(reqAction.getContent())         // 액션 내용
+                .freqSeq(reqAction.getFreqSeq())         // 빈도 순서
+                .checkMethodId(reqAction.getCheckMethodId()) // 체크 방법
+                .build();
+    }
 }

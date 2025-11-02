@@ -84,7 +84,7 @@ public class TemplateHabitCreation implements HabitCreation {
             LocalDate actionDate = requestActions.get(i).getActionDate();
 
             // actionId가 실제로 존재하는지
-            if (actionId.equals(requestActions.get(i).getActionId())) {
+            if (!actionId.equals(requestActions.get(i).getActionId())) {
                 throw new CustomException(ErrorCode.BAD_REQUEST);
             }
 

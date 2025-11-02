@@ -43,6 +43,13 @@ public class HabitController implements HabitControllerDocs {
         return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<?> testHabit(@RequestBody ModifyHabitRequestDto reqDto) {
+        TokenUserInfo userInfo = new TokenUserInfo(2L, "USER");
+        Long userHabitId = habitCreateService.createModifyHabit(userInfo, reqDto);
+        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
+    }
+
     /**
      * 인기 습관 카테고리 정보 조회
      */

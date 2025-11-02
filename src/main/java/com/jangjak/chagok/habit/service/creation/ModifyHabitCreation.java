@@ -50,12 +50,13 @@ public class ModifyHabitCreation implements HabitCreation {
         if (actions == null || actions.isEmpty()) return false;
 
         // 카테고리 검증
-        if (!habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
+        if (request.getCategoryId() != null && !habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
 
         // frequency 검증
         Integer frequency = request.getFrequency();
         Integer freqUnit = request.getFreqUnit();
 
+        // freqUnit을 바꾸는 경우..를 어떡하지..
         if (frequency == null && freqUnit == null) { // 기존 템플릿 빈도 유지
             return true;
         } else { // 변경점이 존재하는 경우
@@ -79,6 +80,8 @@ public class ModifyHabitCreation implements HabitCreation {
             request.setFreqUnit(freqUnit);
         }
 
+        // TODO 액션 까서 frequency 넘는지 확인해야 함
+
         return true;
     }
 
@@ -86,6 +89,7 @@ public class ModifyHabitCreation implements HabitCreation {
     public HabitCreationInfo createHabit(CreateHabitRequestDto reqDto) {
         ModifyHabitRequestDto request = convertRequest(reqDto);
         Long oldHabitId = request.getHabitId();
+        Habit oldHabit = habitQuery.getHabitById(oldHabitId);
 
         LocalDate startDate = request.getStartDate();
         LocalDate endDate = request.getEndDate();
@@ -95,29 +99,30 @@ public class ModifyHabitCreation implements HabitCreation {
                 .sorted(Comparator.comparing(ModifyActionRequestDto::getActionDate))
                 .toList();
 
-        // action 오름차 정렬 (오래된 순)
-        List<Action> actionList = habitQuery.getActionsByHabitId(oldHabitId).stream()
-                .sorted(Comparator.comparing(action -> action.getSequence() * 100 + action.getFreqSeq()))
-                .toList();
+        Map<Long, Action> actionMap = habitQuery.getActionsByHabitId(oldHabitId).stream()
+                .collect(Collectors.toMap(
+                        Action::getId,
+                        Function.identity()
+                ));
 
         // 습관 저장
-        Habit habit = HabitMapper.toEntity(request);
-        Long habitId = habit.getId();
-        habitQuery.saveHabit(habit);
-
-        if (reqActions.size() != actionList.size()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
+        Habit habit = HabitMapper.toEntity(request, oldHabit);
+        Long habitId = habitQuery.saveHabit(habit).getId();
 
         List<Action> actionResult = new ArrayList<>();
-        for(int i = 0; i < reqActions.size(); i++) {
-            ModifyActionRequestDto reqAction = reqActions.get(i);
-            Action action = actionList.get(i);
+        for (ModifyActionRequestDto reqAction : reqActions) {
+            Action action = actionMap.get(reqAction.getActionId());
 
             Action result;
-            if (reqAction.getActionId() != null) { // 변경점 존재
-                result = ActionMapper.toEntity(habitId, reqAction, action);
+            if (reqAction.getIsModified()) { // 변경 되었다면
+                if (reqAction.getActionId() == null) { // 템플릿에 없는 action이라면
+                    result = ActionMapper.toEntity(habitId, reqAction);
+                } else { // 템플릿에 있는 action이라면
+                    if (action == null) throw new CustomException(ErrorCode.BAD_REQUEST);
+                    result = ActionMapper.toEntity(habitId, reqAction, action);
+                }
             } else {
+                if (action == null) throw new CustomException(ErrorCode.BAD_REQUEST);
                 result = ActionMapper.toEntity(habitId, action);
             }
 

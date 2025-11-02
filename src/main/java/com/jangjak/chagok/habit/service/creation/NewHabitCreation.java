@@ -98,7 +98,7 @@ public class NewHabitCreation implements HabitCreation {
                 .toList();
 
         // UserHabit을 DB에 저장하고 생성된 ID 반환
-        UserHabit userHabit = UserHabitMapper.toEntity(habitInfo, userId, request.isPublic());
+        UserHabit userHabit = UserHabitMapper.toEntity(habitInfo, userId, request.getIsPublic());
         Long userHabitId = habitQuery.saveUserHabit(userHabit);
 
         // UserAction 생성 및 저장
