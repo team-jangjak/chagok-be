@@ -21,10 +21,10 @@ public class NewHabitRequestDto implements CreateHabitRequestDto {
     private List<NewActionRequestDto> actions;
 
     // 추후 소셜 공유 기능 고려 진행 중 습관 공개 가능 여부
-    private boolean isPublic;
+    private Boolean isPublic;
 
     // 템플릿 공유 가능한지 여부
-    private boolean isTemplate;
+    private Boolean isTemplate;
 
     @Positive
     private Long categoryId;

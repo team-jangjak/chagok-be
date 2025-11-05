@@ -28,7 +28,9 @@ public class Habit extends BaseTimeEntity {
 
     private Integer freqUnit;
 
+    private String image;
+
     // Y: 공개, N: 비공개
     @Enumerated(EnumType.STRING)
-    private YN isPublic;
+    private YN isTemplate;
 }

@@ -1,9 +1,12 @@
 package com.jangjak.chagok.habit.repository;
 
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
+import com.jangjak.chagok.habit.dto.response.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -48,10 +51,8 @@ public class HabitQuery {
         actionRepository.saveAll(actions);
     }
 
-    public HabitCategory getHabitCategoryById(Long categoryId) {
-        return habitCategoryRepository.findById(categoryId).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND)
-        );
+    public boolean getHabitCategoryById(Long categoryId) {
+        return habitCategoryRepository.findById(categoryId).isPresent();
     }
 
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
@@ -70,5 +71,26 @@ public class HabitQuery {
      */
     public List<PopularCategoryDto> getPopularHabitCategory() {
         return popularHabitCategoryRepository.findAllWithCategoryName();
+    }
+
+    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState){
+        return userHabitRepository.findByUserIdAndState(userId, habitState);
+    }
+
+    public List<Habit> findAllById(List<Long> habitIds){
+        return habitRepository.findAllById(habitIds);
+    }
+
+    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds, List<Long> habitIds){
+        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds, habitIds);
+    }
+
+    public boolean isTemplateHabit(Long habitId) {
+        return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).isPresent();
+    }
+
+    // 일치하는 Habit이 없다면 null 반환
+    public Habit getTemplateHabit(Long habitId) {
+        return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 }
