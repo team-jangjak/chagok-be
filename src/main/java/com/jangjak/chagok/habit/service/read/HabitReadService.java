@@ -36,6 +36,9 @@ public class HabitReadService {
         return habitQuery.getPopularHabitCategory();
     }
 
+     /**
+     * 사용자 습관 대시보드 조회
+     */
     public List<HabitDashboardResDto> getHabitDashboard(Long id) {
         //habit, 시간 가장 가까운 action, user_action 정보, user_habit 가져오기
         List<UserHabit> userHabitList = habitQuery.findByUserIdAndState(id, HabitState.IN_PROGRESS);
@@ -67,18 +70,11 @@ public class HabitReadService {
                 .map(dto -> {
                     Habit h = habitMap.get(dto.getHabitId());
                     return HabitDashboardResDto.builder()
-                            .habitId(dto.getHabitId())
-                            .actionId(dto.getActionId())
-                            .checkMethodId(dto.getCheckMethodId())
                             .actionFreqSeq(dto.getActionFreqSeq())
                             .actionContent(dto.getActionContent())
-                            .userActionId(dto.getUserActionId())
                             .actionDate(dto.getActionDate())
                             .actionSequence(dto.getActionSequence())
                             .delayCount(dto.getDelayCount())
-                            .isCompleted(YN.from(dto.getIsCompleted()))
-                            .habitTitle(h.getTitle())
-                            .frequency(h.getFrequency())
                             .build();
                 })
                 .toList();
