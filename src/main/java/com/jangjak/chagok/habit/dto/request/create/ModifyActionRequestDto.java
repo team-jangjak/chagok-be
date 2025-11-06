@@ -7,6 +7,8 @@ import java.time.LocalDate;
 
 @Data
 public class ModifyActionRequestDto {
+    Boolean isModified;
+
     @DateFormatter
     LocalDate actionDate;
 

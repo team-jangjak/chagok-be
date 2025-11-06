@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.mapper;
 
 import com.jangjak.chagok.common.enums.YN;
+import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.entity.Habit;
 import lombok.AccessLevel;
@@ -14,7 +15,19 @@ public class HabitMapper {
                .title(reqDto.getTitle())
                .frequency(reqDto.getFrequency())
                .freqUnit(reqDto.getFreqUnit())
-               .isPublic(reqDto.isTemplate() ? YN.Y : YN.N)
+               .image("") // TODO 이미지 처리
+               .isTemplate(reqDto.getIsTemplate() ? YN.Y : YN.N)
                .build();
+    }
+
+    public static Habit toEntity(ModifyHabitRequestDto reqDto, Habit oldHabit) {
+        return Habit.builder()
+                .categoryId(reqDto.getCategoryId() != null ? reqDto.getCategoryId() : oldHabit.getCategoryId())
+                .title(reqDto.getTitle() != null ? reqDto.getTitle() : oldHabit.getTitle())
+                .frequency(reqDto.getFrequency() != null ? reqDto.getFrequency() : oldHabit.getFrequency())
+                .freqUnit(reqDto.getFreqUnit() != null ? reqDto.getFreqUnit() : oldHabit.getFreqUnit())
+                .image("") // TODO 이미지 처리
+                .isTemplate(YN.N)
+                .build();
     }
 }
