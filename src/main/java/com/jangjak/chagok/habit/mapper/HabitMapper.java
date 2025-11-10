@@ -15,6 +15,7 @@ public class HabitMapper {
                .title(reqDto.getTitle())
                .frequency(reqDto.getFrequency())
                .freqUnit(reqDto.getFreqUnit())
+               .freqCount(reqDto.getFreqCount())
                .image("") // TODO 이미지 처리
                .isTemplate(reqDto.getIsTemplate() ? YN.Y : YN.N)
                .build();
@@ -26,6 +27,7 @@ public class HabitMapper {
                 .title(reqDto.getTitle() != null ? reqDto.getTitle() : oldHabit.getTitle())
                 .frequency(reqDto.getFrequency() != null ? reqDto.getFrequency() : oldHabit.getFrequency())
                 .freqUnit(reqDto.getFreqUnit() != null ? reqDto.getFreqUnit() : oldHabit.getFreqUnit())
+                .freqCount(reqDto.getFreqCount() != null ? reqDto.getFreqCount() : oldHabit.getFreqCount())
                 .image("") // TODO 이미지 처리
                 .isTemplate(YN.N)
                 .build();

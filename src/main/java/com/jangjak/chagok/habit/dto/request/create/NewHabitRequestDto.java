@@ -37,4 +37,6 @@ public class NewHabitRequestDto implements CreateHabitRequestDto {
 
     @Range(min = 1, max = 3)
     private int freqUnit;
+
+    private int freqCount;
 }
