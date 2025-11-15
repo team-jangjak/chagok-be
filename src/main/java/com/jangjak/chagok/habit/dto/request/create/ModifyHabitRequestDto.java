@@ -35,5 +35,7 @@ public class ModifyHabitRequestDto implements CreateHabitRequestDto {
 
     private Integer freqUnit;
 
+    private Integer freqCount;
+
 
 }

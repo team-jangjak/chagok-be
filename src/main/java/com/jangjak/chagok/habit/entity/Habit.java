@@ -28,6 +28,8 @@ public class Habit extends BaseTimeEntity {
 
     private Integer freqUnit;
 
+    private Integer freqCount;
+
     private String image;
 
     // Y: 공개, N: 비공개

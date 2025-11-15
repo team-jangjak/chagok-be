@@ -39,6 +39,7 @@ public class NewHabitCreation implements HabitCreation {
         List<NewActionRequestDto> actions = request.getActions();
         if (actions == null || actions.isEmpty()) return false;
 
+
         // 인증방식 검증
         List<Long> checkMethodIdList = actions.stream()
                 .map(NewActionRequestDto::getCheckMethodId)

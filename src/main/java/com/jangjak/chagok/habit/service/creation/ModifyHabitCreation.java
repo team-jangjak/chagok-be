@@ -80,7 +80,7 @@ public class ModifyHabitCreation implements HabitCreation {
             request.setFreqUnit(freqUnit);
         }
 
-        // TODO 액션 까서 frequency 넘는지 확인해야 함
+        // TODO 액션 까서 freqCount 넘는지 확인해야 함
 
         return true;
     }
