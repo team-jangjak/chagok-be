@@ -20,7 +20,7 @@ public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long categoryId;
+    private Long category;
 
     private String title;
 

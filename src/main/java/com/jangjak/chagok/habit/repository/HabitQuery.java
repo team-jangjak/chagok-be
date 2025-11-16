@@ -21,8 +21,7 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-    private final HabitCategoryRepository habitCategoryRepository;
-    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
+//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
@@ -51,9 +50,9 @@ public class HabitQuery {
         actionRepository.saveAll(actions);
     }
 
-    public boolean getHabitCategoryById(Long categoryId) {
-        return habitCategoryRepository.findById(categoryId).isPresent();
-    }
+//    public boolean getHabitCategoryById(Long categoryId) {
+//        return habitCategoryRepository.findById(categoryId).isPresent();
+//    }
 
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
         List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdIn(checkMethodIdList);
@@ -69,9 +68,9 @@ public class HabitQuery {
     /**
      * 인기 습관 카테고리 정보 조회
      */
-    public List<PopularCategoryDto> getPopularHabitCategory() {
-        return popularHabitCategoryRepository.findAllWithCategoryName();
-    }
+//    public List<PopularCategoryDto> getPopularHabitCategory() {
+//        return popularHabitCategoryRepository.findAllWithCategoryName();
+//    }
 
     public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState){
         return userHabitRepository.findByUserIdAndState(userId, habitState);

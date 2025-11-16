@@ -5,6 +5,7 @@ import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.*;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.mapper.ActionMapper;
 import com.jangjak.chagok.habit.mapper.HabitMapper;
 import com.jangjak.chagok.habit.mapper.UserActionMapper;
@@ -48,7 +49,9 @@ public class NewHabitCreation implements HabitCreation {
         if(!habitQuery.isUserCheckMethod(userId, checkMethodIdList)) return false;
 
         // 카테고리 검증
-        if (!habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
+        HabitCategory habitCategory = HabitCategory.fromValue(request.getCategory().intValue());
+        if (habitCategory == HabitCategory.NONE) return false;
+//        if (!habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
 
         // frequency 검증
         int frequency = request.getFrequency();

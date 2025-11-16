@@ -27,7 +27,7 @@ public class NewHabitRequestDto implements CreateHabitRequestDto {
     private Boolean isTemplate;
 
     @Positive
-    private Long categoryId;
+    private Long category;
 
     @NotBlank
     private String title;
