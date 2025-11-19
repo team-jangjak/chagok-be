@@ -3,15 +3,19 @@ package com.jangjak.chagok.habit.repository;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.response.ActionAndUserActionView;
+import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
+import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
+import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -81,8 +85,8 @@ public class HabitQuery {
         return habitRepository.findAllById(habitIds);
     }
 
-    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds, List<Long> habitIds){
-        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds, habitIds);
+    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds){
+        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds);
     }
 
     public boolean isTemplateHabit(Long habitId) {
@@ -92,5 +96,21 @@ public class HabitQuery {
     // 일치하는 Habit이 없다면 null 반환
     public Habit getTemplateHabit(Long habitId) {
         return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
+    }
+
+    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds){
+        return userActionRepository.findProgressRates(userHabitIds);
+    }
+
+    public List<CalendarInfo> findCalendarInfo(LocalDate startDate, LocalDate endDate, List<Long> userHabitIds){
+        return userActionRepository.findCalendarInfo(startDate, endDate, userHabitIds);
+    }
+
+    public ActionAndUserActionView findHabitActionDetail(Long userActionId){
+        return userActionRepository.findHabitActionDetail(userActionId);
+    }
+
+    public List<HabitCategory> findByIdIn(Set<Long> ids){
+        return habitCategoryRepository.findByIdIn(ids);
     }
 }

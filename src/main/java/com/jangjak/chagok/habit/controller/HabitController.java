@@ -6,7 +6,9 @@ import com.jangjak.chagok.habit.controller.docs.HabitControllerDocs;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
+import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
 import com.jangjak.chagok.habit.service.creation.HabitCreateService;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
 import lombok.RequiredArgsConstructor;
@@ -63,4 +65,17 @@ public class HabitController implements HabitControllerDocs {
         List<HabitDashboardResDto> habitDashboard = habitReadService.getHabitDashboard(userInfo.getId());
         return CommonResponse.toRes(habitDashboard,"습관 대시보드가 조회되었습니다.");
     }
+
+    @GetMapping("/calendar-view")
+    public ResponseEntity<?> getCalendarView(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestParam Integer year, @RequestParam Integer month) {
+        List<CalendarViewResDto> calendarView = habitReadService.getCalendarView(userInfo.getId(), year, month);
+        return CommonResponse.toRes(calendarView,"캘린더가 조회되었습니다.");
+    }
+
+    @GetMapping("/habit-detail/{userActionId}")
+    public ResponseEntity<?> getHabitDetail(@AuthenticationPrincipal TokenUserInfo userInfo, @PathVariable Long userActionId) {
+        HabitDetailResDto actionDetail = habitReadService.getHabitDetail(userActionId);
+        return CommonResponse.toRes(actionDetail,"습관 상세 정보가 조회되었습니다.");
+    }
+
 }
