@@ -113,4 +113,8 @@ public class HabitQuery {
     public List<HabitCategory> findByIdIn(Set<Long> ids){
         return habitCategoryRepository.findByIdIn(ids);
     }
+
+    public Action findActionById(Long actionId){
+        return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 }

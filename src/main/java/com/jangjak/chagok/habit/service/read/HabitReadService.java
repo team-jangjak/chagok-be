@@ -3,18 +3,15 @@ package com.jangjak.chagok.habit.service.read;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.response.ActionResDto;
-import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
-import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
-import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
+import com.jangjak.chagok.habit.dto.response.*;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
-import com.jangjak.chagok.habit.entity.Habit;
-import com.jangjak.chagok.habit.entity.HabitCategory;
-import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
+import com.jangjak.chagok.habit.repository.CheckMethodDetailRepository;
+import com.jangjak.chagok.habit.repository.CheckMethodRepository;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +31,9 @@ public class HabitReadService {
      * 습관 관련 데이터베이스 조회/저장을 담당하는 쿼리 클래스
      */
     private final HabitQuery habitQuery;
+
+    private final CheckMethodRepository checkMethodRepository;
+    private final CheckMethodDetailRepository checkMethodDetailRepository;
 
 
     /**
@@ -101,7 +101,7 @@ public class HabitReadService {
 
                     return HabitDashboardResDto.builder()
                             .frequencyUnit(r.getFrequencyUnit())
-                            .id(r.getId())
+                            .id(r.getId()) // todo: userhabitId말고 userActionId로 바꾸기
                             .image(r.getImage())
 //                            .categoryName(categoryNameMap.getOrDefault(r.getCategoryId(), "기타"))
                             .categoryName(categoryName)
@@ -150,7 +150,7 @@ public class HabitReadService {
                         CalendarInfo::getActionDate,
                         LinkedHashMap::new,
                         Collectors.mapping(r -> ActionResDto.builder()
-                                        .id(r.getUserHabitId())
+                                        .id(r.getUserHabitId()) // todo: userhabitId말고 userActionId로 바꾸기
                                         .userActionId(r.getUserActionId())
                                         .actionContent(r.getActionContent())
                                         .isCompleted(r.getIsCompleted())
@@ -169,6 +169,8 @@ public class HabitReadService {
     }
 
     public HabitDetailResDto getHabitDetail(Long userActionId) {
+        // userId와 비교 검증 추가
+
         ActionAndUserActionView habitActionDetail = habitQuery.findHabitActionDetail(userActionId);
 
         if (habitActionDetail == null) {
@@ -180,7 +182,7 @@ public class HabitReadService {
                 .habitTitle(habitActionDetail.getHabitTitle())
                 .frequency(habitActionDetail.getFrequency())
                 .frequencyUnit(habitActionDetail.getFrequencyUnit())
-                .id(habitActionDetail.getId())  // userHabitId
+                .id(habitActionDetail.getId())  // userHabitId todo: userhabitId말고 userActionId로 바꾸기
                 .categoryName(habitActionDetail.getCategoryName())
                 .image(habitActionDetail.getImage())
 
@@ -200,4 +202,34 @@ public class HabitReadService {
                 .build();
     }
 
+    /**
+     * Action 인증을 위한 인증 방식(check method) 조회
+     *
+     * @return
+     */
+    public CheckMethodResDto checkMethodOfAction(Long id, Long actionId) {
+        Action actionById = habitQuery.findActionById(actionId);
+
+        CheckMethod checkMethod = checkMethodRepository.findById(actionById.getCheckMethodId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND));
+
+        List<CheckMethodDetail> details = checkMethodDetailRepository.findByCheckMethodIdOrderByMethodOrderAsc(actionById.getCheckMethodId());
+
+        if (details.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+
+        List<CheckMethodDetailRestDto> detailResDto = details.stream()
+                .map(detail -> CheckMethodDetailRestDto.builder()
+                        .type(detail.getType())
+                        .value(detail.getValue())
+                        .build()
+                ).toList();
+
+        return CheckMethodResDto.builder()
+                .id(actionById.getCheckMethodId())
+                .title(checkMethod.getTitle())
+                .details(detailResDto)
+                .build();
+    }
 }
