@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -62,7 +63,7 @@ public class HabitQuery {
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
         List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdIn(checkMethodIdList);
         for (CheckMethod method : methodList) {
-            if(!method.getUserId().equals(userId)) {
+            if (!method.getUserId().equals(userId)) {
                 return false;
             }
         }
@@ -77,15 +78,15 @@ public class HabitQuery {
         return popularHabitCategoryRepository.findAllWithCategoryName();
     }
 
-    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState){
+    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState) {
         return userHabitRepository.findByUserIdAndState(userId, habitState);
     }
 
-    public List<Habit> findAllById(List<Long> habitIds){
+    public List<Habit> findAllById(List<Long> habitIds) {
         return habitRepository.findAllById(habitIds);
     }
 
-    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds){
+    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds) {
         return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds);
     }
 
@@ -98,23 +99,40 @@ public class HabitQuery {
         return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 
-    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds){
+    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds) {
         return userActionRepository.findProgressRates(userHabitIds);
     }
 
-    public List<CalendarInfo> findCalendarInfo(LocalDate startDate, LocalDate endDate, List<Long> userHabitIds){
+    public List<CalendarInfo> findCalendarInfo(LocalDate startDate, LocalDate endDate, List<Long> userHabitIds) {
         return userActionRepository.findCalendarInfo(startDate, endDate, userHabitIds);
     }
 
-    public ActionAndUserActionView findHabitActionDetail(Long userActionId){
+    public ActionAndUserActionView findHabitActionDetail(Long userActionId) {
         return userActionRepository.findHabitActionDetail(userActionId);
     }
 
-    public List<HabitCategory> findByIdIn(Set<Long> ids){
+    public List<HabitCategory> findByIdIn(Set<Long> ids) {
         return habitCategoryRepository.findByIdIn(ids);
     }
 
-    public Action findActionById(Long actionId){
+    public Action findActionById(Long actionId) {
         return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
+
+    public UserAction getUserActionById(Long userActionId) {
+        return userActionRepository.findById(userActionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    public int countByUserHabitId(Long userHabitId) {
+        return Optional.ofNullable(
+                userActionRepository.countByUserHabitId(userHabitId)
+        ).orElse(0);
+    }
+
+    public int countByUserHabitIdAndIsCompleted(Long userHabitId, String isCompleted) {
+        return Optional.ofNullable(
+                userActionRepository.countByUserHabitIdAndIsCompleted(userHabitId, isCompleted)
+        ).orElse(0);
+    }
+
 }

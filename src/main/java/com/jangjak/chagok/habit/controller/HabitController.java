@@ -104,8 +104,8 @@ public class HabitController implements HabitControllerDocs {
      * Action 인증을 위한 인증 방식(check method) 조회
      */
     @GetMapping("/action-verify/{userActionId}")
-    public ResponseEntity<?> getCheckMethodOfAction(@AuthenticationPrincipal TokenUserInfo userInfo, @PathVariable Long actionId) {
-        CheckMethodResDto checkMethodResDto = habitReadService.checkMethodOfAction(userInfo.getId(), actionId);
+    public ResponseEntity<?> getCheckMethodOfAction(@AuthenticationPrincipal TokenUserInfo userInfo, @PathVariable Long userActionId) {
+        CheckMethodResDto checkMethodResDto = habitReadService.checkMethodOfAction(userInfo.getId(), userActionId);
         return CommonResponse.toRes(checkMethodResDto,"인증 방식이 조회되었습니다.");
     }
 }

@@ -82,26 +82,22 @@ public class HabitReadService {
                 .collect(Collectors.toMap(Habit::getId, Function.identity()));
 
         // 진행률 계산
-        Map<Long, Integer> progressRateMap = habitQuery.findProgressRates(userHabitIds)
-                .stream()
-                .collect(Collectors.toMap(
-                        ProgressRateInfo::getUserHabitId,
-                        r -> r.getProgressRate() == null ? 0 : r.getProgressRate()
-                ));
+        List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds);
+        Map<Long, Integer> progressRateMap = getProgressRateMap(rawList);
 
 
 //        log.info("habitMap: {}", habitMap);
 
         return habitQuery.findNextUpcomingPerUserHabit(userHabitIds).stream()
                 .map(r -> {
-                    Long habitId = userHabitToHabitId.get(r.getId()); // r.getId() = userHabitId
+                    Long habitId = userHabitToHabitId.get(r.getUserHabitId()); //userHabitId
                     Habit h = habitMap.get(habitId);
                     Long categoryId = (h != null) ? h.getCategoryId() : null;
                     String categoryName = (categoryId != null) ? categoryNameMap.get(categoryId) : null;
 
                     return HabitDashboardResDto.builder()
                             .frequencyUnit(r.getFrequencyUnit())
-                            .id(r.getId()) // todo: userhabitId말고 userActionId로 바꾸기
+                            .id(r.getUserActionId()) //userActionId
                             .image(r.getImage())
 //                            .categoryName(categoryNameMap.getOrDefault(r.getCategoryId(), "기타"))
                             .categoryName(categoryName)
@@ -114,11 +110,19 @@ public class HabitReadService {
                             .delayCount(r.getDelayCount())
 
                             //진행률
-                            .progressRate(progressRateMap.getOrDefault(r.getId(), 0))
+                            .progressRate(progressRateMap.getOrDefault(r.getUserHabitId(), 0))
                             .build();
                 })
                 .toList();
 
+    }
+
+    private Map<Long, Integer> getProgressRateMap(List<ProgressRateInfo> rawList) {
+        return rawList.stream()
+                .collect(Collectors.toMap(
+                        ProgressRateInfo::getUserHabitId,
+                        raw -> calculateProgressRate(raw.getTotalCount(), raw.getCompletedCount())
+                ));
     }
 
     private List<UserHabit> getUserHabits(Long id) {
@@ -150,8 +154,7 @@ public class HabitReadService {
                         CalendarInfo::getActionDate,
                         LinkedHashMap::new,
                         Collectors.mapping(r -> ActionResDto.builder()
-                                        .id(r.getUserHabitId()) // todo: userhabitId말고 userActionId로 바꾸기
-                                        .userActionId(r.getUserActionId())
+                                        .id(r.getUserActionId()) //userActionId
                                         .actionContent(r.getActionContent())
                                         .isCompleted(r.getIsCompleted())
                                         .build(),
@@ -168,6 +171,9 @@ public class HabitReadService {
                 .toList();
     }
 
+    /**
+     * 습관&액션 상세 조회
+     */
     public HabitDetailResDto getHabitDetail(Long userActionId) {
         // userId와 비교 검증 추가
 
@@ -177,12 +183,20 @@ public class HabitReadService {
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
 
+        // 진행률 조회
+        UserAction userActionById = habitQuery.getUserActionById(userActionId);
+        int total = habitQuery.countByUserHabitId(userActionById.getUserHabitId());
+        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userActionById.getUserHabitId(), "Y");
+        int progressRate = calculateProgressRate(total, completed);
+
+        // 인증 방식 정보 가져오기 userAction에 checkMethodId가 없어서
+        // userAction - Action - CheckMethod 경로로 접근
+
         return HabitDetailResDto.builder()
                 // habit
                 .habitTitle(habitActionDetail.getHabitTitle())
                 .frequency(habitActionDetail.getFrequency())
                 .frequencyUnit(habitActionDetail.getFrequencyUnit())
-                .id(habitActionDetail.getId())  // userHabitId todo: userhabitId말고 userActionId로 바꾸기
                 .categoryName(habitActionDetail.getCategoryName())
                 .image(habitActionDetail.getImage())
 
@@ -193,13 +207,27 @@ public class HabitReadService {
                 .actionFreqSeq(habitActionDetail.getActionFreqSeq())
 
                 // user_action
+                .id(habitActionDetail.getUserActionId())  // userActionId
                 .actionDate(habitActionDetail.getActionDate())
                 .delayCount(habitActionDetail.getDelayCount())
                 .isCompleted("Y".equalsIgnoreCase(habitActionDetail.getIsCompleted()) ? YN.Y : YN.N)
 
                 // 진행률
-                .progressRate(Optional.ofNullable(habitActionDetail.getProgressRate()).orElse(0))
+                .progressRate(progressRate)
                 .build();
+    }
+
+    /**
+     * 진행률 계산 로직
+     * @param total
+     * @param completed
+     * @return
+     */
+    private int calculateProgressRate(int total, int completed) {
+        if (total <= 0) {
+            return 0;
+        }
+        return (int) Math.floor((completed * 100.0) / total);
     }
 
     /**

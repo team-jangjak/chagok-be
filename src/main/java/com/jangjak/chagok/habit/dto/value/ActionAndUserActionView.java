@@ -6,12 +6,18 @@ import java.time.LocalDate;
 public interface ActionAndUserActionView {
 
     String getHabitTitle();
+
     Integer getFrequency();
+
     Long getHabitId();
+
     String getCategoryName();
+
     Long getCategoryId();
+
     // action
     Long getActionId();
+
     Long getCheckMethodId();
 
     // user_action
@@ -21,18 +27,19 @@ public interface ActionAndUserActionView {
 
     String getIsCompleted();
 
-    // habit dashboard res dto
+    // HabitDashboardResDto
     Integer getFrequencyUnit();
-    Long getId();                 // userHabitId
+
     String getImage();
 
     String getActionContent();
+
     Integer getActionSequence();
+
     Integer getActionFreqSeq();
 
     LocalDate getActionDate();
+
     Integer getDelayCount();
 
-    //
-    Integer getProgressRate();
 }

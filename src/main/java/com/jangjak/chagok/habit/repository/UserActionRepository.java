@@ -15,6 +15,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
 
     /**
      * 사용자가 진행하고 있는 습관의 가장 가까운 action 조회
+     *
      * @param userHabitIds
      * @return
      */
@@ -43,7 +44,8 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
             )
             SELECT
                 h.freq_unit                  AS frequencyUnit,
-                b.user_habit_id              AS id,          
+                b.id                         AS userActionId,   
+                b.user_habit_id              AS userHabitId,
                 h.image                      AS image,
             
                 b.action_content             AS actionContent,
@@ -61,7 +63,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
     );
 
     /**
-     * 습관의 진행률 조회
+     * 습관의 진행률 조회 (총 횟수 + 완료 횟수만 반환)
      * @param userHabitIds
      * @return
      */
@@ -69,18 +71,13 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
             SELECT 
               ua.user_habit_id AS userHabitId,
               COUNT(*) AS totalCount,
-              SUM(CASE WHEN ua.is_completed = 'Y' THEN 1 ELSE 0 END) AS completedCount,
-              CAST(
-                FLOOR(
-                  100.0 * SUM(CASE WHEN ua.is_completed = 'Y' THEN 1 ELSE 0 END)
-                  / NULLIF(COUNT(*), 0)
-                ) AS INT
-              ) AS progressRate
+              SUM(CASE WHEN ua.is_completed = 'Y' THEN 1 ELSE 0 END) AS completedCount
             FROM user_action ua
             WHERE ua.user_habit_id IN (:userHabitIds)    
             GROUP BY ua.user_habit_id
             """, nativeQuery = true)
     List<ProgressRateInfo> findProgressRates(@Param("userHabitIds") List<Long> userHabitIds);
+
 
     // 날짜 범위 + (옵션: 특정 습관들만)
     /**
@@ -113,51 +110,40 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
     );
 
     /**
+     * 습관&행위 상세 조회
      *
      * @param userActionId
      * @return
      */
     @Query(value = """
-        SELECT 
-            -- habit
-            h.title                               AS habitTitle,
-            h.frequency                           AS frequency,
-            h.freq_unit                           AS frequencyUnit,
-            ua.user_habit_id                      AS id,               -- userHabitId
-            c.name                                AS categoryName,
-            h.image                               AS image,
-
-            -- action
-            a.content                             AS actionContent,
-            a.check_method_id                     AS checkMethodId,
-            a."sequence"                          AS actionSequence,
-            a."freq_seq"                          AS actionFreqSeq,
-
-            -- user_action
-            ua.action_date                        AS actionDate,
-            ua.delay_count                        AS delayCount,
-            ua.is_completed                       AS isCompleted,
-
-            -- progressRate: (해당 user_habit 전체 중 완료 비율)
-            CAST(
-              FLOOR(
-                100.0 * (
-                  SELECT SUM(CASE WHEN ua2.is_completed = 'Y' THEN 1 ELSE 0 END)
-                  FROM user_action ua2
-                  WHERE ua2.user_habit_id = ua.user_habit_id
-                )
-                / NULLIF((
-                  SELECT COUNT(*)
-                  FROM user_action ua3
-                  WHERE ua3.user_habit_id = ua.user_habit_id
-                ), 0)
-              ) AS INT
-            )                                     AS progressRate
-        FROM user_action ua
-        JOIN "action" a ON a.id = ua.action_id
-        JOIN habit h     ON h.id = a.habit_id
-        LEFT JOIN category c ON c.id = h.category_id
-        WHERE ua.id = :userActionId
-        """, nativeQuery = true)
+            SELECT 
+                -- habit
+                h.title                               AS habitTitle,
+                h.frequency                           AS frequency,
+                h.freq_unit                           AS frequencyUnit,
+                c.name                                AS categoryName,
+                h.image                               AS image,
+            
+                -- action
+                a.content                             AS actionContent,
+                a.check_method_id                     AS checkMethodId,
+                a."sequence"                          AS actionSequence,
+                a."freq_seq"                          AS actionFreqSeq,
+            
+                -- user_action
+                ua.id                                 AS userActionId,     -- userActionId
+                ua.action_date                        AS actionDate,
+                ua.delay_count                        AS delayCount,
+                ua.is_completed                       AS isCompleted,
+            FROM user_action ua
+            JOIN "action" a ON a.id = ua.action_id
+            JOIN habit h     ON h.id = a.habit_id
+            LEFT JOIN category c ON c.id = h.category_id
+            WHERE ua.id = :userActionId
+            """, nativeQuery = true)
     ActionAndUserActionView findHabitActionDetail(@Param("userActionId") Long userActionId);
+
+    int countByUserHabitId(Long userHabitId);
+    int countByUserHabitIdAndIsCompleted(Long userHabitId, String isCompleted);
+
 }
