@@ -7,7 +7,6 @@ import java.time.LocalDate;
 
 @Data
 public class ActionVerifyRequestDto {
-    // id, checkMethodId, date, value
     Long id; // userActionId
     Long checkMethodId;
     @DateFormatter

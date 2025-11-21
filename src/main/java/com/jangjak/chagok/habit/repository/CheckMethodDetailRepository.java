@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface CheckMethodDetailRepository extends JpaRepository<CheckMethodDetail, Long> {
      List<CheckMethodDetail> findByCheckMethodIdOrderByMethodOrderAsc(Long checkMethodId);
+     void deleteAllByCheckMethodId(Long checkMethodId);
 }

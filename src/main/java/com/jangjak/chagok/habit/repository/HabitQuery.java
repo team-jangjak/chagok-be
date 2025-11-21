@@ -135,4 +135,9 @@ public class HabitQuery {
         ).orElse(0);
     }
 
+    public UserHabit getUserHabit(Long userHabitId) {
+        return userHabitRepository.findById(userHabitId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
 }

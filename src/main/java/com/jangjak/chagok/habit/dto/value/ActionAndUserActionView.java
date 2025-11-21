@@ -13,8 +13,6 @@ public interface ActionAndUserActionView {
 
     String getCategoryName();
 
-    Long getCategoryId();
-
     // action
     Long getActionId();
 

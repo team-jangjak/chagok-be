@@ -10,9 +10,8 @@ import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
-import com.jangjak.chagok.habit.repository.CheckMethodDetailRepository;
-import com.jangjak.chagok.habit.repository.CheckMethodRepository;
 import com.jangjak.chagok.habit.repository.HabitQuery;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,9 +30,6 @@ public class HabitReadService {
      * 습관 관련 데이터베이스 조회/저장을 담당하는 쿼리 클래스
      */
     private final HabitQuery habitQuery;
-
-    private final CheckMethodRepository checkMethodRepository;
-    private final CheckMethodDetailRepository checkMethodDetailRepository;
 
 
     /**
@@ -63,20 +59,10 @@ public class HabitReadService {
         // 사용자가 진행하고 있는 습관들
         List<Habit> habitList = habitQuery.findAllById(habitIds);
 
-        // 카테고리 이름 조회
-        Set<Long> categoryIds = habitList.stream()
-                .map(Habit::getCategoryId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        List<HabitCategory> categories = habitQuery.findByIdIn(categoryIds);
-        Map<Long, String> categoryNameMap = categories.stream()
-                .collect(Collectors.toMap(HabitCategory::getId, HabitCategory::getName));
 
         // 방법 1. userHabitId -> habitId 맵
         Map<Long, Long> userHabitToHabitId = userHabitList.stream()
                 .collect(Collectors.toMap(UserHabit::getId, UserHabit::getHabitId));
-
 
         Map<Long, Habit> habitMap = habitList.stream()
                 .collect(Collectors.toMap(Habit::getId, Function.identity()));
@@ -92,14 +78,13 @@ public class HabitReadService {
                 .map(r -> {
                     Long habitId = userHabitToHabitId.get(r.getUserHabitId()); //userHabitId
                     Habit h = habitMap.get(habitId);
-                    Long categoryId = (h != null) ? h.getCategoryId() : null;
-                    String categoryName = (categoryId != null) ? categoryNameMap.get(categoryId) : null;
+                    HabitCategory category = (h != null) ? h.getCategoryId() : null;
+                    String categoryName = (category != null) ? category.getValue() : "기타";
 
                     return HabitDashboardResDto.builder()
                             .frequencyUnit(r.getFrequencyUnit())
                             .id(r.getUserActionId()) //userActionId
                             .image(r.getImage())
-//                            .categoryName(categoryNameMap.getOrDefault(r.getCategoryId(), "기타"))
                             .categoryName(categoryName)
 
                             .actionContent(r.getActionContent())
@@ -174,20 +159,19 @@ public class HabitReadService {
     /**
      * 습관&액션 상세 조회
      */
-    public HabitDetailResDto getHabitDetail(Long userActionId) {
-        // userId와 비교 검증 추가
+    public HabitDetailResDto getHabitDetail(Long id, Long userActionId) {
+        UserAction userActionById = validate(id, userActionId);
+
+        // 진행률 조회
+        int total = habitQuery.countByUserHabitId(userActionById.getUserHabitId());
+        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userActionById.getUserHabitId(), "Y");
+        int progressRate = calculateProgressRate(total, completed);
 
         ActionAndUserActionView habitActionDetail = habitQuery.findHabitActionDetail(userActionId);
 
         if (habitActionDetail == null) {
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
-
-        // 진행률 조회
-        UserAction userActionById = habitQuery.getUserActionById(userActionId);
-        int total = habitQuery.countByUserHabitId(userActionById.getUserHabitId());
-        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userActionById.getUserHabitId(), "Y");
-        int progressRate = calculateProgressRate(total, completed);
 
         // 인증 방식 정보 가져오기 userAction에 checkMethodId가 없어서
         // userAction - Action - CheckMethod 경로로 접근
@@ -217,8 +201,20 @@ public class HabitReadService {
                 .build();
     }
 
+    public UserAction validate(Long id, Long userActionId) {
+        UserAction userActionById = habitQuery.getUserActionById(userActionId);
+
+        // userId와 비교 검증
+        UserHabit userHabit = habitQuery.getUserHabit(userActionById.getUserHabitId());
+        if (!userHabit.getUserId().equals(id)) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        return userActionById;
+    }
+
     /**
      * 진행률 계산 로직
+     *
      * @param total
      * @param completed
      * @return
@@ -228,36 +224,5 @@ public class HabitReadService {
             return 0;
         }
         return (int) Math.floor((completed * 100.0) / total);
-    }
-
-    /**
-     * Action 인증을 위한 인증 방식(check method) 조회
-     *
-     * @return
-     */
-    public CheckMethodResDto checkMethodOfAction(Long id, Long actionId) {
-        Action actionById = habitQuery.findActionById(actionId);
-
-        CheckMethod checkMethod = checkMethodRepository.findById(actionById.getCheckMethodId()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND));
-
-        List<CheckMethodDetail> details = checkMethodDetailRepository.findByCheckMethodIdOrderByMethodOrderAsc(actionById.getCheckMethodId());
-
-        if (details.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND);
-        }
-
-        List<CheckMethodDetailRestDto> detailResDto = details.stream()
-                .map(detail -> CheckMethodDetailRestDto.builder()
-                        .type(detail.getType())
-                        .value(detail.getValue())
-                        .build()
-                ).toList();
-
-        return CheckMethodResDto.builder()
-                .id(actionById.getCheckMethodId())
-                .title(checkMethod.getTitle())
-                .details(detailResDto)
-                .build();
     }
 }
