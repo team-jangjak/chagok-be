@@ -109,39 +109,6 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
             @Param("userHabitIds") List<Long> userHabitIds
     );
 
-    /**
-     * 습관&행위 상세 조회
-     *
-     * @param userActionId
-     * @return
-     */
-    @Query(value = """
-            SELECT 
-                -- habit
-                h.title                               AS habitTitle,
-                h.frequency                           AS frequency,
-                h.freq_unit                           AS frequencyUnit,
-                c.name                                AS categoryName,
-                h.image                               AS image,
-            
-                -- action
-                a.content                             AS actionContent,
-                a.check_method_id                     AS checkMethodId,
-                a."sequence"                          AS actionSequence,
-                a."freq_seq"                          AS actionFreqSeq,
-            
-                -- user_action
-                ua.id                                 AS userActionId,     -- userActionId
-                ua.action_date                        AS actionDate,
-                ua.delay_count                        AS delayCount,
-                ua.is_completed                       AS isCompleted,
-            FROM user_action ua
-            JOIN "action" a ON a.id = ua.action_id
-            JOIN habit h     ON h.id = a.habit_id
-            LEFT JOIN category c ON c.id = h.category_id
-            WHERE ua.id = :userActionId
-            """, nativeQuery = true)
-    ActionAndUserActionView findHabitActionDetail(@Param("userActionId") Long userActionId);
 
     int countByUserHabitId(Long userHabitId);
     int countByUserHabitIdAndIsCompleted(Long userHabitId, String isCompleted);

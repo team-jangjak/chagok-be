@@ -107,14 +107,6 @@ public class HabitQuery {
         return userActionRepository.findCalendarInfo(startDate, endDate, userHabitIds);
     }
 
-    public ActionAndUserActionView findHabitActionDetail(Long userActionId) {
-        return userActionRepository.findHabitActionDetail(userActionId);
-    }
-
-    public List<HabitCategory> findByIdIn(Set<Long> ids) {
-        return habitCategoryRepository.findByIdIn(ids);
-    }
-
     public Action findActionById(Long actionId) {
         return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
@@ -124,7 +116,7 @@ public class HabitQuery {
     }
 
     public int countByUserHabitId(Long userHabitId) {
-        return Optional.ofNullable(
+        return Optional.of(
                 userActionRepository.countByUserHabitId(userHabitId)
         ).orElse(0);
     }

@@ -1,15 +1,14 @@
 package com.jangjak.chagok.habit.service.read;
 
-import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.response.*;
-import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
+import com.jangjak.chagok.habit.repository.CheckMethodRepository;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import com.jangjak.chagok.habit.enums.HabitCategory;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +29,7 @@ public class HabitReadService {
      * 습관 관련 데이터베이스 조회/저장을 담당하는 쿼리 클래스
      */
     private final HabitQuery habitQuery;
+    private final CheckMethodRepository checkMethodRepository;
 
 
     /**
@@ -160,41 +160,42 @@ public class HabitReadService {
      * 습관&액션 상세 조회
      */
     public HabitDetailResDto getHabitDetail(Long id, Long userActionId) {
-        UserAction userActionById = validate(id, userActionId);
+        UserAction userAction = validate(id, userActionId);
+
+        Action action = habitQuery.findActionById(userAction.getActionId());
+        Habit habit = habitQuery.getHabitById(action.getHabitId());
+        CheckMethod checkMethod = checkMethodRepository.findById(action.getCheckMethodId()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND));
+
 
         // 진행률 조회
-        int total = habitQuery.countByUserHabitId(userActionById.getUserHabitId());
-        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userActionById.getUserHabitId(), "Y");
+        int total = habitQuery.countByUserHabitId(userAction.getUserHabitId());
+        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userAction.getUserHabitId(), "Y");
         int progressRate = calculateProgressRate(total, completed);
 
-        ActionAndUserActionView habitActionDetail = habitQuery.findHabitActionDetail(userActionId);
-
-        if (habitActionDetail == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND);
-        }
-
-        // 인증 방식 정보 가져오기 userAction에 checkMethodId가 없어서
-        // userAction - Action - CheckMethod 경로로 접근
 
         return HabitDetailResDto.builder()
                 // habit
-                .habitTitle(habitActionDetail.getHabitTitle())
-                .frequency(habitActionDetail.getFrequency())
-                .frequencyUnit(habitActionDetail.getFrequencyUnit())
-                .categoryName(habitActionDetail.getCategoryName())
-                .image(habitActionDetail.getImage())
+                .habitTitle(habit.getTitle())
+                .frequency(habit.getFrequency())
+                .frequencyUnit(habit.getFreqUnit())
+                .categoryName(
+                        habit.getCategoryId() != null ? habit.getCategoryId().getValue() : "기타"
+                )
+
+                .image(habit.getImage())
 
                 // action
-                .actionContent(habitActionDetail.getActionContent())
-                .checkMethodId(habitActionDetail.getCheckMethodId())
-                .actionSequence(habitActionDetail.getActionSequence())
-                .actionFreqSeq(habitActionDetail.getActionFreqSeq())
+                .actionContent(action.getContent())
+                .checkMethodTitle(checkMethod.getTitle())
+                .actionSequence(action.getSequence())
+                .actionFreqSeq(action.getFreqSeq())
 
                 // user_action
-                .id(habitActionDetail.getUserActionId())  // userActionId
-                .actionDate(habitActionDetail.getActionDate())
-                .delayCount(habitActionDetail.getDelayCount())
-                .isCompleted("Y".equalsIgnoreCase(habitActionDetail.getIsCompleted()) ? YN.Y : YN.N)
+                .id(userAction.getId())  // userActionId
+                .actionDate(userAction.getActionDate())
+                .delayCount(userAction.getDelayCount())
+                .isCompleted(userAction.getIsCompleted())
 
                 // 진행률
                 .progressRate(progressRate)

@@ -11,7 +11,7 @@ public interface ActionAndUserActionView {
 
     Long getHabitId();
 
-    String getCategoryName();
+    Integer getCategoryId();
 
     // action
     Long getActionId();

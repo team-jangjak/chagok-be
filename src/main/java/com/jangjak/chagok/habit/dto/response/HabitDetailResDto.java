@@ -24,8 +24,7 @@ public class HabitDetailResDto {
 
     // action
     String actionContent; // 액션 내용
-    Long checkMethodId; // 인증 방식 id
-    // 인증 방식 타이틀
+    String checkMethodTitle; // 인증 방식 타이틀
     Integer actionSequence;  // 묶음 순서
     Integer actionFreqSeq;  // 묶음 내부 행위 순서
 

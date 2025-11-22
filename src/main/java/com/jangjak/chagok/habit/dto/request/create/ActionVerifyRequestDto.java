@@ -4,6 +4,7 @@ import com.jangjak.chagok.common.anotation.DateFormatter;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ActionVerifyRequestDto {
@@ -11,5 +12,5 @@ public class ActionVerifyRequestDto {
     Long checkMethodId;
     @DateFormatter
     LocalDate verifyDate;
-    String value;
+    List<String> answer; // 답변
 }

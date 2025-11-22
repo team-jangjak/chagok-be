@@ -9,5 +9,6 @@ import lombok.Data;
 public class CheckMethodDetailRestDto {
     Long methodOrder;
     CheckMethodType type;
-    String value;
+    String value;  // 질문
+    String answer;
 }
