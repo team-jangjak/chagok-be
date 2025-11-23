@@ -17,7 +17,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table
 public class UserAction extends BaseTimeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long userHabitId;
@@ -30,4 +31,9 @@ public class UserAction extends BaseTimeEntity {
     private YN isCompleted;
 
     private Integer delayCount;
+
+    public void complete() {
+        this.isCompleted = YN.Y;
+    }
+
 }

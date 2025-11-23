@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -121,10 +122,17 @@ public class CheckMethodService {
     /**
      * action 인증
      */
+    @Transactional
     public Long actionVerify(Long id, Long userActionId, ActionVerifyRequestDto requestDto) {
 
         // userId와 비교 검증
-        habitReadService.validate(id, userActionId);
+        UserAction userAction = habitReadService.validate(id, userActionId);
+
+        // actionDate 검증
+        if (!userAction.getActionDate().isEqual(LocalDate.now())) {
+            throw new CustomException(ErrorCode.DATASET_ERROR);
+        }
+
 
         // 인증 템플릿 구조 가져오기
         CheckMethodResDto checkMethodResDto = getCheckMethodResDto(requestDto.getCheckMethodId());
@@ -136,15 +144,17 @@ public class CheckMethodService {
                 .sorted(Comparator.comparing(CheckMethodDetailRestDto::getMethodOrder))
                 .toList();
 
+        List<String> answers = requestDto.getAnswer();
+
         // 질문 수와 답변 수가 다르면 에러
-        if (requestDto.getAnswer().size() != sortedDetails.size()) {
+        if (answers == null || answers.isEmpty() || answers.size() != sortedDetails.size()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
         // 매칭
         for (int i = 0; i < sortedDetails.size(); i++) {
             Long order = sortedDetails.get(i).getMethodOrder();
-            String answer = requestDto.getAnswer().get(i);
+            String answer = answers.get(i);
             answerMap.put(order, answer);
         }
 
@@ -164,6 +174,7 @@ public class CheckMethodService {
                 .build();
 
         actionVerifyRepository.save(verify);
+        userAction.complete();
 
         return verify.getId();
     }
