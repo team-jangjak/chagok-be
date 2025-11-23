@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class HabitMapper {
     public static Habit toEntity(NewHabitRequestDto reqDto) {
        return Habit.builder()
-               .categoryId(reqDto.getCategoryId())
+               .category(reqDto.getCategory())
                .title(reqDto.getTitle())
                .frequency(reqDto.getFrequency())
                .freqUnit(reqDto.getFreqUnit())
@@ -23,7 +23,7 @@ public class HabitMapper {
 
     public static Habit toEntity(ModifyHabitRequestDto reqDto, Habit oldHabit) {
         return Habit.builder()
-                .categoryId(reqDto.getCategoryId() != null ? reqDto.getCategoryId() : oldHabit.getCategoryId())
+                .category(reqDto.getCategory() != null ? reqDto.getCategory() : oldHabit.getCategory())
                 .title(reqDto.getTitle() != null ? reqDto.getTitle() : oldHabit.getTitle())
                 .frequency(reqDto.getFrequency() != null ? reqDto.getFrequency() : oldHabit.getFrequency())
                 .freqUnit(reqDto.getFreqUnit() != null ? reqDto.getFreqUnit() : oldHabit.getFreqUnit())

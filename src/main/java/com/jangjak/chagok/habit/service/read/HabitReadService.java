@@ -32,9 +32,9 @@ public class HabitReadService {
     /**
      * 인기 습관 카테고리 정보 조회
      */
-    public List<PopularCategoryDto> getPopularHabitCategory() {
-        return habitQuery.getPopularHabitCategory();
-    }
+//    public List<PopularCategoryDto> getPopularHabitCategory() {
+//        return habitQuery.getPopularHabitCategory();
+//    }
 
     public List<HabitDashboardResDto> getHabitDashboard(Long id) {
         //habit, 시간 가장 가까운 action, user_action 정보, user_habit 가져오기

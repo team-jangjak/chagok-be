@@ -29,7 +29,7 @@ public class ModifyHabitRequestDto implements CreateHabitRequestDto {
     // === null 가능 ===
     private String title;
 
-    private Long categoryId;
+    private Long category;
 
     private Integer frequency;
 
