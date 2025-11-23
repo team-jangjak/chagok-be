@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.dto.response;
 
 import com.jangjak.chagok.common.enums.YN;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class HabitDetailResDto {
     Integer frequency; // 빈도수
     Integer frequencyUnit;
     Long id; //userHabitID
-    String categoryName;
+    HabitCategory categoryName;
     String image;
 
 

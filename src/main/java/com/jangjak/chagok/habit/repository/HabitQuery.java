@@ -98,8 +98,8 @@ public class HabitQuery {
         return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 
-    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds) {
-        return userActionRepository.findProgressRates(userHabitIds);
+    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds, YN isCompleted) {
+        return userActionRepository.findProgressRates(userHabitIds, isCompleted);
     }
 
     public List<CalendarInfo> findCalendarInfo(LocalDate startDate, LocalDate endDate, List<Long> userHabitIds) {
@@ -120,8 +120,8 @@ public class HabitQuery {
         ).orElse(0);
     }
 
-    public int countByUserHabitIdAndIsCompleted(Long userHabitId, String isCompleted) {
-        return Optional.ofNullable(
+    public int countByUserHabitIdAndIsCompleted(Long userHabitId, YN isCompleted) {
+        return Optional.of(
                 userActionRepository.countByUserHabitIdAndIsCompleted(userHabitId, isCompleted)
         ).orElse(0);
     }

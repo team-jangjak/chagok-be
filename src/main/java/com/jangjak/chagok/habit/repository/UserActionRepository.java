@@ -7,6 +7,7 @@ import com.jangjak.chagok.habit.entity.UserAction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import com.jangjak.chagok.common.enums.YN;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -64,24 +65,28 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
 
     /**
      * 습관의 진행률 조회 (총 횟수 + 완료 횟수만 반환)
+     *
      * @param userHabitIds
      * @return
      */
-    @Query(value = """
-            SELECT 
-              ua.user_habit_id AS userHabitId,
-              COUNT(*) AS totalCount,
-              SUM(CASE WHEN ua.is_completed = 'Y' THEN 1 ELSE 0 END) AS completedCount
-            FROM user_action ua
-            WHERE ua.user_habit_id IN (:userHabitIds)    
-            GROUP BY ua.user_habit_id
-            """, nativeQuery = true)
-    List<ProgressRateInfo> findProgressRates(@Param("userHabitIds") List<Long> userHabitIds);
+    @Query("""
+            SELECT new com.jangjak.chagok.habit.dto.value.ProgressRateInfo(
+                ua.userHabitId,
+                COUNT(ua),
+                SUM(CASE WHEN ua.isCompleted = :isCompleted THEN 1 ELSE 0 END)
+            )
+            FROM UserAction ua
+            WHERE ua.userHabitId IN :userHabitIds
+            GROUP BY ua.userHabitId
+            """)
+    List<ProgressRateInfo> findProgressRates(@Param("userHabitIds") List<Long> userHabitIds, @Param("isCompleted") YN isCompleted);
 
 
     // 날짜 범위 + (옵션: 특정 습관들만)
+
     /**
      * 날짜별 action 조회
+     *
      * @param startDate
      * @param endDate
      * @param userHabitIds
@@ -111,6 +116,6 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
 
 
     int countByUserHabitId(Long userHabitId);
-    int countByUserHabitIdAndIsCompleted(Long userHabitId, String isCompleted);
+    int countByUserHabitIdAndIsCompleted(Long userHabitId, YN isCompleted);
 
 }

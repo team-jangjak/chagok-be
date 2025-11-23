@@ -1,10 +1,10 @@
 package com.jangjak.chagok.habit.service.read;
 
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.response.*;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
-import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
@@ -68,7 +68,7 @@ public class HabitReadService {
                 .collect(Collectors.toMap(Habit::getId, Function.identity()));
 
         // 진행률 계산
-        List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds);
+        List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds, YN.Y);
         Map<Long, Integer> progressRateMap = getProgressRateMap(rawList);
 
 
@@ -78,8 +78,8 @@ public class HabitReadService {
                 .map(r -> {
                     Long habitId = userHabitToHabitId.get(r.getUserHabitId()); //userHabitId
                     Habit h = habitMap.get(habitId);
-                    HabitCategory category = (h != null) ? h.getCategoryId() : null;
-                    String categoryName = (category != null) ? category.getValue() : "기타";
+                    HabitCategory categoryName = HabitCategory.fromValue(h.getCategory().intValue());
+                    if (categoryName == HabitCategory.NONE) categoryName = HabitCategory.OTHER;
 
                     return HabitDashboardResDto.builder()
                             .frequencyUnit(r.getFrequencyUnit())
@@ -106,7 +106,7 @@ public class HabitReadService {
         return rawList.stream()
                 .collect(Collectors.toMap(
                         ProgressRateInfo::getUserHabitId,
-                        raw -> calculateProgressRate(raw.getTotalCount(), raw.getCompletedCount())
+                        raw -> calculateProgressRate(raw.getTotalCount().intValue(), raw.getCompletedCount().intValue())
                 ));
     }
 
@@ -170,8 +170,9 @@ public class HabitReadService {
 
         // 진행률 조회
         int total = habitQuery.countByUserHabitId(userAction.getUserHabitId());
-        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userAction.getUserHabitId(), "Y");
+        int completed = habitQuery.countByUserHabitIdAndIsCompleted(userAction.getUserHabitId(), YN.Y);
         int progressRate = calculateProgressRate(total, completed);
+        log.info("total:{} , completed:{} , progressRate:{}", total, completed, progressRate);
 
 
         return HabitDetailResDto.builder()
@@ -179,8 +180,9 @@ public class HabitReadService {
                 .habitTitle(habit.getTitle())
                 .frequency(habit.getFrequency())
                 .frequencyUnit(habit.getFreqUnit())
-                .categoryName(
-                        habit.getCategoryId() != null ? habit.getCategoryId().getValue() : "기타"
+                .categoryName(HabitCategory.fromValue(habit.getCategory().intValue()) == HabitCategory.NONE
+                        ? HabitCategory.OTHER
+                        : HabitCategory.fromValue(habit.getCategory().intValue())
                 )
 
                 .image(habit.getImage())

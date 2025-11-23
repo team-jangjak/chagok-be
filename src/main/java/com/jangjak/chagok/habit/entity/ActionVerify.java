@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +20,7 @@ public class ActionVerify {
 
     private Long checkMethodId;
 
-    private LocalDate verifyDate;
+    private LocalDateTime verifyDate;
 
     // 얘는 진짜 LOB 자료형 해야될수도
     private String value;
