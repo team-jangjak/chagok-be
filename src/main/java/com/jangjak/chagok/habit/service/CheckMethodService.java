@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -123,19 +124,29 @@ public class CheckMethodService {
      * action 인증
      */
     @Transactional
-    public Long actionVerify(Long id, Long userActionId, ActionVerifyRequestDto requestDto) {
+    public Long actionVerify(Long id, Long userActionId, List<ActionVerifyRequestDto> requestDto) {
 
         // userId와 비교 검증
         UserAction userAction = habitReadService.validate(id, userActionId);
 
         // actionDate 검증
         if (!userAction.getActionDate().isEqual(LocalDate.now())) {
-            throw new CustomException(ErrorCode.DATASET_ERROR);
+            throw new CustomException(ErrorCode.NOT_ACTION_DATE);
         }
+
+        // 이미 인증된 데이터라면 에러
+        if (userAction.getActionVerify() != null) {
+            throw new CustomException(ErrorCode.ALREADY_VERIFIED);
+        }
+
+        // action에서 checkMethodId 가져오기
+        Long checkMethodId = habitQuery.findActionById(userAction.getActionId()).getCheckMethodId();
 
 
         // 인증 템플릿 구조 가져오기
-        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(requestDto.getCheckMethodId());
+        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(checkMethodId);
+
+        log.info("checkMethodResDto: {}", checkMethodResDto);
 
         Map<Long, String> answerMap = new LinkedHashMap<>();
 
@@ -144,34 +155,39 @@ public class CheckMethodService {
                 .sorted(Comparator.comparing(CheckMethodDetailRestDto::getMethodOrder))
                 .toList();
 
-        List<String> answers = requestDto.getAnswer();
 
         // 질문 수와 답변 수가 다르면 에러
-        if (answers == null || answers.isEmpty() || answers.size() != sortedDetails.size()) {
+        if (requestDto == null || requestDto.isEmpty() || requestDto.size() != sortedDetails.size()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
         // 매칭
         for (int i = 0; i < sortedDetails.size(); i++) {
             Long order = sortedDetails.get(i).getMethodOrder();
-            String answer = answers.get(i);
+            String answer = requestDto.get(i).getAnswer();
+            log.info("order: {}, answer: {}", order, answer);
             answerMap.put(order, answer);
         }
+
+        log.info("answerMap: {}", answerMap);
 
         String answerJson = "";
         // JSON으로 변환
         try {
             answerJson = objectMapper.writeValueAsString(answerMap);
         } catch (JsonProcessingException e) {
+            log.error("JSON 변환 오류: {}", e.getMessage(), e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
         ActionVerify verify = ActionVerify.builder()
-                .id(userActionId)
-                .checkMethodId(requestDto.getCheckMethodId())
-                .verifyDate(requestDto.getVerifyDate())
+                .checkMethodId(checkMethodId)
+                .verifyDate(LocalDateTime.now())
                 .value(answerJson)
                 .build();
+
+        // 연관관계 세팅
+        verify.assignUserAction(userAction);
 
         actionVerifyRepository.save(verify);
         userAction.complete();
@@ -205,6 +221,7 @@ public class CheckMethodService {
                 .map(detail -> CheckMethodDetailRestDto.builder()
                         .type(detail.getType())
                         .value(detail.getValue())
+                        .methodOrder(detail.getMethodOrder())
                         .build()
                 ).toList();
 

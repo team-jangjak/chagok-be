@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActionVerify {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
     private Long checkMethodId;
@@ -24,4 +24,14 @@ public class ActionVerify {
 
     // 얘는 진짜 LOB 자료형 해야될수도
     private String value;
+
+    // 식별 관계 설정
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_action_id")
+    private UserAction userAction;
+
+    public void assignUserAction(UserAction userAction) {
+        this.userAction = userAction;
+    }
 }

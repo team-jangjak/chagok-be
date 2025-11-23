@@ -36,4 +36,8 @@ public class UserAction extends BaseTimeEntity {
         this.isCompleted = YN.Y;
     }
 
+    //부모 매핑관계 설정이 맞는진 모르겠습니다..
+    @OneToOne(mappedBy = "userAction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ActionVerify actionVerify;
+
 }

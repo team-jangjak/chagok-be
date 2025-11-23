@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/verify")
 @RequiredArgsConstructor
@@ -57,7 +59,7 @@ public class CheckMethodController {
      */
     @PostMapping("/{userActionId}")
     public ResponseEntity<?> actionVerify(@AuthenticationPrincipal TokenUserInfo userInfo,
-                                          @PathVariable Long userActionId, @RequestBody ActionVerifyRequestDto reqDto) {
+                                          @PathVariable Long userActionId, @RequestBody List<@Valid ActionVerifyRequestDto> reqDto) {
         Long verifyId = checkMethodService.actionVerify(userInfo.getId(), userActionId, reqDto);
         return CommonResponse.toRes(verifyId, "인증이 완료되었습니다.");
     }
