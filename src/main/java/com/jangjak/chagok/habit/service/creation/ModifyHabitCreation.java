@@ -8,6 +8,7 @@ import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.Habit;
 import com.jangjak.chagok.habit.entity.UserAction;
 import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.mapper.ActionMapper;
 import com.jangjak.chagok.habit.mapper.HabitMapper;
 import com.jangjak.chagok.habit.mapper.UserActionMapper;
@@ -50,7 +51,9 @@ public class ModifyHabitCreation implements HabitCreation {
         if (actions == null || actions.isEmpty()) return false;
 
         // 카테고리 검증
-        if (request.getCategoryId() != null && !habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
+        HabitCategory habitCategory = HabitCategory.fromValue(request.getCategory().intValue());
+        if (habitCategory == HabitCategory.NONE) return false;
+//        if (request.getCategoryId() != null && !habitQuery.getHabitCategoryById(request.getCategoryId())) return false;
 
         // frequency 검증
         Integer frequency = request.getFrequency();
@@ -80,7 +83,7 @@ public class ModifyHabitCreation implements HabitCreation {
             request.setFreqUnit(freqUnit);
         }
 
-        // TODO 액션 까서 frequency 넘는지 확인해야 함
+        // TODO 액션 까서 freqCount 넘는지 확인해야 함
 
         return true;
     }

@@ -27,7 +27,7 @@ public class NewHabitRequestDto implements CreateHabitRequestDto {
     private Boolean isTemplate;
 
     @Positive
-    private Long categoryId;
+    private Long category;
 
     @NotBlank
     private String title;
@@ -37,4 +37,6 @@ public class NewHabitRequestDto implements CreateHabitRequestDto {
 
     @Range(min = 1, max = 3)
     private int freqUnit;
+
+    private int freqCount;
 }

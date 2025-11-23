@@ -35,9 +35,9 @@ public class HabitReadService {
     /**
      * 인기 습관 카테고리 정보 조회
      */
-    public List<PopularCategoryDto> getPopularHabitCategory() {
-        return habitQuery.getPopularHabitCategory();
-    }
+//    public List<PopularCategoryDto> getPopularHabitCategory() {
+//        return habitQuery.getPopularHabitCategory();
+//    }
 
     /**
      * 사용자 습관 대시보드 조회

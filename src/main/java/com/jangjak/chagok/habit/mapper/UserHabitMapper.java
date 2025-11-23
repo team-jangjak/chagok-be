@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.mapper;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ public class UserHabitMapper {
                 .startDate(info.getStartDate())   // 습관 시작일
                 .endDate(info.getEndDate())       // 습관 종료일
                 .isPublic(isPublic ? YN.Y : YN.N)
+                .state(HabitState.PENDING)
                 .build();
     }
 }

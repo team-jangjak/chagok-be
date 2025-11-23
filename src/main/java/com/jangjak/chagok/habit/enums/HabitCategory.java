@@ -1,25 +1,24 @@
 package com.jangjak.chagok.habit.enums;
 
-import com.jangjak.chagok.common.exception.CustomException;
-import com.jangjak.chagok.common.exception.ErrorCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
-
-@Getter
-@RequiredArgsConstructor
 public enum HabitCategory {
-    EXERCISE(1, "운동"),
-    STUDY(2, "공부");
+    NONE(0),
+    HEALTH(1),
+    LEARNING(2),
+    LIFESTYLE(3),
+    ;
 
-    private final int code;
-    private final String value;
+    final int value;
 
-    public static HabitCategory toEnum(int code) {
-        return Arrays.stream(values())
-            .filter(c -> c.code == code)
-            .findFirst()
-            .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    HabitCategory(int value) {
+        this.value = value;
+    }
+
+    public static HabitCategory fromValue(int value) {
+        for (HabitCategory category : HabitCategory.values()) {
+            if (category.value == value) {
+                return category;
+            }
+        }
+        return NONE;
     }
 }

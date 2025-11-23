@@ -2,7 +2,6 @@ package com.jangjak.chagok.habit.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import com.jangjak.chagok.common.enums.YN;
-import com.jangjak.chagok.habit.enums.HabitCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,14 +18,15 @@ public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.ORDINAL)
-    private HabitCategory categoryId;
+    private Long category;
 
     private String title;
 
     private Integer frequency;
 
     private Integer freqUnit;
+
+    private Integer freqCount;
 
     private String image;
 

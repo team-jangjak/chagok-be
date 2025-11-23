@@ -56,10 +56,10 @@ public class HabitController implements HabitControllerDocs {
     /**
      * 인기 습관 카테고리 정보 조회
      */
-    @GetMapping("/popular-habit-category")
-    public ResponseEntity<?> getPopularHabitCategory() {
-        return CommonResponse.toRes(habitReadService.getPopularHabitCategory(), "인기 습관 카테고리가 조회되었습니다.");
-    }
+//    @GetMapping("/popular-habit-category")
+//    public ResponseEntity<?> getPopularHabitCategory() {
+//        return CommonResponse.toRes(habitReadService.getPopularHabitCategory(), "인기 습관 카테고리가 조회되었습니다.");
+//    }
 
     /**
      * 습관 대시보드 조회
