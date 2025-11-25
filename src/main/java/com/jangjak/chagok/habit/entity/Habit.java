@@ -20,7 +20,7 @@ public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long categoryId;
+    private Long category;
 
     private String title;
 
@@ -28,7 +28,11 @@ public class Habit extends BaseTimeEntity {
 
     private Integer freqUnit;
 
+    private Integer freqCount;
+
+    private String image;
+
     // Y: 공개, N: 비공개
     @Enumerated(EnumType.STRING)
-    private YN isPublic;
+    private YN isTemplate;
 }
