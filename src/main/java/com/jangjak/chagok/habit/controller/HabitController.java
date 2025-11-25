@@ -9,7 +9,7 @@ import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
-import com.jangjak.chagok.habit.service.CheckMethodService;
+import com.jangjak.chagok.habit.enums.HabitState;
 import com.jangjak.chagok.habit.service.creation.HabitCreateService;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +74,9 @@ public class HabitController implements HabitControllerDocs {
      * 캘린더 뷰
      */
     @GetMapping("/calendar-view")
-    public ResponseEntity<?> getCalendarView(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestParam Integer year, @RequestParam Integer month) {
-        List<CalendarViewResDto> calendarView = habitReadService.getCalendarView(userInfo.getId(), year, month);
+    public ResponseEntity<?> getCalendarView(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestParam Integer year, @RequestParam Integer month,
+                                             @RequestParam(required = false) Long userHabitId, @RequestParam(required = false) HabitState state) {
+        List<CalendarViewResDto> calendarView = habitReadService.getCalendarView(userInfo.getId(), year, month, userHabitId, state);
         return CommonResponse.toRes(calendarView,"캘린더가 조회되었습니다.");
     }
 

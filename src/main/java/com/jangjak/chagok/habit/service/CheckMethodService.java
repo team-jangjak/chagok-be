@@ -99,6 +99,11 @@ public class CheckMethodService {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
 
+        // 사용되었는지 검증
+        if(habitQuery.existsByCheckMethodId(checkMethodId)){
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
         // 템플릿 기본 정보 수정 (title)
         checkMethod.updateTitle(requestDto.getTitle());
 

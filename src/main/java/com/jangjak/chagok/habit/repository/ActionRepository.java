@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ActionRepository extends JpaRepository<Action, Long> {
     List<Action> getActionsByHabitId(Long habitId);
+    boolean existsByCheckMethodId(Long checkMethodId);
 }

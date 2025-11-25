@@ -4,7 +4,6 @@ import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
-import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
@@ -13,10 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
+    //    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
@@ -102,10 +99,6 @@ public class HabitQuery {
         return userActionRepository.findProgressRates(userHabitIds, isCompleted);
     }
 
-    public List<CalendarInfo> findCalendarInfo(LocalDate startDate, LocalDate endDate, List<Long> userHabitIds) {
-        return userActionRepository.findCalendarInfo(startDate, endDate, userHabitIds);
-    }
-
     public Action findActionById(Long actionId) {
         return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
@@ -130,5 +123,10 @@ public class HabitQuery {
         return userHabitRepository.findById(userHabitId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
+
+    public boolean existsByCheckMethodId(Long checkMethodId) {
+        return actionRepository.existsByCheckMethodId(checkMethodId);
+    }
+
 
 }

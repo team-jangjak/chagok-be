@@ -1,7 +1,6 @@
 package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
-import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.UserAction;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.jangjak.chagok.common.enums.YN;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface UserActionRepository extends JpaRepository<UserAction, Long> {
@@ -81,38 +79,6 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
             """)
     List<ProgressRateInfo> findProgressRates(@Param("userHabitIds") List<Long> userHabitIds, @Param("isCompleted") YN isCompleted);
 
-
-    // 날짜 범위 + (옵션: 특정 습관들만)
-
-    /**
-     * 날짜별 action 조회
-     *
-     * @param startDate
-     * @param endDate
-     * @param userHabitIds
-     * @return
-     */
-    @Query(value = """
-            SELECT 
-                ua.action_date           AS actionDate,
-                ua.user_habit_id         AS userHabitId,
-                ua.id                    AS userActionId,
-                a.content                AS actionContent,
-                ua.is_completed          AS isCompleted
-            FROM user_action ua
-            JOIN "action" a    ON a.id = ua.action_id
-            JOIN user_habit uh ON uh.id = ua.user_habit_id
-            WHERE 
-              ua.action_date >= :startDate
-              AND ua.action_date <  :endDate
-              AND ( :userHabitIds IS NULL OR ua.user_habit_id IN (:userHabitIds) )  -- userHabitIds가 null이면 모든 습관
-            ORDER BY ua.action_date ASC, ua.user_habit_id ASC, ua.id ASC  
-            """, nativeQuery = true)
-    List<CalendarInfo> findCalendarInfo(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("userHabitIds") List<Long> userHabitIds
-    );
 
 
     int countByUserHabitId(Long userHabitId);

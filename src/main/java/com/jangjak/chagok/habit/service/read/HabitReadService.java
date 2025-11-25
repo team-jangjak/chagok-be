@@ -11,6 +11,7 @@ import com.jangjak.chagok.habit.enums.HabitState;
 import com.jangjak.chagok.habit.repository.CheckMethodRepository;
 import com.jangjak.chagok.habit.repository.HabitQuery;
 import com.jangjak.chagok.habit.enums.HabitCategory;
+import com.jangjak.chagok.habit.repository.QueryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class HabitReadService {
      */
     private final HabitQuery habitQuery;
     private final CheckMethodRepository checkMethodRepository;
+    private final QueryRepository queryRepository;
 
 
     /**
@@ -44,7 +46,7 @@ public class HabitReadService {
      */
     public List<HabitDashboardResDto> getHabitDashboard(Long id) {
         //habit, 시간 가장 가까운 action, user_action 정보, user_habit 가져오기
-        List<UserHabit> userHabitList = getUserHabits(id);
+        List<UserHabit> userHabitList = getUserHabits(id, HabitState.IN_PROGRESS);
 
         List<Long> userHabitIds = userHabitList.stream()
                 .map(UserHabit::getId)
@@ -110,8 +112,8 @@ public class HabitReadService {
                 ));
     }
 
-    private List<UserHabit> getUserHabits(Long id) {
-        List<UserHabit> userHabitList = habitQuery.findByUserIdAndState(id, HabitState.IN_PROGRESS);
+    private List<UserHabit> getUserHabits(Long id, HabitState... states) {
+        List<UserHabit> userHabitList = queryRepository.findByUserIdAndStates(id, Arrays.asList(states));
 
         if (userHabitList.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND);
@@ -122,16 +124,11 @@ public class HabitReadService {
     /**
      * 캘린더 조회
      */
-    public List<CalendarViewResDto> getCalendarView(Long id, Integer year, Integer month) {
+    public List<CalendarViewResDto> getCalendarView(Long id, Integer year, Integer month, Long userHabitId, HabitState state) {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.plusMonths(1);
 
-        List<UserHabit> userHabitList = getUserHabits(id);
-        List<Long> userHabitIds = userHabitList.stream()
-                .map(UserHabit::getId)
-                .toList();
-
-        List<CalendarInfo> calendarInfo = habitQuery.findCalendarInfo(start, end, userHabitIds);
+        List<CalendarInfo> calendarInfo = queryRepository.findCalendarInfo(id, start, end, userHabitId, state);
 
         // 날짜별 그룹핑
         Map<LocalDate, List<ActionResDto>> byDate = calendarInfo.stream()
@@ -140,6 +137,7 @@ public class HabitReadService {
                         LinkedHashMap::new,
                         Collectors.mapping(r -> ActionResDto.builder()
                                         .id(r.getUserActionId()) //userActionId
+                                        .userHabitId(r.getUserHabitId()) // 습관별로 시각적으로 구분할 수 있도록, userHabitId(or habitId)도 추가
                                         .actionContent(r.getActionContent())
                                         .isCompleted(r.getIsCompleted())
                                         .build(),
