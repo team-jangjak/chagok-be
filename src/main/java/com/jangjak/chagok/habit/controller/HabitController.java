@@ -6,7 +6,10 @@ import com.jangjak.chagok.habit.controller.docs.HabitControllerDocs;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
+import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
+import com.jangjak.chagok.habit.enums.HabitState;
 import com.jangjak.chagok.habit.service.creation.HabitCreateService;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
 import lombok.RequiredArgsConstructor;
@@ -58,9 +61,33 @@ public class HabitController implements HabitControllerDocs {
 //        return CommonResponse.toRes(habitReadService.getPopularHabitCategory(), "인기 습관 카테고리가 조회되었습니다.");
 //    }
 
+    /**
+     * 습관 대시보드 조회
+     */
     @GetMapping("/habit-dashboard")
     public ResponseEntity<?> getHabitDashboard(@AuthenticationPrincipal TokenUserInfo userInfo) {
         List<HabitDashboardResDto> habitDashboard = habitReadService.getHabitDashboard(userInfo.getId());
         return CommonResponse.toRes(habitDashboard,"습관 대시보드가 조회되었습니다.");
     }
+
+    /**
+     * 캘린더 뷰
+     */
+    @GetMapping("/calendar-view")
+    public ResponseEntity<?> getCalendarView(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestParam Integer year, @RequestParam Integer month,
+                                             @RequestParam(required = false) Long userHabitId, @RequestParam(required = false) HabitState state) {
+        List<CalendarViewResDto> calendarView = habitReadService.getCalendarView(userInfo.getId(), year, month, userHabitId, state);
+        return CommonResponse.toRes(calendarView,"캘린더가 조회되었습니다.");
+    }
+
+    /**
+     * 습관&액션 상세 조회
+     */
+    @GetMapping("/habit-detail/{userActionId}")
+    public ResponseEntity<?> getHabitDetail(@AuthenticationPrincipal TokenUserInfo userInfo, @PathVariable Long userActionId) {
+        HabitDetailResDto actionDetail = habitReadService.getHabitDetail(userInfo.getId(), userActionId);
+        return CommonResponse.toRes(actionDetail,"습관 상세 정보가 조회되었습니다.");
+    }
+
+
 }

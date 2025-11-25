@@ -3,10 +3,7 @@ package com.jangjak.chagok.habit.entity;
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Table
 @Getter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Habit extends BaseTimeEntity {
