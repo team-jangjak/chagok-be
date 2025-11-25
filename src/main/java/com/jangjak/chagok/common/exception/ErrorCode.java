@@ -12,6 +12,9 @@ public enum ErrorCode {
     DATASET_ERROR("유효한 요청이지만 데이터를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     NOT_ACTION_DATE("습관 인증 가능일이 아닙니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     ALREADY_VERIFIED("이미 인증된 데이터입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    AI_RESPONSE_ERROR("AI 응답이 비어 있습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    AI_RESPONSE_MAPPING_ERROR("AI 계획 생성 실패: 결과가 비어 있습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    AI_REQUEST_ERROR("AI 계획 생성 중 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     final String message;
