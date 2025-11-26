@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.dto.request;
 
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ public class ActionToAIReqDto {
     private String habitTitle;
 
     @Schema(description = "습관 카테고리", example = "운동")
-    private String categoryName;
+    private HabitCategory categoryName;
 
 //    @Schema(description = "빈도 단위 (1=하루, 2=일주일, 3=한 달)", example = "2")
 //    private Integer freqUnit; // 1=일, 2=주, 3=월

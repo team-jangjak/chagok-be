@@ -7,7 +7,8 @@ import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.HabitForActionReqDto;
 import com.jangjak.chagok.habit.dto.request.ActionToAIReqDto;
 import com.jangjak.chagok.habit.dto.response.ActionDto;
-import com.jangjak.chagok.habit.repository.HabitCategoryRepository;
+import com.jangjak.chagok.habit.enums.HabitCategory;
+import com.jangjak.chagok.habit.repository.HabitQuery;
 import com.jangjak.chagok.user.entity.User;
 import com.jangjak.chagok.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -95,8 +96,8 @@ public class OpenAIService {
 
     private final ChatClient chatClient;
     private final UserRepository userRepository;
-    private final HabitCategoryRepository habitCategoryRepository;
     private final ObjectMapper objectMapper;
+    private final HabitQuery habitQuery;
 
 
     /**
@@ -113,8 +114,7 @@ public class OpenAIService {
 
         int age = Period.between(birthDate, now).getYears();
 
-        String category = habitCategoryRepository.findCategoryNameByHabitId(dto.getHabitId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        HabitCategory category = HabitCategory.fromValue(habitQuery.getHabitById(dto.getHabitId()).getCategory().intValue());
 
         ActionToAIReqDto actionToAIReqDto = ActionToAIReqDto.builder().age(age).tendency(user.getTendency()).categoryName(category).build();
 
