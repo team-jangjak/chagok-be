@@ -1,5 +1,6 @@
 package com.jangjak.chagok.admin.controller;
 
+import com.jangjak.chagok.admin.dto.res.GlobalProgressResDto;
 import com.jangjak.chagok.admin.dto.res.UserProgressResDto;
 import com.jangjak.chagok.admin.service.AdminService;
 import com.jangjak.chagok.common.dto.CommonResponse;
@@ -27,8 +28,8 @@ public class AdminController {
      */
     @GetMapping("/all-progress")
     public ResponseEntity<?> getAllProgress(@AuthenticationPrincipal TokenUserInfo userInfo) {
-        adminService.getAllProgress(userInfo.getId());
-        return CommonResponse.toRes(null,"전체 회원 통계가 조회되었습니다.");
+        GlobalProgressResDto progress = adminService.getAllProgress(userInfo.getId());
+        return CommonResponse.toRes(progress,"전체 회원 통계가 조회되었습니다.");
     }
 
     /**

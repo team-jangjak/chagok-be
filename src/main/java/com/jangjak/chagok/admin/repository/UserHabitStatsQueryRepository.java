@@ -7,4 +7,7 @@ import java.util.List;
 
 public interface UserHabitStatsQueryRepository {
     List<HabitProgressDto> findHabitStatsByUserIds(List<Long> userIds, LocalDate baseDate);
+
+    Double findGlobalAverageProgress();
+
 }

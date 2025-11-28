@@ -12,12 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.jangjak.chagok.admin.entity.QUserHabitStats.userHabitStats;
 import static com.jangjak.chagok.habit.entity.QUserAction.userAction;
 import static com.jangjak.chagok.habit.entity.QUserHabit.userHabit;
 
 @Repository
 @RequiredArgsConstructor
-public class UserHabitStatsQueryRepositoryImpl implements UserHabitStatsQueryRepository{
+public class UserHabitStatsQueryRepositoryImpl implements UserHabitStatsQueryRepository {
 
     private final JPAQueryFactory queryFactory;
 
@@ -68,5 +69,16 @@ public class UserHabitStatsQueryRepositoryImpl implements UserHabitStatsQueryRep
                         userHabit.state
                 )
                 .fetch();
+    }
+
+    @Override
+    public Double findGlobalAverageProgress() {
+        Double result = queryFactory
+                .select(userHabitStats.avgProgress.avg())
+                .from(userHabitStats)
+                .where(userHabitStats.habitCount.gt(0))
+                .fetchOne();
+
+        return result != null ? result : 0.0;
     }
 }

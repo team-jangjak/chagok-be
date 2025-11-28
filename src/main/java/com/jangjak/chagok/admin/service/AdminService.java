@@ -1,8 +1,13 @@
 package com.jangjak.chagok.admin.service;
 
+import com.jangjak.chagok.admin.dto.res.GlobalProgressResDto;
 import com.jangjak.chagok.admin.dto.res.UserProgressResDto;
 import com.jangjak.chagok.admin.entity.UserHabitStats;
+import com.jangjak.chagok.admin.repository.AdminRepository;
+import com.jangjak.chagok.admin.repository.UserHabitStatsQueryRepository;
 import com.jangjak.chagok.admin.repository.UserHabitStatsRepository;
+import com.jangjak.chagok.common.exception.CustomException;
+import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.user.entity.User;
 import com.jangjak.chagok.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +31,12 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final UserHabitStatsRepository userHabitStatsRepository;
+    private final UserHabitStatsQueryRepository userHabitStatsQueryRepository;
+    private final AdminRepository adminRepository;
 
-    public void getAllProgress(Long id) {
-
+    public GlobalProgressResDto getAllProgress(Long id) {
+        Double avg = userHabitStatsQueryRepository.findGlobalAverageProgress();
+        return GlobalProgressResDto.builder().avgProgress(Math.round(avg * 10) / 10.0).build();
     }
 
 
@@ -82,7 +90,9 @@ public class AdminService {
     }
 
     private void validate(Long id) {
-
+        if(!adminRepository.existsByIdAndRoleIsAdmin(id)){
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
     }
 
 }

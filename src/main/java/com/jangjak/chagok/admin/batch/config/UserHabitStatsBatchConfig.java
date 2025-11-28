@@ -1,7 +1,7 @@
 package com.jangjak.chagok.admin.batch.config;
 
 import com.jangjak.chagok.admin.repository.UserHabitStatsQueryRepository;
-import com.jangjak.chagok.admin.service.UserHabitStatsItemWriter;
+import com.jangjak.chagok.admin.batch.writer.UserHabitStatsItemWriter;
 import com.jangjak.chagok.user.entity.User;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;

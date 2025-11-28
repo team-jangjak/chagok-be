@@ -1,4 +1,4 @@
-package com.jangjak.chagok.admin.service;
+package com.jangjak.chagok.admin.batch.writer;
 
 import com.jangjak.chagok.admin.dto.info.HabitProgressDto;
 import com.jangjak.chagok.admin.entity.UserHabitStats;
@@ -70,10 +70,12 @@ public class UserHabitStatsItemWriter implements ItemWriter<User> {
                         long completed = (r.getHabitState() == HabitState.COMPLETED)
                                 ? isNull(r.getTotalCompleted()) : isNull(r.getUntilBaseCompleted());
 
-                        return expected == 0 ? 0 : (double) completed / expected;
+                        return expected == 0 ? 0 : ((double) completed / expected) * 100;
                     })
                     .average()
                     .orElse(0.0);
+
+            avgProgress = Math.round(avgProgress * 10) / 10.0;  // 소수점 첫째 자리
 
             UserHabitStats stats = UserHabitStats.create(user.getId(), habitCount, avgProgress);
             userHabitStatsList.add(stats);
