@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.batch.config;
+package com.jangjak.chagok.admin.batch.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -15,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * 인기 습관 카테고리 통계를 집계하는 Spring Batch 설정 클래스입니다.
- *
+ * <p>
  * 이 배치 작업은 주기적으로 실행되어 `user_habit` 테이블의 데이터를 분석하고,
  * 가장 많이 사용된 상위 5개 습관 카테고리를 `popular_habit_category` 테이블에 업데이트합니다.
  */
