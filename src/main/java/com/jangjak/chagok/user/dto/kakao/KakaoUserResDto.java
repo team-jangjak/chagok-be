@@ -33,7 +33,8 @@ public class KakaoUserResDto {
     public static class Properties {
 
         @Schema(description = "사용자 이름", example = "name")
-        private String name;
+        @JsonProperty("nickname")
+        private String nickname;
 
         @Schema(description = "프로필 이미지 URL", example = "https://...")
         @JsonProperty("profile_image")
