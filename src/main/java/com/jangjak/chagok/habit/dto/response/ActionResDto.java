@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class ActionResDto {
     Long id; //userActionId
-    Long userHabitId;
+    Long habit;
     String actionContent; // 액션 내용
     YN isCompleted; // completed 여부
 }

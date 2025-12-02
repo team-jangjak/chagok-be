@@ -137,7 +137,7 @@ public class HabitReadService {
                         LinkedHashMap::new,
                         Collectors.mapping(r -> ActionResDto.builder()
                                         .id(r.getUserActionId()) //userActionId
-                                        .userHabitId(r.getUserHabitId()) // 습관별로 시각적으로 구분할 수 있도록, userHabitId(or habitId)도 추가
+                                        .habit(r.getUserHabitId()) // 습관별로 시각적으로 구분할 수 있도록, userHabitId(or habitId)도 추가
                                         .actionContent(r.getActionContent())
                                         .isCompleted(r.getIsCompleted())
                                         .build(),
