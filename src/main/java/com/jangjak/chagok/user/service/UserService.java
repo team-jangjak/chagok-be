@@ -10,6 +10,7 @@ import com.jangjak.chagok.user.dto.UserCookieResDto;
 import com.jangjak.chagok.user.dto.UserReqDto;
 import com.jangjak.chagok.user.dto.UserResDto;
 import com.jangjak.chagok.user.entity.User;
+import com.jangjak.chagok.user.enums.GENDER;
 import com.jangjak.chagok.user.repository.OauthRepository;
 import com.jangjak.chagok.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -60,6 +61,7 @@ public class UserService {
                 .profileImage(userReqDto.getProfileImage())
                 .birthDate(userReqDto.getBirthDate())
                 .tendency(userReqDto.getTendency())
+                .gender(GENDER.from(userReqDto.getGender()))
                 .build();
 
         userRepository.save(user);
