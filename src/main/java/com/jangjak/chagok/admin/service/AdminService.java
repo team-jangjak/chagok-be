@@ -6,6 +6,7 @@ import com.jangjak.chagok.admin.entity.UserHabitStats;
 import com.jangjak.chagok.admin.repository.AdminRepository;
 import com.jangjak.chagok.admin.repository.UserHabitStatsQueryRepository;
 import com.jangjak.chagok.admin.repository.UserHabitStatsRepository;
+import com.jangjak.chagok.common.enums.Role;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.user.entity.User;
@@ -90,7 +91,7 @@ public class AdminService {
     }
 
     private void validate(Long id) {
-        if(!adminRepository.existsByIdAndRoleIsAdmin(id)){
+        if(!adminRepository.existsByIdAndRole(id, Role.ADMIN)){
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
     }

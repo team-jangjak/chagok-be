@@ -153,26 +153,30 @@ public class SocialLoginService {
             );
 
             html = String.format("""
-                    <!DOCTYPE html>
-                    <html>
-                    <head><title>회원가입</title></head>
-                    <body>
-                        <script>
-                            if (window.opener) {
-                                window.opener.postMessage({
-                                    type: 'NEW_USER_SIGNUP',
-                                    oauthId: '%s',
-                                    provider: '%s'
-                                }, '%s');
-                                window.close();
-                            } else {
-                                window.location.href = '%s';
-                            }
-                        </script>
-                        <p>회원가입 페이지로 이동 중...</p>
-                    </body>
-                    </html>
-                    """, res.getOauthId(), provider, frontendBaseUrl, redirectUrl);
+                            <!DOCTYPE html>
+                            <html>
+                            <head><title>회원가입</title></head>
+                            <body>
+                                <script>
+                                    if (window.opener) {
+                                        window.opener.postMessage({
+                                            type: 'NEW_USER_SIGNUP',
+                                            oauthId: '%s',
+                                            provider: '%s',
+                                            name: '%s',
+                                            email: '%s',
+                                            profileImage: '%s',
+                                        }, '%s');
+                                        window.close();
+                                    } else {
+                                        window.location.href = '%s';
+                                    }
+                                </script>
+                                <p>회원가입 페이지로 이동 중...</p>
+                            </body>
+                            </html>
+                            """, res.getOauthId(), provider, res.getName(), res.getEmail(), res.getProfileImage(),
+                    frontendBaseUrl, redirectUrl);
         }
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().write(html);

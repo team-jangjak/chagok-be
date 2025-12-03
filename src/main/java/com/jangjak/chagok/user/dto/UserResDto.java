@@ -1,5 +1,6 @@
 package com.jangjak.chagok.user.dto;
 
+import com.jangjak.chagok.user.enums.GENDER;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class UserResDto {
     LocalDate birthDate;
     String profileImage;
     Integer tendency;
+    GENDER gender;
 }

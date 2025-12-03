@@ -1,5 +1,6 @@
 package com.jangjak.chagok.user.dto;
 
+import com.jangjak.chagok.user.enums.GENDER;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,4 +39,8 @@ public class UserReqDto {
     @Schema(description = "성향 점수(0~100 가정)", example = "73", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "성향 점수는 필수 입니다.")
     private Integer tendency;
+
+    @Schema(description = "성별", example = "MALE", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "성별은 필수 입니다.")
+    private String gender;
 }
