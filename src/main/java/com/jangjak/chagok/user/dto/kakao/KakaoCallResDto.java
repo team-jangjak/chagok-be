@@ -51,4 +51,9 @@ public class KakaoCallResDto implements SocialCallbackDto {
     public String getEmail() {
         return this.email;
     }
+
+    @Override
+    public String getProfileImage() {
+        return this.profileImage;
+    }
 }

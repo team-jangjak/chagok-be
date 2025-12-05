@@ -11,4 +11,6 @@ public interface SocialCallbackDto {
     String getEmail();
 
     Long getUserId();
+
+    String getProfileImage();
 }

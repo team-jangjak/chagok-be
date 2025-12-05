@@ -5,6 +5,7 @@ public enum HabitCategory {
     HEALTH(1),
     LEARNING(2),
     LIFESTYLE(3),
+    OTHER(4),
     ;
 
     final int value;

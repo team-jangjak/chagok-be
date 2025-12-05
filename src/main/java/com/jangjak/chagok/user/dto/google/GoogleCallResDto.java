@@ -47,4 +47,9 @@ public class GoogleCallResDto implements SocialCallbackDto {
     public String getEmail() {
         return this.email;
     }
+
+    @Override
+    public String getProfileImage() {
+        return this.picture;
+    }
 }

@@ -3,8 +3,9 @@ package com.jangjak.chagok.habit.repository;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
-import com.jangjak.chagok.habit.dto.response.ActionAndUserActionView;
+import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
+import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -57,7 +59,7 @@ public class HabitQuery {
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
         List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdIn(checkMethodIdList);
         for (CheckMethod method : methodList) {
-            if(!method.getUserId().equals(userId)) {
+            if (!method.getUserId().equals(userId)) {
                 return false;
             }
         }
@@ -72,16 +74,16 @@ public class HabitQuery {
 //        return popularHabitCategoryRepository.findAllWithCategoryName();
 //    }
 
-    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState){
+    public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState) {
         return userHabitRepository.findByUserIdAndState(userId, habitState);
     }
 
-    public List<Habit> findAllById(List<Long> habitIds){
+    public List<Habit> findAllById(List<Long> habitIds) {
         return habitRepository.findAllById(habitIds);
     }
 
-    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds, List<Long> habitIds){
-        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds, habitIds);
+    public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds) {
+        return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds);
     }
 
     public boolean isTemplateHabit(Long habitId) {
@@ -92,4 +94,39 @@ public class HabitQuery {
     public Habit getTemplateHabit(Long habitId) {
         return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
+
+    public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds, YN isCompleted) {
+        return userActionRepository.findProgressRates(userHabitIds, isCompleted);
+    }
+
+    public Action findActionById(Long actionId) {
+        return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    public UserAction getUserActionById(Long userActionId) {
+        return userActionRepository.findById(userActionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    public int countByUserHabitId(Long userHabitId) {
+        return Optional.of(
+                userActionRepository.countByUserHabitId(userHabitId)
+        ).orElse(0);
+    }
+
+    public int countByUserHabitIdAndIsCompleted(Long userHabitId, YN isCompleted) {
+        return Optional.of(
+                userActionRepository.countByUserHabitIdAndIsCompleted(userHabitId, isCompleted)
+        ).orElse(0);
+    }
+
+    public UserHabit getUserHabit(Long userHabitId) {
+        return userHabitRepository.findById(userHabitId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    public boolean existsByCheckMethodId(Long checkMethodId) {
+        return actionRepository.existsByCheckMethodId(checkMethodId);
+    }
+
+
 }
