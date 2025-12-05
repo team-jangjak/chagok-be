@@ -10,6 +10,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR("서버 내부 오류입니다. 관리자에게 문의하세요.", HttpStatus.INTERNAL_SERVER_ERROR),
     DATE_FORMAT_ERROR("잘못된 날짜 형식입니다. 날짜는 yyyyMMdd 형식으로 전달해주세요.", HttpStatus.BAD_REQUEST),
     DATASET_ERROR("유효한 요청이지만 데이터를 찾을 수 없습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    IMAGE_PROCESS_FAILED("이미지 처리 과정에서 문제가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     final String message;

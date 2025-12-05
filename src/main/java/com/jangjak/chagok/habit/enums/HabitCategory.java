@@ -13,6 +13,10 @@ public enum HabitCategory {
         this.value = value;
     }
 
+    public int value() {
+        return value;
+    }
+
     public static HabitCategory fromValue(int value) {
         for (HabitCategory category : HabitCategory.values()) {
             if (category.value == value) {
