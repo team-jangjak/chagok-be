@@ -69,6 +69,13 @@ dependencies {
     // OPEN AI
     implementation 'org.springframework.ai:spring-ai-openai:1.0.0-M6'
     implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-M6'
+
+    // S3
+    implementation platform("software.amazon.awssdk:bom:2.25.4")
+    implementation 'software.amazon.awssdk:s3'
+
+    // Tika (S3 이미지 유효성 검증)
+    implementation 'org.apache.tika:tika-core:2.9.2'
 }
 
 dependencyManagement {

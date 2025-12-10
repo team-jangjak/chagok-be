@@ -23,7 +23,7 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-    //    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
+//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
