@@ -75,7 +75,7 @@ dependencies {
     implementation 'software.amazon.awssdk:s3'
 
     // Tika (S3 이미지 유효성 검증)
-    implementation 'org.apache.tika:tika-core:2.9.2'
+    implementation 'org.apache.tika:tika-core:3.2.2'
 }
 
 dependencyManagement {
