@@ -91,7 +91,7 @@ public class AdminService {
     }
 
     private void validate(Long id) {
-        if(!adminRepository.existsByIdAndRole(id, Role.ADMIN)){
+        if(!adminRepository.existsByAdminIdAndRole(id, Role.ADMIN)){
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
     }

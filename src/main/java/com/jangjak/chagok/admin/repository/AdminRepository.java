@@ -5,5 +5,5 @@ import com.jangjak.chagok.common.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AdminRepository extends JpaRepository<Admin, Long> {
-    boolean existsByIdAndRole(Long id, Role role);
+    boolean existsByAdminIdAndRole(Long id, Role role);
 }
