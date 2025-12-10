@@ -54,12 +54,12 @@ public class SocialLoginService {
             log.info("기존에 소셜 로그인한 유저입니다.");
             Oauth foundUser = oauth.get();
 
-            Optional<User> byOauthId = userRepository.findByOauthId(oauth.get().getId());
+            Optional<User> byOauthId = userRepository.findByOauthId(oauth.get().getOauthId());
             //byOauthId가 null이면
             if (byOauthId.isEmpty()) {
                 log.info("oauth는 생성하였지만 회원가입을 마치지 못한 유저입니다.");
                 return OauthResDto.builder()
-                        .oauthId(foundUser.getId())
+                        .oauthId(foundUser.getOauthId())
                         .socialId(foundUser.getSocialId())
                         .newUser(true)
                         .build();
@@ -67,9 +67,9 @@ public class SocialLoginService {
 
             log.info("byOauthId: {}", byOauthId);
             return OauthResDto.builder()
-                    .oauthId(foundUser.getId())
+                    .oauthId(foundUser.getOauthId())
                     .socialId(foundUser.getSocialId())
-                    .userId(byOauthId.get().getId())
+                    .userId(byOauthId.get().getUserId())
                     .newUser(false)
                     .build();
         }
@@ -87,7 +87,7 @@ public class SocialLoginService {
         log.info("saved: {}", saved);
 
         return OauthResDto.builder()
-                .oauthId(saved.getId())
+                .oauthId(saved.getOauthId())
                 .newUser(true)
                 .build();
     }

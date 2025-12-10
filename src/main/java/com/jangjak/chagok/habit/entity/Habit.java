@@ -5,8 +5,6 @@ import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Entity
 @Table
 @Getter
@@ -16,7 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long habitId;
 
     private Long category;
 

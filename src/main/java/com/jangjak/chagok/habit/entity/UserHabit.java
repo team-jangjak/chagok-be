@@ -18,7 +18,7 @@ import java.time.LocalDate;
 @Table
 public class UserHabit {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userHabitId;
 
     private Long userId;
     private Long habitId;

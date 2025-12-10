@@ -104,13 +104,13 @@ public class ModifyHabitCreation implements HabitCreation {
 
         Map<Long, Action> actionMap = habitQuery.getActionsByHabitId(oldHabitId).stream()
                 .collect(Collectors.toMap(
-                        Action::getId,
+                        Action::getActionId,
                         Function.identity()
                 ));
 
         // 습관 저장
         Habit habit = HabitMapper.toEntity(request, oldHabit);
-        Long habitId = habitQuery.saveHabit(habit).getId();
+        Long habitId = habitQuery.saveHabit(habit).getHabitId();
 
         List<Action> actionResult = new ArrayList<>();
         for (ModifyActionRequestDto reqAction : reqActions) {
@@ -157,7 +157,7 @@ public class ModifyHabitCreation implements HabitCreation {
         // UserAction 생성 및 저장
         List<UserAction> userActions = new ArrayList<>();
         for (int i = 0; i < requestActions.size(); i++) {
-            Long actionId = actions.get(i).getId();
+            Long actionId = actions.get(i).getActionId();
             LocalDate actionDate = requestActions.get(i).getActionDate();
 
             UserAction userAction = UserActionMapper.toEntity(userHabitId, actionId, actionDate);

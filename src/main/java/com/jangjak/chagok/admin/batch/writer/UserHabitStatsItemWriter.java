@@ -43,7 +43,7 @@ public class UserHabitStatsItemWriter implements ItemWriter<User> {
         if (users.isEmpty()) return;
 
         List<Long> userIds = users.stream()
-                .map(User::getId)
+                .map(User::getUserId)
                 .toList();
 
         // 현재 chunk 유저들에 대한 집계 한 번에
@@ -58,7 +58,7 @@ public class UserHabitStatsItemWriter implements ItemWriter<User> {
         List<UserHabitStats> userHabitStatsList = new ArrayList<>();
 
         for (User user : users) {
-            List<HabitProgressDto> progressOfUser = grouped.get(user.getId());
+            List<HabitProgressDto> progressOfUser = grouped.get(user.getUserId());
             if (progressOfUser == null || progressOfUser.isEmpty()) continue;
 
             int habitCount = progressOfUser.size();
@@ -77,7 +77,7 @@ public class UserHabitStatsItemWriter implements ItemWriter<User> {
 
             avgProgress = Math.round(avgProgress * 10) / 10.0;  // 소수점 첫째 자리
 
-            UserHabitStats stats = UserHabitStats.create(user.getId(), habitCount, avgProgress);
+            UserHabitStats stats = UserHabitStats.create(user.getUserId(), habitCount, avgProgress);
             userHabitStatsList.add(stats);
         }
 

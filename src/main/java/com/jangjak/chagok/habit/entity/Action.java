@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Table
 public class Action extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long actionId;
 
     private Long habitId;
 

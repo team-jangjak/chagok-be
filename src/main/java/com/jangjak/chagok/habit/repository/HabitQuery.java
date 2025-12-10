@@ -4,7 +4,6 @@ import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
-import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
@@ -36,7 +35,7 @@ public class HabitQuery {
     }
 
     public Long saveUserHabit(UserHabit userHabit) {
-        return userHabitRepository.save(userHabit).getId();
+        return userHabitRepository.save(userHabit).getUserHabitId();
     }
 
     public Habit saveHabit(Habit habit) {

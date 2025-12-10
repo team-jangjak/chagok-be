@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class UserAction extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userActionId;
 
     private Long userHabitId;
 

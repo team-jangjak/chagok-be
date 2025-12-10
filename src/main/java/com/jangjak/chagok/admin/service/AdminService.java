@@ -55,7 +55,7 @@ public class AdminService {
         }
 
         List<Long> userIdList = users.stream()
-                .map(User::getId)
+                .map(User::getUserId)
                 .toList();
 
         // UserHabitStats 테이블에서 userIdList에 해당하는 데이터 조회
@@ -71,14 +71,14 @@ public class AdminService {
         // User + Stats 합쳐서 resDto 리스트 생성
         List<UserProgressResDto> content = users.stream()
                 .map(user -> {
-                    UserHabitStats stats = statsMap.get(user.getId());
+                    UserHabitStats stats = statsMap.get(user.getUserId());
 
                     Double avgProgress = (stats != null) ? stats.getAvgProgress() : 0.0;
                     Integer habitCount = (stats != null) ? stats.getHabitCount() : 0;
                     LocalDateTime calculatedAt = (stats != null) ? stats.getCalculatedAt() : null;
 
                     return UserProgressResDto.builder()
-                            .id(user.getId()) // userId
+                            .id(user.getUserId()) // userId
                             .name(user.getName())
                             .avgProgress(avgProgress)
                             .habitCount(habitCount)
