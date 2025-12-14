@@ -67,7 +67,7 @@ public class HabitReadService {
                 .collect(Collectors.toMap(UserHabit::getUserHabitId, UserHabit::getHabitId));
 
         Map<Long, Habit> habitMap = habitList.stream()
-                .collect(Collectors.toMap(Habit::getHabitId, Function.identity()));
+                .collect(Collectors.toMap(e -> e.getId().getHabitId(), Function.identity()));
 
         // 진행률 계산
         List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds, YN.Y);

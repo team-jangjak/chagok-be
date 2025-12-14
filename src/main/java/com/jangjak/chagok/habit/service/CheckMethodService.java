@@ -11,6 +11,7 @@ import com.jangjak.chagok.habit.dto.response.CheckMethodDetailRestDto;
 import com.jangjak.chagok.habit.dto.response.CheckMethodResDto;
 import com.jangjak.chagok.habit.dto.response.VerifyOfActionResDto;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import com.jangjak.chagok.habit.repository.ActionVerifyRepository;
 import com.jangjak.chagok.habit.repository.CheckMethodDetailRepository;
 import com.jangjak.chagok.habit.repository.CheckMethodRepository;
@@ -67,8 +68,13 @@ public class CheckMethodService {
         // checkMethodDetail: checkMethodId, order, type, value
         List<CheckMethodDetail> detailEntities = requestDto.getDetails().stream()
                 .map(detailDto -> CheckMethodDetail.builder()
-                        .checkMethodId(savedCheckMethod.getCheckMethodId())
-                        .methodOrder(detailDto.getMethodOrder())
+                        .id(
+                               CheckMethodDetailCompositeKey.builder()
+                                       .checkMethodId(savedCheckMethod.getId().getCheckMethodId())
+                                       .methodOrder(detailDto.getMethodOrder())
+                                       // TODO
+                                       .build()
+                        )
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
                         .build())
@@ -76,7 +82,7 @@ public class CheckMethodService {
 
         checkMethodDetailRepository.saveAll(detailEntities);
 
-        return savedCheckMethod.getCheckMethodId();
+        return savedCheckMethod.getId().getCheckMethodId();
     }
 
     /**
@@ -108,13 +114,17 @@ public class CheckMethodService {
         checkMethod.updateTitle(requestDto.getTitle());
 
         // 기존 detail 삭제
-        checkMethodDetailRepository.deleteAllByCheckMethodId(checkMethodId);
+        checkMethodDetailRepository.deleteAllByIdCheckMethodId(checkMethodId);
 
         // 새 detail 생성
         List<CheckMethodDetail> newDetails = requestDto.getDetails().stream()
                 .map(dto -> CheckMethodDetail.builder()
-                        .checkMethodId(checkMethodId)
-                        .methodOrder(dto.getMethodOrder())
+                        .id(CheckMethodDetailCompositeKey.builder()
+                                .checkMethodId(checkMethodId)
+                                .methodOrder(dto.getMethodOrder())
+                                // TODO
+                                .build()
+                        )
                         .type(dto.getType())
                         .value(dto.getValue())
                         .build())
@@ -140,7 +150,7 @@ public class CheckMethodService {
         }
 
         // 이미 인증된 데이터라면 에러
-        if (userAction.getActionVerify() != null) {
+        if (actionVerifyRepository.getActionVerifyByUserActionId(userActionId).isPresent()) {
             throw new CustomException(ErrorCode.ALREADY_VERIFIED);
         }
 
@@ -197,7 +207,7 @@ public class CheckMethodService {
         actionVerifyRepository.save(verify);
         userAction.complete();
 
-        return verify.getActionVerifyId();
+        return verify.getUserActionId();
     }
 
     /**
@@ -216,7 +226,7 @@ public class CheckMethodService {
         CheckMethod checkMethod = checkMethodRepository.findById(checkMethodId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND));
 
-        List<CheckMethodDetail> details = checkMethodDetailRepository.findByCheckMethodIdOrderByMethodOrderAsc(checkMethodId);
+        List<CheckMethodDetail> details = checkMethodDetailRepository.findByIdCheckMethodIdOrderByIdMethodOrderAsc(checkMethodId);
 
         if (details.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND);
@@ -226,7 +236,7 @@ public class CheckMethodService {
                 .map(detail -> CheckMethodDetailRestDto.builder()
                         .type(detail.getType())
                         .value(detail.getValue())
-                        .methodOrder(detail.getMethodOrder())
+                        .methodOrder(detail.getId().getMethodOrder())
                         .build()
                 ).toList();
 

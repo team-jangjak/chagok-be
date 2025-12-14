@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import com.jangjak.chagok.habit.enums.CheckMethodType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,13 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckMethodDetail {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long checkMethodDetailId;
-
-    private Long checkMethodId;
-
-    @Column(nullable = false)
-    private Long methodOrder; // order가 postgresql 예약어라 이름 바꿈
+    @EmbeddedId
+    private CheckMethodDetailCompositeKey id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,7 +30,4 @@ public class CheckMethodDetail {
 
     @Column(nullable = false)
     private LocalDateTime validStartAt;
-
-    @Column(nullable = false)
-    private LocalDateTime validEndAt;
 }

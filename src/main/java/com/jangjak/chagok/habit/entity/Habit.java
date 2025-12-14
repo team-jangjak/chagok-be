@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import com.jangjak.chagok.common.enums.YN;
+import com.jangjak.chagok.habit.entity.keys.HabitCompositeKey;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,8 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Habit extends BaseTimeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long habitId;
+    @EmbeddedId
+    private HabitCompositeKey id;
 
     @Column(nullable = false)
     private Long category;
@@ -43,6 +44,4 @@ public class Habit extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime validStartAt;
 
-    @Column(nullable = false)
-    private LocalDateTime validEndAt;
 }

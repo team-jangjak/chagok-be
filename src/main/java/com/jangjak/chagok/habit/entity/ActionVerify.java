@@ -15,8 +15,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActionVerify {
+    // 식별 관계 설정
     @Id
-    private Long actionVerifyId;
+    private Long userActionId;
 
     @Column(nullable = false)
     private Long checkMethodId;
@@ -31,13 +32,7 @@ public class ActionVerify {
     @Column(nullable = false)
     private Integer methodOrder;
 
-    // 식별 관계 설정
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_action_id")
-    private UserAction userAction;
-
     public void assignUserAction(UserAction userAction) {
-        this.userAction = userAction;
+        this.userActionId = userAction.getUserActionId();
     }
 }

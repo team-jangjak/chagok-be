@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -20,6 +20,11 @@ spring:
   batch:
     job:
       enabled: false  # 자동 실행 끄기
+  data:
+    redis:
+      repositories:
+        enabled: false
+
 # DB 날린 경우 (혹은 배치 처음 실행할 경우) 주석 해제
 #    jdbc:
 #      initialize-schema: always

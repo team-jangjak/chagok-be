@@ -76,7 +76,7 @@ public class QueryRepository {
                         userAction.isCompleted
                 ))
                 .from(userAction)
-                .join(action).on(action.actionId.eq(userAction.actionId))
+                .join(action).on(action.id.actionId.eq(userAction.actionId))
                 .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))
                 .where(builder)
                 .orderBy(

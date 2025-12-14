@@ -56,7 +56,7 @@ public class HabitQuery {
 //    }
 
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
-        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByCheckMethodIdIn(checkMethodIdList);
+        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdCheckMethodIdIn(checkMethodIdList);
         for (CheckMethod method : methodList) {
             if (!method.getUserId().equals(userId)) {
                 return false;
@@ -86,12 +86,12 @@ public class HabitQuery {
     }
 
     public boolean isTemplateHabit(Long habitId) {
-        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).isPresent();
+        return habitRepository.findByIdHabitIdAndIsTemplate(habitId, YN.Y).isPresent();
     }
 
     // 일치하는 Habit이 없다면 null 반환
     public Habit getTemplateHabit(Long habitId) {
-        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).orElse(null);
+        return habitRepository.findByIdHabitIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 
     public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds, YN isCompleted) {
