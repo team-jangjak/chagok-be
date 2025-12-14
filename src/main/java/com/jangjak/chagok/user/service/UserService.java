@@ -65,7 +65,7 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-        return user.getId();
+        return user.getUserId();
 
     }
 

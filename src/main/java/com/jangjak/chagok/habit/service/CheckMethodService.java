@@ -67,7 +67,7 @@ public class CheckMethodService {
         // checkMethodDetail: checkMethodId, order, type, value
         List<CheckMethodDetail> detailEntities = requestDto.getDetails().stream()
                 .map(detailDto -> CheckMethodDetail.builder()
-                        .checkMethodId(savedCheckMethod.getId())
+                        .checkMethodId(savedCheckMethod.getCheckMethodId())
                         .methodOrder(detailDto.getMethodOrder())
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
@@ -76,7 +76,7 @@ public class CheckMethodService {
 
         checkMethodDetailRepository.saveAll(detailEntities);
 
-        return savedCheckMethod.getId();
+        return savedCheckMethod.getCheckMethodId();
     }
 
     /**
@@ -197,7 +197,7 @@ public class CheckMethodService {
         actionVerifyRepository.save(verify);
         userAction.complete();
 
-        return verify.getId();
+        return verify.getActionVerifyId();
     }
 
     /**

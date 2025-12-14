@@ -49,7 +49,7 @@ public class HabitReadService {
         List<UserHabit> userHabitList = getUserHabits(id, HabitState.IN_PROGRESS);
 
         List<Long> userHabitIds = userHabitList.stream()
-                .map(UserHabit::getId)
+                .map(UserHabit::getUserHabitId)
                 .toList();
 
         List<Long> habitIds = userHabitList.stream()
@@ -64,10 +64,10 @@ public class HabitReadService {
 
         // 방법 1. userHabitId -> habitId 맵
         Map<Long, Long> userHabitToHabitId = userHabitList.stream()
-                .collect(Collectors.toMap(UserHabit::getId, UserHabit::getHabitId));
+                .collect(Collectors.toMap(UserHabit::getUserHabitId, UserHabit::getHabitId));
 
         Map<Long, Habit> habitMap = habitList.stream()
-                .collect(Collectors.toMap(Habit::getId, Function.identity()));
+                .collect(Collectors.toMap(Habit::getHabitId, Function.identity()));
 
         // 진행률 계산
         List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds, YN.Y);
@@ -192,7 +192,7 @@ public class HabitReadService {
                 .actionFreqSeq(action.getFreqSeq())
 
                 // user_action
-                .id(userAction.getId())  // userActionId
+                .id(userAction.getUserActionId())  // userActionId
                 .actionDate(userAction.getActionDate())
                 .delayCount(userAction.getDelayCount())
                 .isCompleted(userAction.getIsCompleted())

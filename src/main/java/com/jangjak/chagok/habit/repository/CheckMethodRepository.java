@@ -7,5 +7,5 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CheckMethodRepository extends JpaRepository<CheckMethod, Long> {
-    List<CheckMethod> getCheckMethodsByIdIn(Collection<Long> ids);
+    List<CheckMethod> getCheckMethodsByCheckMethodIdIn(Collection<Long> ids);
 }

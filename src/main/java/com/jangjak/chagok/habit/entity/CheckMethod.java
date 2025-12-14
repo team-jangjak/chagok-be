@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class CheckMethod extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long checkMethodId;
 
     private Long userId;
 

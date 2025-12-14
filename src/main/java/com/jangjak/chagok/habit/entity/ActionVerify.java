@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ActionVerify {
     @Id
-    private Long id;
+    private Long actionVerifyId;
 
     private Long checkMethodId;
 
