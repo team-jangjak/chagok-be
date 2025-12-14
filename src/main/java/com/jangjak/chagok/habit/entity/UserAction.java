@@ -21,13 +21,23 @@ public class UserAction extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userActionId;
 
+    @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
+    private Long habitId;
+
+    @Column(nullable = false)
     private Long userHabitId;
 
+    @Column(nullable = false)
     private Long actionId;
 
+    @Column(nullable = false)
     private LocalDate actionDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private YN isCompleted;
 
     private Integer delayCount;

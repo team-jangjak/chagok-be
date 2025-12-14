@@ -5,6 +5,8 @@ import com.jangjak.chagok.common.enums.YN;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table
 @Getter
@@ -16,19 +18,31 @@ public class Habit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long habitId;
 
+    @Column(nullable = false)
     private Long category;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private Integer frequency;
 
+    @Column(nullable = false)
     private Integer freqUnit;
 
+    @Column(nullable = false)
     private Integer freqCount;
 
     private String image;
 
     // Y: 공개, N: 비공개
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private YN isTemplate;
+
+    @Column(nullable = false)
+    private LocalDateTime validStartAt;
+
+    @Column(nullable = false)
+    private LocalDateTime validEndAt;
 }
