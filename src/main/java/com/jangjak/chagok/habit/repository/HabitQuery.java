@@ -4,7 +4,6 @@ import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
-import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
@@ -23,7 +22,7 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-    //    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
+//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
@@ -36,7 +35,7 @@ public class HabitQuery {
     }
 
     public Long saveUserHabit(UserHabit userHabit) {
-        return userHabitRepository.save(userHabit).getId();
+        return userHabitRepository.save(userHabit).getUserHabitId();
     }
 
     public Habit saveHabit(Habit habit) {
@@ -57,7 +56,7 @@ public class HabitQuery {
 //    }
 
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
-        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdIn(checkMethodIdList);
+        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByCheckMethodIdIn(checkMethodIdList);
         for (CheckMethod method : methodList) {
             if (!method.getUserId().equals(userId)) {
                 return false;
@@ -87,12 +86,12 @@ public class HabitQuery {
     }
 
     public boolean isTemplateHabit(Long habitId) {
-        return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).isPresent();
+        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).isPresent();
     }
 
     // 일치하는 Habit이 없다면 null 반환
     public Habit getTemplateHabit(Long habitId) {
-        return habitRepository.findByIdAndIsTemplate(habitId, YN.Y).orElse(null);
+        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 
     public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds, YN isCompleted) {

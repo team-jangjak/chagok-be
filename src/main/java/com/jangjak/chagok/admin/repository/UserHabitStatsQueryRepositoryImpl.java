@@ -49,22 +49,22 @@ public class UserHabitStatsQueryRepositoryImpl implements UserHabitStatsQueryRep
         return queryFactory
                 .select(com.querydsl.core.types.Projections.constructor(
                         HabitProgressDto.class,
-                        userHabit.id,                    // userHabitId
+                        userHabit.userHabitId,                    // userHabitId
                         userHabit.userId,               // userId
                         userHabit.state,                 // habitState
-                        userAction.id.count(),           // totalCount
+                        userAction.userActionId.count(),           // totalCount
                         totalCompleted.sum(),        // totalCompleted
                         untilBaseCount.sum(),        // untilBaseCount
                         untilBaseCompleted.sum()     // untilBaseCompleted
                 ))
                 .from(userAction)
-                .join(userHabit).on(userHabit.id.eq(userAction.userHabitId))
+                .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))
                 .where(
                         userHabit.userId.in(userIds),
                         userHabit.state.in(HabitState.IN_PROGRESS, HabitState.COMPLETED)
                 )
                 .groupBy(
-                        userHabit.id,
+                        userHabit.userHabitId,
                         userHabit.userId,
                         userHabit.state
                 )

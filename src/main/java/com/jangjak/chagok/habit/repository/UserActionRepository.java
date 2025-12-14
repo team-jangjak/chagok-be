@@ -21,7 +21,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
     @Query(value = """
             WITH base AS (
                 SELECT 
-                    ua.id,
+                    ua.user_action_id,
                     ua.user_habit_id,
                     ua.action_id,
                     ua.action_date,
@@ -33,17 +33,17 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                     a."content"        AS action_content,
                     ROW_NUMBER() OVER (
                         PARTITION BY ua.user_habit_id
-                        ORDER BY ua.action_date ASC, a."sequence" ASC, ua.id ASC
+                        ORDER BY ua.action_date ASC, a."sequence" ASC, ua.user_action_id ASC
                     ) AS rn
                 FROM user_action ua
-                JOIN "action" a ON a.id = ua.action_id
+                JOIN "action" a ON a.action_id = ua.action_id
                 WHERE ua.user_habit_id IN (:userHabitIds)
                   AND ua.is_completed = 'N'
                   AND ua.action_date >= CURRENT_DATE
             )
             SELECT
                 h.freq_unit                  AS frequencyUnit,
-                b.id                         AS userActionId,   
+                b.user_action_id                         AS userActionId,   
                 b.user_habit_id              AS userHabitId,
                 h.image                      AS image,
             
@@ -54,7 +54,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                 b.action_date                AS actionDate,
                 b.delay_count                AS delayCount
             FROM base b
-            JOIN habit h ON h.id = b.habit_id
+            JOIN habit h ON h.habit_id = b.habit_id
             WHERE b.rn = 1
             """, nativeQuery = true)
     List<ActionAndUserActionView> findNextUpcomingPerUserHabit(

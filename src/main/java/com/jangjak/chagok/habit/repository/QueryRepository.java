@@ -55,7 +55,7 @@ public class QueryRepository {
 
         // 필터: 특정 userHabit만
         if (userHabitId != null) {
-            builder.and(userHabit.id.eq(userHabitId));
+            builder.and(userHabit.userHabitId.eq(userHabitId));
         }
 
         // 기본 상태: 진행중+완료
@@ -71,18 +71,18 @@ public class QueryRepository {
                         CalendarInfo.class,
                         userAction.actionDate,
                         userAction.userHabitId,
-                        userAction.id,
+                        userAction.userActionId,
                         action.content,
                         userAction.isCompleted
                 ))
                 .from(userAction)
-                .join(action).on(action.id.eq(userAction.actionId))
-                .join(userHabit).on(userHabit.id.eq(userAction.userHabitId))
+                .join(action).on(action.actionId.eq(userAction.actionId))
+                .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))
                 .where(builder)
                 .orderBy(
                         userAction.actionDate.asc(),
                         userAction.userHabitId.asc(),
-                        userAction.id.asc()
+                        userAction.userActionId.asc()
                 )
                 .fetch();
     }

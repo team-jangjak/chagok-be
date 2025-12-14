@@ -16,14 +16,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ActionVerify {
     @Id
-    private Long id;
+    private Long actionVerifyId;
 
+    @Column(nullable = false)
     private Long checkMethodId;
 
+    @Column(nullable = false)
     private LocalDateTime verifyDate;
 
     // 얘는 진짜 LOB 자료형 해야될수도
+    @Column(nullable = false)
     private String value;
+
+    @Column(nullable = false)
+    private Integer methodOrder;
 
     // 식별 관계 설정
     @OneToOne

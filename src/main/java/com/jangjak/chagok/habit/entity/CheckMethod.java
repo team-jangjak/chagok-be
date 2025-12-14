@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table
 @Getter
@@ -16,11 +18,19 @@ import lombok.NoArgsConstructor;
 public class CheckMethod extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long checkMethodId;
 
+    @Column(nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
+    private LocalDateTime validStartAt;
+
+    @Column(nullable = false)
+    private LocalDateTime validEndAt;
 
     public void updateTitle(String title) {
         this.title = title;

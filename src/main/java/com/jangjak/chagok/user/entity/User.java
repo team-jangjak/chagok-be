@@ -1,6 +1,7 @@
 package com.jangjak.chagok.user.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.user.enums.GENDER;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
     @Column(unique = true, nullable = false)
     private Long oauthId;
@@ -45,4 +46,10 @@ public class User extends BaseTimeEntity {
 
     @Column(nullable = false) @Enumerated(EnumType.STRING)
     private GENDER gender;
+
+    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    private YN active;
+
+    @Column(nullable = false)
+    private Long point;
 }

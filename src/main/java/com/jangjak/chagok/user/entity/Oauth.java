@@ -19,7 +19,7 @@ import lombok.*;
 public class Oauth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long oauthId;
 
     @Column(nullable = false)
     private String socialId;

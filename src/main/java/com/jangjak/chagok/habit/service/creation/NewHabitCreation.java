@@ -78,7 +78,7 @@ public class NewHabitCreation implements HabitCreation {
         LocalDate end = request.getEndDate();
 
         Habit habit = HabitMapper.toEntity(request);
-        Long habitId = habitQuery.saveHabit(habit).getId();
+        Long habitId = habitQuery.saveHabit(habit).getHabitId();
 
         // Action DB 저장
         List<Action> actions = ActionMapper.toEntities(habitId, request);
@@ -108,7 +108,7 @@ public class NewHabitCreation implements HabitCreation {
         // UserAction 생성 및 저장
         List<UserAction> userActions = new ArrayList<>();
         for (int i = 0; i < requestActions.size(); i++) {
-            Long actionId = actions.get(i).getId();
+            Long actionId = actions.get(i).getActionId();
             LocalDate actionDate = requestActions.get(i).getActionDate();
 
             UserAction userAction = UserActionMapper.toEntity(userHabitId, actionId, actionDate);
