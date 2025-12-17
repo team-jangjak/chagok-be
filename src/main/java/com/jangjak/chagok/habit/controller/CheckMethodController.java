@@ -56,12 +56,15 @@ public class CheckMethodController {
 
     /**
      * Action 인증
+     * @return {
+     *     id : userActionId (기존 verifyId가 사라져 userActionId 반환 추후 반환값 논의 필요)
+     * }
      */
     @PostMapping("/{userActionId}")
     public ResponseEntity<?> actionVerify(@AuthenticationPrincipal TokenUserInfo userInfo,
                                           @PathVariable Long userActionId, @RequestBody List<@Valid ActionVerifyRequestDto> reqDto) {
-        Long verifyId = checkMethodService.actionVerify(userInfo.getId(), userActionId, reqDto);
-        return CommonResponse.toRes(verifyId, "인증이 완료되었습니다.");
+        Long id = checkMethodService.actionVerify(userInfo.getId(), userActionId, reqDto);
+        return CommonResponse.toRes(id, "인증이 완료되었습니다.");
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.entity;
 
 import com.jangjak.chagok.common.dto.BaseTimeEntity;
+import com.jangjak.chagok.habit.entity.keys.CheckMethodCompositeKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckMethod extends BaseTimeEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long checkMethodId;
+    @EmbeddedId
+    private CheckMethodCompositeKey id;
 
     @Column(nullable = false)
     private Long userId;
@@ -28,9 +28,6 @@ public class CheckMethod extends BaseTimeEntity {
 
     @Column(nullable = false)
     private LocalDateTime validStartAt;
-
-    @Column(nullable = false)
-    private LocalDateTime validEndAt;
 
     public void updateTitle(String title) {
         this.title = title;

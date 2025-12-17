@@ -38,9 +38,11 @@ public class ActionToAIReqDto {
     @Schema(description = "인증 방식(사진/이미지 | 글 작성)", example = "글 작성")
     private String verificationMethod;
 
+    @Builder.Default
     @Schema(description = "목표 기간", example = "8주")
     private Integer weeksCount = 8;     // 기본 8주
 
+    @Builder.Default
     @Schema(description = "사용할 모델", example = "gpt-4.1-mini", defaultValue = "gpt-4.1-mini")
     private String model = "gpt-4.1-mini";
 }
