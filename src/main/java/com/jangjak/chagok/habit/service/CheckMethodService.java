@@ -12,6 +12,7 @@ import com.jangjak.chagok.habit.dto.response.CheckMethodResDto;
 import com.jangjak.chagok.habit.dto.response.VerifyOfActionResDto;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
+import com.jangjak.chagok.habit.mapper.ActionVerifyMapper;
 import com.jangjak.chagok.habit.repository.ActionVerifyRepository;
 import com.jangjak.chagok.habit.repository.CheckMethodDetailRepository;
 import com.jangjak.chagok.habit.repository.CheckMethodRepository;
@@ -27,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -69,11 +71,11 @@ public class CheckMethodService {
         List<CheckMethodDetail> detailEntities = requestDto.getDetails().stream()
                 .map(detailDto -> CheckMethodDetail.builder()
                         .id(
-                               CheckMethodDetailCompositeKey.builder()
-                                       .checkMethodId(savedCheckMethod.getId().getCheckMethodId())
-                                       .methodOrder(detailDto.getMethodOrder())
-                                       // TODO
-                                       .build()
+                                CheckMethodDetailCompositeKey.builder()
+                                        .checkMethodId(savedCheckMethod.getId().getCheckMethodId())
+                                        .methodOrder(detailDto.getMethodOrder())
+                                        // TODO
+                                        .build()
                         )
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
@@ -106,7 +108,7 @@ public class CheckMethodService {
         }
 
         // 사용되었는지 검증
-        if(habitQuery.existsByCheckMethodId(checkMethodId)){
+        if (habitQuery.existsByCheckMethodId(checkMethodId)) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
@@ -141,73 +143,67 @@ public class CheckMethodService {
     @Transactional
     public Long actionVerify(Long id, Long userActionId, List<ActionVerifyRequestDto> requestDto) {
 
+        validateRequestNotEmpty(requestDto);
         // userId와 비교 검증
         UserAction userAction = habitReadService.validate(id, userActionId);
-
-        // actionDate 검증
-        if (!userAction.getActionDate().isEqual(LocalDate.now())) {
-            throw new CustomException(ErrorCode.NOT_ACTION_DATE);
-        }
-
-        // 이미 인증된 데이터라면 에러
-        if (actionVerifyRepository.getActionVerifyByUserActionId(userActionId).isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_VERIFIED);
-        }
+        validateActionAvailability(userAction);
 
         // action에서 checkMethodId 가져오기
         Long checkMethodId = habitQuery.findActionById(userAction.getActionId()).getCheckMethodId();
-
 
         // 인증 템플릿 구조 가져오기
         CheckMethodResDto checkMethodResDto = getCheckMethodResDto(checkMethodId);
 
         log.info("checkMethodResDto: {}", checkMethodResDto);
 
-        Map<Long, String> answerMap = new LinkedHashMap<>();
+        List<ActionVerify> verifies = toEntityList(userActionId, checkMethodId, checkMethodResDto, requestDto);
 
-        // detail을 methodOrder 기준으로 정렬
-        List<CheckMethodDetailRestDto> sortedDetails = checkMethodResDto.getDetails().stream()
-                .sorted(Comparator.comparing(CheckMethodDetailRestDto::getMethodOrder))
-                .toList();
+        actionVerifyRepository.saveAll(verifies);
+        userAction.complete();
 
+        return userActionId;
+    }
 
-        // 질문 수와 답변 수가 다르면 에러
-        if (requestDto == null || requestDto.isEmpty() || requestDto.size() != sortedDetails.size()) {
+    private void validateRequestNotEmpty(List<ActionVerifyRequestDto> requests) {
+        if (requests == null || requests.isEmpty()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    private void validateActionAvailability(UserAction userAction) {
+        // 오늘 날짜인지 확인
+        if (!userAction.getActionDate().isEqual(LocalDate.now())) {
+            throw new CustomException(ErrorCode.NOT_ACTION_DATE);
+        }
+        // 이미 인증되었는지 확인
+        if (actionVerifyRepository.existsByUserActionId(userAction.getUserActionId())) {
+            throw new CustomException(ErrorCode.ALREADY_VERIFIED);
+        }
+    }
+
+    private List<ActionVerify> toEntityList(Long userActionId, Long checkMethodId,
+                                                      CheckMethodResDto checkMethodResDto,
+                                                      List<ActionVerifyRequestDto> requestDto) {
+
+        List<CheckMethodDetailRestDto> details = checkMethodResDto.getDetails();
+
+        // 개수 검증
+        if (details.size() != requestDto.size()) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        // 매칭
-        for (int i = 0; i < sortedDetails.size(); i++) {
-            Long order = sortedDetails.get(i).getMethodOrder();
-            String answer = requestDto.get(i).getAnswer();
-            log.info("order: {}, answer: {}", order, answer);
-            answerMap.put(order, answer);
-        }
+        Set<Long> detailsSet = details.stream()
+                .map(CheckMethodDetailRestDto::getMethodOrder)
+                .collect(Collectors.toSet());
 
-        log.info("answerMap: {}", answerMap);
-
-        String answerJson = "";
-        // JSON으로 변환
-        try {
-            answerJson = objectMapper.writeValueAsString(answerMap);
-        } catch (JsonProcessingException e) {
-            log.error("JSON 변환 오류: {}", e.getMessage(), e);
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-
-        ActionVerify verify = ActionVerify.builder()
-                .checkMethodId(checkMethodId)
-                .verifyDate(LocalDateTime.now())
-                .value(answerJson)
-                .build();
-
-        // 연관관계 세팅
-        verify.assignUserAction(userAction);
-
-        actionVerifyRepository.save(verify);
-        userAction.complete();
-
-        return verify.getUserActionId();
+        return requestDto.stream()
+                .map(req -> {
+                    if (!detailsSet.contains(req.getMethodOrder().longValue())) {
+                        throw new CustomException(ErrorCode.BAD_REQUEST);
+                    }
+                    return ActionVerifyMapper.toEntity(userActionId, checkMethodId, req);
+                })
+                .toList();
     }
 
     /**
