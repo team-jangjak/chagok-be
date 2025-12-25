@@ -13,10 +13,7 @@ import com.jangjak.chagok.habit.dto.response.VerifyOfActionResDto;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import com.jangjak.chagok.habit.mapper.ActionVerifyMapper;
-import com.jangjak.chagok.habit.repository.ActionVerifyRepository;
-import com.jangjak.chagok.habit.repository.CheckMethodDetailRepository;
-import com.jangjak.chagok.habit.repository.CheckMethodRepository;
-import com.jangjak.chagok.habit.repository.HabitQuery;
+import com.jangjak.chagok.habit.repository.*;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +37,7 @@ public class CheckMethodService {
     private final ActionVerifyRepository actionVerifyRepository;
     private final HabitQuery habitQuery;
     private final HabitReadService habitReadService;
+    private final QueryRepository queryRepository;
 
     private final ObjectMapper objectMapper;
 
@@ -149,14 +147,15 @@ public class CheckMethodService {
         validateActionAvailability(userAction);
 
         // action에서 checkMethodId 가져오기
-        Long checkMethodId = habitQuery.findActionById(userAction.getActionId()).getCheckMethodId();
+        Action actionById = habitQuery.findActionById(userAction.getActionId(), userAction.getCreatedAt());
 
         // 인증 템플릿 구조 가져오기
-        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(checkMethodId);
+        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(actionById.getCheckMethodId(), actionById.getCreatedAt());
 
         log.info("checkMethodResDto: {}", checkMethodResDto);
 
-        List<ActionVerify> verifies = toEntityList(userActionId, checkMethodId, checkMethodResDto, requestDto);
+        // **확인해봐야함
+        List<ActionVerify> verifies = toEntityList(userActionId, actionById.getCheckMethodId(), checkMethodResDto, requestDto);
 
         actionVerifyRepository.saveAll(verifies);
         userAction.complete();
@@ -213,16 +212,16 @@ public class CheckMethodService {
      */
     public CheckMethodResDto checkMethodOfAction(Long id, Long userActionId) {
         UserAction userAction = habitQuery.getUserActionById(userActionId);
-        Action actionById = habitQuery.findActionById(userAction.getActionId());
+        Action actionById = habitQuery.findActionById(userAction.getActionId(), userAction.getCreatedAt());
 
-        return getCheckMethodResDto(actionById.getCheckMethodId());
+        return getCheckMethodResDto(actionById.getCheckMethodId(), actionById.getCreatedAt());
     }
 
-    private CheckMethodResDto getCheckMethodResDto(Long checkMethodId) {
-        CheckMethod checkMethod = checkMethodRepository.findById(checkMethodId).orElseThrow(
+    private CheckMethodResDto getCheckMethodResDto(Long checkMethodId, LocalDateTime createdAt) {
+        CheckMethod checkMethod = queryRepository.findByCheckMethodIdAndCreatedAt(checkMethodId, createdAt).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND));
 
-        List<CheckMethodDetail> details = checkMethodDetailRepository.findByIdCheckMethodIdOrderByIdMethodOrderAsc(checkMethodId);
+        List<CheckMethodDetail> details = queryRepository.findDetailsByCheckMethodIdAndCreatedAt(checkMethodId, checkMethod.getCreatedAt());
 
         if (details.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND);
@@ -255,7 +254,7 @@ public class CheckMethodService {
 
         // 인증 템플릿 구조 가져오기
         Action action = habitQuery.findActionById(userAction.getActionId());
-        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(action.getCheckMethodId());
+        CheckMethodResDto checkMethodResDto = getCheckMethodResDto(action.getCheckMethodId(), action.getCreatedAt());
 
         Map<Long, String> answerMap;
         try {
