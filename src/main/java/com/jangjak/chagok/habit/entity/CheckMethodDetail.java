@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class CheckMethodDetail {
@@ -30,4 +29,51 @@ public class CheckMethodDetail {
 
     @Column(nullable = false)
     private LocalDateTime validStartAt;
+
+    public static CheckMethodDetail.Build builder() {
+        return new CheckMethodDetail.Build();
+    }
+
+    public static class Build {
+        private Long checkMethodId = null;
+        private CheckMethodType type;
+        private String value;
+        private Long methodOrder;
+        private LocalDateTime validStartAt;
+        private LocalDateTime validEndAt;
+
+        public CheckMethodDetail build() {
+            return new CheckMethodDetail(
+                    new CheckMethodDetailCompositeKey(checkMethodId, methodOrder, validEndAt),
+                    type,
+                    value,
+                    validStartAt
+            );
+        }
+
+        public Build type(CheckMethodType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Build value(String value) {
+            this.value = value;
+            return this;
+        }
+
+        public Build methodOrder(Long methodOrder) {
+            this.methodOrder = methodOrder;
+            return this;
+        }
+
+        public Build validStartAt(LocalDateTime validStartAt) {
+            this.validStartAt = validStartAt;
+            return this;
+        }
+
+        public Build validEndAt(LocalDateTime validEndAt) {
+            this.validEndAt = validEndAt;
+            return this;
+        }
+    }
 }
