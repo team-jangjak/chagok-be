@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.service.creation;
 
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
+import com.jangjak.chagok.external.service.s3.S3ImageService;
 import com.jangjak.chagok.habit.dto.request.create.*;
 import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
@@ -28,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NewHabitCreation implements HabitCreation {
     private final HabitQuery habitQuery;
+    private final S3ImageService s3ImageService;
 
     @Override
     public boolean validateRequest(Long userId, CreateHabitRequestDto reqDto) {
@@ -84,9 +86,15 @@ public class NewHabitCreation implements HabitCreation {
 
     @Override
     public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto, LocalDateTime validStDt) {
+        // 이미지 등록
+        String imageUrl = s3ImageService.registerImage(reqDto.getHabitImage());
+        reqDto.setHabitImage(imageUrl);
+
+        // 습관 생성
         Habit habit = HabitMapper.toEntity(reqDto, validStDt);
         Long habitId = habitQuery.saveHabit(habit).getId().getHabitId();
 
+        // 행위 생성
         List<Action> actions = ActionMapper.toEntities(habitId, reqDto, validStDt);
         habitQuery.saveActionList(actions);
 
