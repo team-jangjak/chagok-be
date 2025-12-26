@@ -1,8 +1,13 @@
 package com.jangjak.chagok.admin.dto;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.time.LocalDate;
 
-public record DateSuccess(
-        LocalDate actionDate,
-        boolean isSuccess
-) {}
+@Data
+@Builder
+public class DateSuccess {
+    LocalDate actionDate;
+    boolean isSuccess;
+}
