@@ -28,5 +28,7 @@ public class HabitCreateRequestDto {
     private Boolean isTemplate;         // 습관 템플릿 공개 유무
     private Boolean isPublic;           // 습관 공개 유무
 
+    private Long templateHabitId;     // 템플릿 습관 ID (템플릿 습관 사용 시에만)
+
     private List<ActionCreateRequestDto> actions; // 행위 리스트
 }

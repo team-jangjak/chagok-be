@@ -10,6 +10,7 @@ import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.UserAction;
 import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.mapper.UserActionMapper;
 import com.jangjak.chagok.habit.mapper.UserHabitMapper;
 import com.jangjak.chagok.habit.repository.HabitQuery;
@@ -47,7 +48,14 @@ public class TemplateHabitCreation implements HabitCreation {
 
     @Override
     public boolean validateRequest(Long userId, HabitCreateRequestDto reqDto) {
-        return false;
+        // 템플릿 습관이 실제로 존재하는 지 확인
+        if (!habitQuery.isTemplateHabit(reqDto.getTemplateHabitId())) return false;
+
+        // 카테고리 검증
+        HabitCategory habitCategory = HabitCategory.fromValue(reqDto.getHabitCategory().intValue());
+        if (habitCategory == HabitCategory.NONE) return false;
+
+        return true;
     }
 
     public HabitCreationInfo createHabit(CreateHabitRequestDto reqDto) {
@@ -66,7 +74,15 @@ public class TemplateHabitCreation implements HabitCreation {
 
     @Override
     public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto, LocalDateTime now) {
-        return null;
+        Long habitId = reqDto.getTemplateHabitId();
+        List<Action> actionList = habitQuery.getActionsByHabitId(habitId);
+
+        // Action 개수 검증
+        if (reqDto.getActions().size() != actionList.size()) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        return new HabitCreationInfo(habitId, actionList);
     }
 
     private TemplateHabitRequestDto convertRequest(CreateHabitRequestDto reqDto) {
