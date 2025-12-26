@@ -23,7 +23,7 @@ public class StreakCalculationService {
     private final UserStreakRepository userStreakRepository;
 
     // 배치 Processor에서 호출
-    // 전체 계산
+    // streak 전체 계산: 현재는 사용하지 않지만 혹시 몰라 두겠습니다..
     public UserStreak allCalculate(Long userId, LocalDate batchDate) {
         log.info("userId: {}", userId);
         // 현재 UserStreak 정보
@@ -44,59 +44,22 @@ public class StreakCalculationService {
             }
         }
 
-        // 오늘의 성공/실패 여부, Freeze 처리
+        // 어제의 성공/실패 여부, Freeze 처리
         int finalStreak = naturalStreak;
         YN finalIsFreeze = currentStreak.getIsFreeze();
 
-        boolean isRequiredActionToday = !timeline.isEmpty() && timeline.get(0).getActionDate().isEqual(batchDate);
+        boolean isRequiredAction = !timeline.isEmpty() && timeline.get(0).getActionDate().isEqual(batchDate);
 
-        // 오늘이 필수 액션 날짜라면
-        if (isRequiredActionToday) {
-            boolean todayFailed = !timeline.get(0).isSuccess();
-
-            if (todayFailed) {
+        // 어제가 actionDate라면
+        if (isRequiredAction) {
+            // 실패일 경우
+            if (!timeline.get(0).isSuccess()) {
                 if (currentStreak.getIsFreeze() == YN.Y) {
                     finalStreak = currentStreak.getStreak();
-                    finalIsFreeze = YN.N;
                 } else {
                     finalStreak = 0;
-                    finalIsFreeze = YN.N;
                 }
-            }
-        }
-
-        // 최종 결과 업데이트
-        currentStreak.updateStreak(finalStreak, finalIsFreeze);
-        return currentStreak;
-    }
-
-
-    // 일일 계산
-    public UserStreak dayCalculate(Long userId, LocalDate today) {
-        // 현재 UserStreak 정보
-        UserStreak currentStreak = userStreakRepository.findById(userId)
-                .orElseGet(() -> new UserStreak(userId, 0, YN.N, null, null));
-
-        // 오늘 액션 현황 조회
-        Optional<DateSuccess> todayStatus = queryRepository.findUserActionStatusByDate(userId, today);
-
-        int finalStreak = currentStreak.getStreak();
-        YN finalIsFreeze = currentStreak.getIsFreeze();
-
-        if (todayStatus.isPresent()) {
-            // CASE 1: 오늘 해야 할 액션이 있는 날
-            if (todayStatus.get().isSuccess()) {
-                // 성공: 기존 스트릭에 +1
-                finalStreak++;
-            } else {
-                // 실패
-                if (currentStreak.getIsFreeze() == YN.Y) {
-                    // 방어권 사용: 스트릭 유지, 프리즈 N
-                    finalIsFreeze = YN.N;
-                } else {
-                    // 방어권 미사용: 스트릭 초기화
-                    finalStreak = 0;
-                }
+                finalIsFreeze = YN.N;
             }
         }
 
@@ -110,7 +73,7 @@ public class StreakCalculationService {
         UserStreak streak = userStreakRepository.findById(userId)
             .orElseGet(() -> new UserStreak(userId, 0, YN.N, null, null));
 
-        // 오늘 전체 성공 여부 확인
+        // 해당 date의 전체 성공 여부 확인
         Optional<DateSuccess> status = queryRepository.findUserActionStatusByDate(userId, date);
 
         if (status.isPresent() && status.get().isSuccess()) {

@@ -58,17 +58,26 @@ public class StreakCalculationJobConfig {
     // Reader: IN_PROGRESS 상태인 UserHabit을 가진 유저 ID 목록을 페이징하여 읽기
     @Bean
     public JpaPagingItemReader<Long> userReader() {
-        String jpql = "SELECT DISTINCT uh.userId FROM UserHabit uh WHERE uh.state = :state";
+        // 어제 날짜 계산
+        LocalDate yesterday = LocalDate.now().minusDays(1);
 
-        JpaPagingItemReader<Long> reader = new JpaPagingItemReaderBuilder<Long>()
+        // 어제가 액션 날짜였던 유저만 조회
+        String jpql = "SELECT DISTINCT uh.userId " +
+                      "FROM UserHabit uh " +
+                      "JOIN UserAction ua ON uh.userHabitId = ua.userHabitId " +
+                      "WHERE uh.state = :state " +
+                      "AND ua.actionDate = :yesterday";
+
+        return new JpaPagingItemReaderBuilder<Long>()
                 .name("userReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(CHUNK_SIZE)
                 .queryString(jpql)
-                .parameterValues(Map.of("state", HabitState.IN_PROGRESS))
+                .parameterValues(Map.of(
+                        "state", HabitState.IN_PROGRESS,
+                        "yesterday", yesterday
+                ))
                 .build();
-
-        return reader;
     }
 
     // Processor: userId별로 Streak 계산
