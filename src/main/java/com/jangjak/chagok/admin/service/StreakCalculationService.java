@@ -1,7 +1,7 @@
 package com.jangjak.chagok.admin.service;
 
 import com.jangjak.chagok.admin.dto.DateSuccess;
-import com.jangjak.chagok.admin.entity.UserStreak;
+import com.jangjak.chagok.admin.entity.Streak;
 import com.jangjak.chagok.admin.repository.UserActionQueryRepository;
 import com.jangjak.chagok.admin.repository.UserStreakRepository;
 import com.jangjak.chagok.common.enums.YN;
@@ -24,11 +24,11 @@ public class StreakCalculationService {
 
     // 배치 Processor에서 호출
     // streak 전체 계산: 현재는 사용하지 않지만 혹시 몰라 두겠습니다..
-    public UserStreak allCalculate(Long userId, LocalDate batchDate) {
+    public Streak allCalculate(Long userId, LocalDate batchDate) {
         log.info("userId: {}", userId);
         // 현재 UserStreak 정보
-        UserStreak currentStreak = userStreakRepository.findById(userId)
-                .orElseGet(() -> new UserStreak(userId, 0, YN.N, null,null));
+        Streak currentStreak = userStreakRepository.findById(userId)
+                .orElseGet(() -> new Streak(userId, 0, YN.N, null,null));
 
         // 유저의 액션 타임라인 조회
         List<DateSuccess> timeline = userActionQueryRepository.findUserActionTimeline(userId, batchDate);
@@ -70,8 +70,8 @@ public class StreakCalculationService {
 
     @Transactional
     public void updateStreak(Long userId, LocalDate date) {
-        UserStreak streak = userStreakRepository.findById(userId)
-            .orElseGet(() -> new UserStreak(userId, 0, YN.N, null, null));
+        Streak streak = userStreakRepository.findById(userId)
+            .orElseGet(() -> new Streak(userId, 0, YN.N, null, null));
 
         // 해당 date의 전체 성공 여부 확인
         Optional<DateSuccess> status = userActionQueryRepository.findUserActionStatusByDate(userId, date);

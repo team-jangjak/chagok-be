@@ -1,6 +1,6 @@
 package com.jangjak.chagok.admin.batch.config;
 
-import com.jangjak.chagok.admin.entity.UserStreak;
+import com.jangjak.chagok.admin.entity.Streak;
 import com.jangjak.chagok.admin.repository.UserStreakRepository;
 import com.jangjak.chagok.admin.service.StreakCalculationService;
 import com.jangjak.chagok.habit.enums.HabitState;
@@ -48,7 +48,7 @@ public class StreakCalculationJobConfig {
     @Bean
     public Step streakCalculationStep() {
         return new StepBuilder("streakCalculationStep", jobRepository)
-                .<Long, UserStreak>chunk(CHUNK_SIZE, transactionManager)
+                .<Long, Streak>chunk(CHUNK_SIZE, transactionManager)
                 .reader(userReader())
                 .processor(streakProcessor())
                 .writer(userStreakWriter())
@@ -82,7 +82,7 @@ public class StreakCalculationJobConfig {
 
     // Processor: userId별로 Streak 계산
     @Bean
-    public ItemProcessor<Long, UserStreak> streakProcessor() {
+    public ItemProcessor<Long, Streak> streakProcessor() {
         // 어제 기준으로 실패한 사람들을 찾아 초기화
         return userId -> {
             streakCalculationService.updateStreak(userId, LocalDate.now().minusDays(1));
@@ -92,8 +92,8 @@ public class StreakCalculationJobConfig {
 
     // Writer: UserStreak 테이블에 INSERT or UPDATE
     @Bean
-    public JpaItemWriter<UserStreak> userStreakWriter() {
-        JpaItemWriter<UserStreak> writer = new JpaItemWriter<>();
+    public JpaItemWriter<Streak> userStreakWriter() {
+        JpaItemWriter<Streak> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
     }

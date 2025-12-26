@@ -10,11 +10,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "user_streak")
+@Table
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStreak {
+public class Streak {
     @Id
     private Long userId;
 
