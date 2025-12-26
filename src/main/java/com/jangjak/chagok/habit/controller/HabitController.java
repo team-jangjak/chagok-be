@@ -6,6 +6,7 @@ import com.jangjak.chagok.habit.controller.docs.HabitControllerDocs;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,6 +35,16 @@ public class HabitController implements HabitControllerDocs {
         Long userHabitId = habitCreateService.createNewHabit(userInfo, reqDto);
         return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
     }
+
+    @PostMapping()
+    public ResponseEntity<?> createHabit(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @Valid @RequestBody HabitCreateRequestDto reqDto
+    ) {
+        Long userHabitId = habitCreateService.createHabit(userInfo.getId(), reqDto);
+        return CommonResponse.toRes(userHabitId, "");
+    }
+
 
     @PostMapping("/modify")
     public ResponseEntity<?> createModifyHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody ModifyHabitRequestDto reqDto) {

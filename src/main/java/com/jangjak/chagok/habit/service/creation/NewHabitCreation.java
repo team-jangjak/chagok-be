@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.service.creation;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.*;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitCategory;
@@ -78,6 +79,21 @@ public class NewHabitCreation implements HabitCreation {
         LocalDate end = request.getEndDate();
 
         Habit habit = HabitMapper.toEntity(request);
+        Long habitId = habitQuery.saveHabit(habit).getId().getHabitId();
+
+        // Action DB 저장
+        List<Action> actions = ActionMapper.toEntities(habitId, request);
+        habitQuery.saveActionList(actions);
+
+        return new HabitCreationInfo(habitId, actions, start, end);
+    }
+
+    @Override
+    public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto) {
+        LocalDate start = reqDto.getHabitStartDate();
+        LocalDate end = reqDto.getHabitEndDate();
+
+        Habit habit = HabitMapper.toEntity(null);
         Long habitId = habitQuery.saveHabit(habit).getId().getHabitId();
 
         // Action DB 저장

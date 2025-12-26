@@ -4,6 +4,7 @@ import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.habit.dto.request.create.ModifyHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.NewHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.enums.HabitCreationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,5 +39,10 @@ public class HabitCreateService {
     public Long createTemplateHabit(TokenUserInfo userInfo, TemplateHabitRequestDto reqDto) {
         HabitCreation manager = creationFactory.getHabitCreation(HabitCreationType.TEMPLATE);
         return creationTxService.createHabit(manager, userInfo, reqDto);
+    }
+
+    public Long createHabit(Long userId, HabitCreateRequestDto reqDto) {
+        HabitCreation manager = creationFactory.getHabitCreation(reqDto.getRequestType());
+        return creationTxService.createHabit(manager, userId, reqDto);
     }
 }

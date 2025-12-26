@@ -21,4 +21,13 @@ public class HabitCreationFactory {
             case TEMPLATE -> templateHabitCreation;
         };
     }
+
+    public HabitCreation getHabitCreation(Integer type) {
+        HabitCreationType habitCreationType = HabitCreationType.fromValue(type);
+        return switch (habitCreationType) {
+            case NEW -> newHabitCreation;
+            case MODIFY -> modifyHabitCreation;
+            case TEMPLATE -> templateHabitCreation;
+        };
+    }
 }

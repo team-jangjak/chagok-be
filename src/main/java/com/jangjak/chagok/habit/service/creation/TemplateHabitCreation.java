@@ -5,6 +5,7 @@ import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateActionRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.TemplateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.UserAction;
@@ -56,6 +57,11 @@ public class TemplateHabitCreation implements HabitCreation {
         }
 
         return new HabitCreationInfo(habitId, actionList, request.getStartDate(), request.getEndDate());
+    }
+
+    @Override
+    public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto) {
+        return null;
     }
 
     @Override

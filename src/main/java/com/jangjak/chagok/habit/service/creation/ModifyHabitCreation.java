@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.service.creation;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create.*;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.Habit;
@@ -134,6 +135,11 @@ public class ModifyHabitCreation implements HabitCreation {
         habitQuery.saveActionList(actionResult);
 
         return new HabitCreationInfo(habitId, actionResult, startDate, endDate);
+    }
+
+    @Override
+    public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto) {
+        return null;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.service.creation;
 
 import com.jangjak.chagok.habit.dto.request.create.CreateHabitRequestDto;
+import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 
 public interface HabitCreation {
@@ -9,6 +10,7 @@ public interface HabitCreation {
 
     // 습관 및 액션 생성
     HabitCreationInfo createHabit(CreateHabitRequestDto reqDto);
+    HabitCreationInfo createHabit(HabitCreateRequestDto reqDto);
 
     // 사용자 액션 생성
     Long createUserHabit(Long userId, CreateHabitRequestDto reqDto, HabitCreationInfo habitInfo);
