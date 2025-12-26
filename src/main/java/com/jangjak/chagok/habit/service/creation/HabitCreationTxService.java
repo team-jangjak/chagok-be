@@ -15,31 +15,34 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class HabitCreationTxService {
-    @Transactional
-    Long createHabit(HabitCreation manager, TokenUserInfo userInfo, CreateHabitRequestDto reqDto) {
-        Long userId = userInfo.getId();
-
-        // 입력값 검증
-        if (!manager.validateRequest(userId, reqDto)) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
-        }
-
-        // 습관 및 액션 생성
-        HabitCreationInfo habitInfo = manager.createHabit(reqDto);
-
-        // 사용자 습관 및 액션 생성
-        Long userHabitId = manager.createUserHabit(userId, reqDto, habitInfo);
-
-        return userHabitId;
-    }
+//    @Transactional
+//    Long createHabit(HabitCreation manager, TokenUserInfo userInfo, CreateHabitRequestDto reqDto) {
+//        Long userId = userInfo.getId();
+//
+//        // 입력값 검증
+//        if (!manager.validateRequest(userId, reqDto)) {
+//            throw new CustomException(ErrorCode.BAD_REQUEST);
+//        }
+//
+//        // 습관 및 액션 생성
+//        HabitCreationInfo habitInfo = manager.createHabit(reqDto);
+//
+//        // 사용자 습관 및 액션 생성
+//        Long userHabitId = manager.createUserHabit(userId, reqDto, habitInfo);
+//
+//        return userHabitId;
+//    }
 
     @Transactional
     Long createHabit(HabitCreation manager, Long userId, HabitCreateRequestDto reqDto) {
+        LocalDateTime validStDt = LocalDateTime.now();
+
         // 입력값 검증
 //        manager.validateRequest(userId, reqDto);
 
@@ -47,7 +50,7 @@ public class HabitCreationTxService {
 
 
         // 습관/행위 생성
-        manager.createHabit(reqDto);
+        manager.createHabit(reqDto, validStDt);
 
         // 사용자 습관/사용자 행위 생성
 

@@ -30,11 +30,11 @@ public class HabitController implements HabitControllerDocs {
     private final HabitCreateService habitCreateService;
     private final HabitReadService habitReadService;
 
-    @PostMapping("/new")
-    public ResponseEntity<?> createNewHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody NewHabitRequestDto reqDto) {
-        Long userHabitId = habitCreateService.createNewHabit(userInfo, reqDto);
-        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
-    }
+//    @PostMapping("/new")
+//    public ResponseEntity<?> createNewHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody NewHabitRequestDto reqDto) {
+//        Long userHabitId = habitCreateService.createNewHabit(userInfo, reqDto);
+//        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
+//    }
 
     @PostMapping()
     public ResponseEntity<?> createHabit(
@@ -45,18 +45,18 @@ public class HabitController implements HabitControllerDocs {
         return CommonResponse.toRes(userHabitId, "");
     }
 
-
-    @PostMapping("/modify")
-    public ResponseEntity<?> createModifyHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody ModifyHabitRequestDto reqDto) {
-        Long userHabitId = habitCreateService.createModifyHabit(userInfo, reqDto);
-        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
-    }
-
-    @PostMapping("/template")
-    public ResponseEntity<?> createTemplateHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody TemplateHabitRequestDto reqDto) {
-        Long userHabitId = habitCreateService.createTemplateHabit(userInfo, reqDto);
-        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
-    }
+//
+//    @PostMapping("/modify")
+//    public ResponseEntity<?> createModifyHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody ModifyHabitRequestDto reqDto) {
+//        Long userHabitId = habitCreateService.createModifyHabit(userInfo, reqDto);
+//        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
+//    }
+//
+//    @PostMapping("/template")
+//    public ResponseEntity<?> createTemplateHabit(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestBody TemplateHabitRequestDto reqDto) {
+//        Long userHabitId = habitCreateService.createTemplateHabit(userInfo, reqDto);
+//        return CommonResponse.toRes(userHabitId, "습관 생성이 완료되었습니다.");
+//    }
 
     @PostMapping("/test")
     public ResponseEntity<?> testHabit(@RequestBody ModifyHabitRequestDto reqDto) {

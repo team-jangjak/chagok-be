@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -45,6 +46,10 @@ public class TemplateHabitCreation implements HabitCreation {
     }
 
     @Override
+    public boolean validateRequest(Long userId, HabitCreateRequestDto reqDto) {
+        return false;
+    }
+
     public HabitCreationInfo createHabit(CreateHabitRequestDto reqDto) {
         TemplateHabitRequestDto request = convertRequest(reqDto);
 
@@ -56,49 +61,12 @@ public class TemplateHabitCreation implements HabitCreation {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        return new HabitCreationInfo(habitId, actionList, request.getStartDate(), request.getEndDate());
+        return new HabitCreationInfo(habitId, actionList);
     }
 
     @Override
-    public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto) {
+    public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto, LocalDateTime now) {
         return null;
-    }
-
-    @Override
-    public Long createUserHabit(Long userId, CreateHabitRequestDto reqDto, HabitCreationInfo habitInfo) {
-        TemplateHabitRequestDto request = convertRequest(reqDto);
-
-        // 오래된 순 actionDto 정렬
-        List<TemplateActionRequestDto> requestActions = request.getActions().stream()
-                .sorted(Comparator.comparing(TemplateActionRequestDto::getActionDate))
-                .toList();
-
-        // action 오름차 정렬 (오래된 순)
-        List<Action> actions = habitInfo.getActions().stream()
-                .sorted(Comparator.comparing(action -> action.getSequence() * 100 + action.getFreqSeq()))
-                .toList();
-
-        // UserHabit을 DB에 저장하고 생성된 ID 반환
-        UserHabit userHabit = UserHabitMapper.toEntity(habitInfo, userId, request.getIsPublic());
-        Long userHabitId = habitQuery.saveUserHabit(userHabit);
-
-        // UserAction 생성 및 저장
-        List<UserAction> userActions = new ArrayList<>();
-        for (int i = 0; i < requestActions.size(); i++) {
-            Long actionId = actions.get(i).getId().getActionId();
-            LocalDate actionDate = requestActions.get(i).getActionDate();
-
-            // actionId가 실제로 존재하는지
-            if (!actionId.equals(requestActions.get(i).getActionId())) {
-                throw new CustomException(ErrorCode.BAD_REQUEST);
-            }
-
-            UserAction userAction = UserActionMapper.toEntity(userHabitId, actionId, actionDate);
-            userActions.add(userAction);
-        }
-        habitQuery.saveUserActionList(userActions);
-
-        return userHabitId;
     }
 
     private TemplateHabitRequestDto convertRequest(CreateHabitRequestDto reqDto) {

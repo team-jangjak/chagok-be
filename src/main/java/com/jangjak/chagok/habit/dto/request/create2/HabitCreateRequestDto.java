@@ -25,7 +25,7 @@ public class HabitCreateRequestDto {
     private Integer freqUnit;           // 습관 빈도 단위 (일/주/월)
     private Integer freqCount;          // 습관 기간 내 총 습관 빈도 단위 수
 
-    private String templateHabitId;     // 습관 템플릿 ID (새로 만드는 습관의 경우 null 값 요청)
+    private Boolean isTemplate;         // 습관 템플릿 공개 유무
     private Boolean isPublic;           // 습관 공개 유무
 
     private List<ActionCreateRequestDto> actions; // 행위 리스트
