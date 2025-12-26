@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.service.creation;
+package com.jangjak.chagok.habit.service.creation.factory;
 
 import com.jangjak.chagok.habit.enums.HabitCreationType;
 import lombok.RequiredArgsConstructor;

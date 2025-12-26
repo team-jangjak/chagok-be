@@ -31,8 +31,22 @@ public class HabitMapper {
                 .frequency(reqDto.getFrequency())
                 .freqUnit(reqDto.getFreqUnit())
                 .freqCount(reqDto.getFreqCount())
-                .image("") // TODO 이미지 처리
+                .image(reqDto.getHabitImage())
                 .isTemplate(reqDto.getIsTemplate() ? YN.Y : YN.N)
+                .validStartAt(validStDt)
+                .validEndAt(LocalDateTime.MAX)
+                .build();
+    }
+
+    public static Habit toEntity(HabitCreateRequestDto reqDto, Habit templateHabit, LocalDateTime validStDt) {
+        return Habit.builder()
+                .category(templateHabit.getCategory())
+                .title(templateHabit.getTitle())
+                .frequency(reqDto.getFrequency())
+                .freqUnit(reqDto.getFreqUnit())
+                .freqCount(reqDto.getFreqCount())
+                .image(templateHabit.getImage())
+                .isTemplate(YN.N)
                 .validStartAt(validStDt)
                 .validEndAt(LocalDateTime.MAX)
                 .build();

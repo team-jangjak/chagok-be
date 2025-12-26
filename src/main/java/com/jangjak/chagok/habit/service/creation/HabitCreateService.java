@@ -1,14 +1,19 @@
 package com.jangjak.chagok.habit.service.creation;
 
+import com.jangjak.chagok.common.exception.CustomException;
+import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.request.create2.ActionCreateRequestDto;
 import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;
 import com.jangjak.chagok.habit.entity.Action;
 import com.jangjak.chagok.habit.entity.UserAction;
 import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.mapper.UserActionMapper;
 import com.jangjak.chagok.habit.mapper.UserHabitMapper;
 import com.jangjak.chagok.habit.repository.HabitQuery;
+import com.jangjak.chagok.habit.service.creation.factory.HabitCreation;
+import com.jangjak.chagok.habit.service.creation.factory.HabitCreationFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,41 +38,32 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class HabitCreateService {
-    /**
-     * 습관 생성 전략을 결정하는 팩토리 클래스
-     */
     private final HabitCreationFactory creationFactory;
     private final HabitQuery habitQuery;
 
-//    public Long createNewHabit(TokenUserInfo userInfo, NewHabitRequestDto reqDto) {
-//        HabitCreation manager = creationFactory.getHabitCreation(HabitCreationType.NEW);
-//        return creationTxService.createHabit(manager, userInfo, reqDto);
-//    }
-//
-//    public Long createModifyHabit(TokenUserInfo userInfo, ModifyHabitRequestDto reqDto) {
-//        HabitCreation manager = creationFactory.getHabitCreation(HabitCreationType.MODIFY);
-//        return creationTxService.createHabit(manager, userInfo, reqDto);
-//    }
-//
-//    public Long createTemplateHabit(TokenUserInfo userInfo, TemplateHabitRequestDto reqDto) {
-//        HabitCreation manager = creationFactory.getHabitCreation(HabitCreationType.TEMPLATE);
-//        return creationTxService.createHabit(manager, userInfo, reqDto);
-//    }
-
     @Transactional
     public Long createHabit(Long userId, HabitCreateRequestDto reqDto) {
-        HabitCreation manager = creationFactory.getHabitCreation(reqDto.getRequestType());
+        // 유효 시작 시간 설정
+        LocalDateTime validStartDt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         // 유효성 검증
-        manager.validateRequest(userId, reqDto);
+        validateRequest(reqDto);
 
         // 습관/행위 생성
-        LocalDateTime validStartDt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        HabitCreation manager = creationFactory.getHabitCreation(reqDto.getRequestType());
         HabitCreationInfo habitInfo = manager.createHabit(reqDto, validStartDt);
 
         // 사용자 습관/행위 생성
-        Long userHabitId = createUserHabit(reqDto, validStartDt, habitInfo, userId);
-        return userHabitId;
+        return createUserHabit(reqDto, validStartDt, habitInfo, userId);
+    }
+
+
+
+    private void validateRequest(HabitCreateRequestDto reqDto) {
+        HabitCategory habitCategory = HabitCategory.fromValue(reqDto.getHabitCategory().intValue());
+        if (habitCategory == HabitCategory.NONE) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
     }
 
     private Long createUserHabit(HabitCreateRequestDto reqDto, LocalDateTime validStartDt, HabitCreationInfo habitInfo, Long userId) {

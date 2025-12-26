@@ -4,7 +4,6 @@ import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import com.jangjak.chagok.habit.enums.CheckMethodType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,12 +29,12 @@ public class CheckMethodDetail {
     @Column(nullable = false)
     private LocalDateTime validStartAt;
 
-    public static CheckMethodDetail.Build builder() {
-        return new CheckMethodDetail.Build();
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public static class Build {
-        private Long checkMethodId = null;
+    public static class Builder {
+        private Long checkMethodId;
         private CheckMethodType type;
         private String value;
         private Long methodOrder;
@@ -51,27 +50,32 @@ public class CheckMethodDetail {
             );
         }
 
-        public Build type(CheckMethodType type) {
+        public Builder checkMethodId(Long checkMethodId) {
+            this.checkMethodId = checkMethodId;
+            return this;
+        }
+
+        public Builder type(CheckMethodType type) {
             this.type = type;
             return this;
         }
 
-        public Build value(String value) {
+        public Builder value(String value) {
             this.value = value;
             return this;
         }
 
-        public Build methodOrder(Long methodOrder) {
+        public Builder methodOrder(Long methodOrder) {
             this.methodOrder = methodOrder;
             return this;
         }
 
-        public Build validStartAt(LocalDateTime validStartAt) {
+        public Builder validStartAt(LocalDateTime validStartAt) {
             this.validStartAt = validStartAt;
             return this;
         }
 
-        public Build validEndAt(LocalDateTime validEndAt) {
+        public Builder validEndAt(LocalDateTime validEndAt) {
             this.validEndAt = validEndAt;
             return this;
         }

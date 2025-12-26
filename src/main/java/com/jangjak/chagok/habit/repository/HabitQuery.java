@@ -26,7 +26,7 @@ public class HabitQuery {
     private final CheckMethodRepository checkMethodRepository;
 
     public Habit getHabitById(Long habitId) {
-        return habitRepository.findById(habitId)
+        return habitRepository.findByIdHabitId(habitId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 

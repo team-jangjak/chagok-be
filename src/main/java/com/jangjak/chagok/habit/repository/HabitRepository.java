@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface HabitRepository extends JpaRepository<Habit, Long> {
     Optional<Habit> findByIdHabitIdAndIsTemplate(Long id, YN isTemplate);
+
+    Optional<Habit> findByIdHabitId(Long habitId);
 }
