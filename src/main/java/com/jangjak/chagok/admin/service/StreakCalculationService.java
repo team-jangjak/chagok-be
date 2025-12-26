@@ -25,7 +25,7 @@ public class StreakCalculationService {
         log.info("userId: {}", userId);
         // 현재 UserStreak 정보
         UserStreak currentStreak = userStreakRepository.findById(userId)
-            .orElseGet(() -> new UserStreak(userId, 0, YN.N, null));
+                .orElseGet(() -> new UserStreak(userId, 0, YN.N, null));
 
         // 유저의 액션 타임라인 조회
         List<DateSuccess> timeline = userActionImpl.findUserActionTimeline(userId, batchDate);
@@ -51,16 +51,21 @@ public class StreakCalculationService {
 
             if (todayFailed) {
                 if (currentStreak.getIsFreeze() == YN.Y) {
+                    finalStreak = currentStreak.getStreak();
                     finalIsFreeze = YN.N;
                 } else {
                     finalStreak = 0;
                     finalIsFreeze = YN.N;
                 }
             } else {
+                // 오늘 성공
+                finalStreak = naturalStreak;
                 finalIsFreeze = YN.N;
             }
         } else {
-
+            // 오늘 액션 없음 → streak 계산 반영, freeze 유지
+            finalStreak = naturalStreak;
+            finalIsFreeze = currentStreak.getIsFreeze();
         }
 
         currentStreak.updateStreak(finalStreak, finalIsFreeze);

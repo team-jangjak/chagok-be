@@ -29,11 +29,10 @@ public class UserActionRepositoryImpl implements UserActionRepositoryCustom {
                         Expressions.cases()
                                 .when(userAction.isCompleted.eq(YN.Y)).then(1)
                                 .otherwise(0)
-                                .max().eq(1).as("isSuccess")
+                                .min().eq(1).as("isSuccess")
                 ))
                 .from(userAction)
-                .join(userAction).on(userAction.userHabitId.eq(userHabit.id))
-
+                .join(userHabit).on(userAction.userHabitId.eq(userHabit.userHabitId))
                 .where(
                         userHabit.userId.eq(userId),
                         userHabit.state.eq(HabitState.IN_PROGRESS), // 진행 중인 습관만
