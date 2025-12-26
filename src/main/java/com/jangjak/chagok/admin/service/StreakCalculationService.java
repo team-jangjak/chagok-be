@@ -2,7 +2,7 @@ package com.jangjak.chagok.admin.service;
 
 import com.jangjak.chagok.admin.dto.DateSuccess;
 import com.jangjak.chagok.admin.entity.UserStreak;
-import com.jangjak.chagok.admin.repository.QueryRepository;
+import com.jangjak.chagok.admin.repository.UserActionQueryRepository;
 import com.jangjak.chagok.admin.repository.UserStreakRepository;
 import com.jangjak.chagok.common.enums.YN;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StreakCalculationService {
 
-    private final QueryRepository queryRepository;
+    private final UserActionQueryRepository userActionQueryRepository;
     private final UserStreakRepository userStreakRepository;
 
     // 배치 Processor에서 호출
@@ -31,7 +31,7 @@ public class StreakCalculationService {
                 .orElseGet(() -> new UserStreak(userId, 0, YN.N, null,null));
 
         // 유저의 액션 타임라인 조회
-        List<DateSuccess> timeline = queryRepository.findUserActionTimeline(userId, batchDate);
+        List<DateSuccess> timeline = userActionQueryRepository.findUserActionTimeline(userId, batchDate);
 
         // TODO 수정해야함 (freeze 사용 여부 확인)
         // Streak 계산 (최근 날짜부터 연속 성공 횟수)
@@ -74,7 +74,7 @@ public class StreakCalculationService {
             .orElseGet(() -> new UserStreak(userId, 0, YN.N, null, null));
 
         // 해당 date의 전체 성공 여부 확인
-        Optional<DateSuccess> status = queryRepository.findUserActionStatusByDate(userId, date);
+        Optional<DateSuccess> status = userActionQueryRepository.findUserActionStatusByDate(userId, date);
 
         if (status.isPresent() && status.get().isSuccess()) {
             // 성공: 스트릭 증가

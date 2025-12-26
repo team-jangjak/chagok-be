@@ -18,7 +18,7 @@ import static com.jangjak.chagok.habit.entity.QUserHabit.userHabit;
 
 @Repository
 @RequiredArgsConstructor
-public class QueryRepository {
+public class UserActionQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     public List<DateSuccess> findUserActionTimeline(Long userId, LocalDate date) {
