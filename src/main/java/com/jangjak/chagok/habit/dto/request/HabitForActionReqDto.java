@@ -26,6 +26,7 @@ public class HabitForActionReqDto {
 //    @Schema(description = "인증 방식(사진/이미지 | 글 작성)", example = "이미지")
 //    private String verificationMethod;
 
+    @Builder.Default
     @Schema(description = "목표 기간", example = "8")
     private Integer weeksCount = 8;     // 기본 8주
 

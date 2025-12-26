@@ -79,7 +79,7 @@ public class TemplateHabitCreation implements HabitCreation {
         // UserAction 생성 및 저장
         List<UserAction> userActions = new ArrayList<>();
         for (int i = 0; i < requestActions.size(); i++) {
-            Long actionId = actions.get(i).getActionId();
+            Long actionId = actions.get(i).getId().getActionId();
             LocalDate actionDate = requestActions.get(i).getActionDate();
 
             // actionId가 실제로 존재하는지

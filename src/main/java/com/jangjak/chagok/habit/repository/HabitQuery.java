@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,8 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
+    private final QueryRepository queryRepository;
 
     public Habit getHabitById(Long habitId) {
         return habitRepository.findById(habitId)
@@ -56,7 +57,7 @@ public class HabitQuery {
 //    }
 
     public boolean isUserCheckMethod(Long userId, List<Long> checkMethodIdList) {
-        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByCheckMethodIdIn(checkMethodIdList);
+        List<CheckMethod> methodList = checkMethodRepository.getCheckMethodsByIdCheckMethodIdIn(checkMethodIdList);
         for (CheckMethod method : methodList) {
             if (!method.getUserId().equals(userId)) {
                 return false;
@@ -72,7 +73,6 @@ public class HabitQuery {
 //    public List<PopularCategoryDto> getPopularHabitCategory() {
 //        return popularHabitCategoryRepository.findAllWithCategoryName();
 //    }
-
     public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState) {
         return userHabitRepository.findByUserIdAndState(userId, habitState);
     }
@@ -86,12 +86,12 @@ public class HabitQuery {
     }
 
     public boolean isTemplateHabit(Long habitId) {
-        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).isPresent();
+        return habitRepository.findByIdHabitIdAndIsTemplate(habitId, YN.Y).isPresent();
     }
 
     // 일치하는 Habit이 없다면 null 반환
     public Habit getTemplateHabit(Long habitId) {
-        return habitRepository.findByHabitIdAndIsTemplate(habitId, YN.Y).orElse(null);
+        return habitRepository.findByIdHabitIdAndIsTemplate(habitId, YN.Y).orElse(null);
     }
 
     public List<ProgressRateInfo> findProgressRates(List<Long> userHabitIds, YN isCompleted) {
@@ -127,5 +127,10 @@ public class HabitQuery {
         return actionRepository.existsByCheckMethodId(checkMethodId);
     }
 
+
+    public Action findActionById(Long actionId, LocalDateTime createdAt) {
+        return queryRepository.findByActionIdAndCreatedAt(actionId, createdAt)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 
 }

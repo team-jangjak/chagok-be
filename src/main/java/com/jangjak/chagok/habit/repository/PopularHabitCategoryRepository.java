@@ -1,11 +1,7 @@
 package com.jangjak.chagok.habit.repository;
 
-import com.jangjak.chagok.habit.dto.value.PopularCategoryDto;
 import com.jangjak.chagok.habit.entity.PopularHabitCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface PopularHabitCategoryRepository extends JpaRepository<PopularHabitCategory, Long> {
 //    @Query("""
