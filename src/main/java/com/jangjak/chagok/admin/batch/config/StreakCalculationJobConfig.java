@@ -1,7 +1,7 @@
 package com.jangjak.chagok.admin.batch.config;
 
 import com.jangjak.chagok.admin.entity.Streak;
-import com.jangjak.chagok.admin.repository.UserStreakRepository;
+import com.jangjak.chagok.admin.repository.StreakRepository;
 import com.jangjak.chagok.admin.service.StreakCalculationService;
 import com.jangjak.chagok.habit.enums.HabitState;
 import jakarta.persistence.EntityManagerFactory;
@@ -32,7 +32,7 @@ public class StreakCalculationJobConfig {
     private final PlatformTransactionManager transactionManager;
     private final EntityManagerFactory entityManagerFactory;
     private final StreakCalculationService streakCalculationService;
-    private final UserStreakRepository userStreakRepository;
+    private final StreakRepository streakRepository;
 
     private static final int CHUNK_SIZE = 10;
 
@@ -86,7 +86,7 @@ public class StreakCalculationJobConfig {
         // 어제 기준으로 실패한 사람들을 찾아 초기화
         return userId -> {
             streakCalculationService.updateStreak(userId, LocalDate.now().minusDays(1));
-            return userStreakRepository.findById(userId).orElse(null);
+            return streakRepository.findById(userId).orElse(null);
         };
     }
 

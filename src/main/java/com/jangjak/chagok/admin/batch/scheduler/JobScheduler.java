@@ -22,16 +22,9 @@ public class JobScheduler {
     private final Job streakCalculationJob;
 
 //    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정
-    @Scheduled(fixedDelay = 100000) // 테스트용
+    @Scheduled(fixedDelay = 500000) // 테스트용
     public void runJob() throws Exception {
         LocalDate baseDate = LocalDate.now().minusDays(1); // 어제 기준
-
-        // 인기 카테고리 Job
-        JobParameters categoryParams = new JobParametersBuilder()
-                .addLong("timestamp", System.currentTimeMillis()) // 중복 실행 방지
-                .toJobParameters();
-
-        jobLauncher.run(updatePopularCategoriesJob, categoryParams);
 
         // 사용자 수행률 Job
         JobParameters statsParams = new JobParametersBuilder()

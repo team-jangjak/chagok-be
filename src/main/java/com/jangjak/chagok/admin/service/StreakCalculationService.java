@@ -3,7 +3,7 @@ package com.jangjak.chagok.admin.service;
 import com.jangjak.chagok.admin.dto.DateSuccess;
 import com.jangjak.chagok.admin.entity.Streak;
 import com.jangjak.chagok.admin.repository.UserActionQueryRepository;
-import com.jangjak.chagok.admin.repository.UserStreakRepository;
+import com.jangjak.chagok.admin.repository.StreakRepository;
 import com.jangjak.chagok.common.enums.YN;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,15 +21,15 @@ import java.util.Optional;
 public class StreakCalculationService {
 
     private final UserActionQueryRepository userActionQueryRepository;
-    private final UserStreakRepository userStreakRepository;
+    private final StreakRepository streakRepository;
 
     // 배치 Processor에서 호출
     // streak 전체 계산: 현재는 사용하지 않지만 혹시 몰라 두겠습니다..
     public Streak allCalculate(Long userId, LocalDate batchDate) {
         log.info("userId: {}", userId);
         // 현재 UserStreak 정보
-        Streak currentStreak = userStreakRepository.findById(userId)
-                .orElseGet(() -> new Streak(userId, 0, YN.N, null,null));
+        Streak currentStreak = streakRepository.findById(userId)
+                .orElseGet(() -> new Streak(userId, 0, YN.N, null, null));
 
         // 유저의 액션 타임라인 조회
         List<DateSuccess> timeline = userActionQueryRepository.findUserActionTimeline(userId, batchDate);
@@ -70,11 +71,20 @@ public class StreakCalculationService {
 
     @Transactional
     public void updateStreak(Long userId, LocalDate date) {
-        Streak streak = userStreakRepository.findById(userId)
-            .orElseGet(() -> new Streak(userId, 0, YN.N, null, null));
+        log.info("userId: {}", userId);
+
+        Optional<Streak> optionalStreak = streakRepository.findById(userId);
+
+        // 새로운 유저는 새로 생성 후 저장
+        Streak streak = optionalStreak.orElseGet(() -> {
+            Streak newStreak = new Streak(userId, 0, YN.N, null, LocalDateTime.now());
+            return streakRepository.save(newStreak);
+        });
 
         // 해당 date의 전체 성공 여부 확인
         Optional<DateSuccess> status = userActionQueryRepository.findUserActionStatusByDate(userId, date);
+
+        log.info("어제 결과: {}", status);
 
         if (status.isPresent() && status.get().isSuccess()) {
             // 성공: 스트릭 증가
