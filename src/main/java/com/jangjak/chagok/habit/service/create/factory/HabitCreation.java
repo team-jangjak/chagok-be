@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.service.creation.factory;
+package com.jangjak.chagok.habit.service.create.factory;
 
 import com.jangjak.chagok.habit.dto.request.create2.HabitCreateRequestDto;
 import com.jangjak.chagok.habit.dto.value.HabitCreationInfo;

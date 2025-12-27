@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.service.creation;
+package com.jangjak.chagok.habit.service.create;
 
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
@@ -12,8 +12,8 @@ import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.mapper.UserActionMapper;
 import com.jangjak.chagok.habit.mapper.UserHabitMapper;
 import com.jangjak.chagok.habit.repository.HabitQuery;
-import com.jangjak.chagok.habit.service.creation.factory.HabitCreation;
-import com.jangjak.chagok.habit.service.creation.factory.HabitCreationFactory;
+import com.jangjak.chagok.habit.service.create.factory.HabitCreation;
+import com.jangjak.chagok.habit.service.create.factory.HabitCreationFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +65,7 @@ public class HabitCreateService {
     }
 
 
-
+    // 요청값 검증
     private void validateRequest(HabitCreateRequestDto reqDto) {
         // 카테고리가 실제로 존재하는 지 검증
         HabitCategory habitCategory = HabitCategory.fromValue(reqDto.getHabitCategory().intValue());
@@ -74,6 +74,7 @@ public class HabitCreateService {
         }
     }
 
+    // 사용자 습관 생성
     private Long createUserHabit(HabitCreateRequestDto reqDto, HabitCreationInfo habitInfo, Long userId) {
         // 오래된 순 actionDto 정렬
         List<ActionCreateRequestDto> requestActions = reqDto.getActions().stream()

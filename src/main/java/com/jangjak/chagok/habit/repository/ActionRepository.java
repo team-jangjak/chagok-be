@@ -24,4 +24,14 @@ public interface ActionRepository extends JpaRepository<Action, Long> {
             @Param("habitId") Long habitId
     );
     boolean existsByCheckMethodId(Long checkMethodId);
+
+    @Query(
+            value = """
+                UPDATE action
+                SET valid_end_at = :validStDt
+                WHERE habit_id = :habitId
+                AND valid_end_at = :max
+            """, nativeQuery = true
+    )
+    void expireActions(Long habitId, LocalDateTime validStDt, LocalDateTime max);
 }
