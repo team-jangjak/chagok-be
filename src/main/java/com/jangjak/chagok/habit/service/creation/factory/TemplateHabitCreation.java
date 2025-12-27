@@ -22,7 +22,7 @@ public class TemplateHabitCreation implements HabitCreation {
     @Override
     public HabitCreationInfo createHabit(HabitCreateRequestDto reqDto, LocalDateTime now) {
         Long habitId = reqDto.getTemplateHabitId();
-        List<Action> actionList = habitQuery.getActionsByHabitId(habitId);
+        List<Action> actionList = habitQuery.getActionsByHabitId(now, habitId);
 
         // Action 개수 검증
         if (reqDto.getActions().size() != actionList.size()) {

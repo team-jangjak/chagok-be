@@ -31,8 +31,8 @@ public class HabitQuery {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 
-    public List<Action> getActionsByHabitId(Long habitId) {
-        return actionRepository.getActionsByHabitId(habitId);
+    public List<Action> getActionsByHabitId(LocalDateTime now, Long habitId) {
+        return actionRepository.getActionsByHabitId(now, habitId);
     }
 
     public Long saveUserHabit(UserHabit userHabit) {

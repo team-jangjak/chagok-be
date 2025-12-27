@@ -41,6 +41,13 @@ public class HabitCreateService {
     private final HabitCreationFactory creationFactory;
     private final HabitQuery habitQuery;
 
+    /**
+     * 습관 생성 (new, modify, template)
+     *
+     * @param userId Token에서 가져온 userId
+     * @param reqDto 습관 생성 공통 요청 데이터
+     * @return userHabitId
+     */
     @Transactional
     public Long createHabit(Long userId, HabitCreateRequestDto reqDto) {
         // 유효 시작 시간 설정
@@ -54,19 +61,20 @@ public class HabitCreateService {
         HabitCreationInfo habitInfo = manager.createHabit(reqDto, validStartDt);
 
         // 사용자 습관/행위 생성
-        return createUserHabit(reqDto, validStartDt, habitInfo, userId);
+        return createUserHabit(reqDto, habitInfo, userId);
     }
 
 
 
     private void validateRequest(HabitCreateRequestDto reqDto) {
+        // 카테고리가 실제로 존재하는 지 검증
         HabitCategory habitCategory = HabitCategory.fromValue(reqDto.getHabitCategory().intValue());
         if (habitCategory == HabitCategory.NONE) {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
     }
 
-    private Long createUserHabit(HabitCreateRequestDto reqDto, LocalDateTime validStartDt, HabitCreationInfo habitInfo, Long userId) {
+    private Long createUserHabit(HabitCreateRequestDto reqDto, HabitCreationInfo habitInfo, Long userId) {
         // 오래된 순 actionDto 정렬
         List<ActionCreateRequestDto> requestActions = reqDto.getActions().stream()
                 .sorted(Comparator.comparing(ActionCreateRequestDto::getActionDate))
