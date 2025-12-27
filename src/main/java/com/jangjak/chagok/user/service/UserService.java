@@ -1,6 +1,7 @@
 package com.jangjak.chagok.user.service;
 
 import com.jangjak.chagok.common.dto.TokenUserInfo;
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.common.jwt.CookieUtil;
@@ -62,6 +63,8 @@ public class UserService {
                 .birthDate(userReqDto.getBirthDate())
                 .tendency(userReqDto.getTendency())
                 .gender(GENDER.from(userReqDto.getGender()))
+                .active(YN.Y)
+                .point(0L)
                 .build();
 
         userRepository.save(user);
@@ -133,6 +136,9 @@ public class UserService {
                 .birthDate(user.getBirthDate())
                 .profileImage(user.getProfileImage())
                 .tendency(user.getTendency())
+                .gender(user.getGender())
+                .active(user.getActive())
+                .point(user.getPoint())
                 .build();
     }
 

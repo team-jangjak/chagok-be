@@ -77,7 +77,12 @@ public class UserHabitStatsItemWriter implements ItemWriter<User> {
 
             avgProgress = Math.round(avgProgress * 10) / 10.0;  // 소수점 첫째 자리
 
-            UserHabitStats stats = UserHabitStats.create(user.getUserId(), habitCount, avgProgress);
+            UserHabitStats stats = UserHabitStats.builder()
+                    .userId(user.getUserId())
+                    .habitCount(habitCount)
+                    .avgProgress(avgProgress)
+                    .build();
+
             userHabitStatsList.add(stats);
         }
 

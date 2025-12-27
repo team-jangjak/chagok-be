@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,8 @@ public class HabitQuery {
     private final ActionRepository actionRepository;
     private final UserHabitRepository userHabitRepository;
     private final UserActionRepository userActionRepository;
-//    private final PopularHabitCategoryRepository popularHabitCategoryRepository;
     private final CheckMethodRepository checkMethodRepository;
+    private final QueryRepository queryRepository;
 
     public Habit getHabitById(Long habitId) {
         return habitRepository.findByIdHabitId(habitId)
@@ -72,7 +73,6 @@ public class HabitQuery {
 //    public List<PopularCategoryDto> getPopularHabitCategory() {
 //        return popularHabitCategoryRepository.findAllWithCategoryName();
 //    }
-
     public List<UserHabit> findByUserIdAndState(Long userId, HabitState habitState) {
         return userHabitRepository.findByUserIdAndState(userId, habitState);
     }
@@ -127,5 +127,10 @@ public class HabitQuery {
         return actionRepository.existsByCheckMethodId(checkMethodId);
     }
 
+
+    public Action findActionById(Long actionId, LocalDateTime createdAt) {
+        return queryRepository.findByActionIdAndCreatedAt(actionId, createdAt)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 
 }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ActionVerifyRepository extends JpaRepository<ActionVerify, Long> {
-    Optional<ActionVerify> getActionVerifyByUserActionId(Long userActionId);
+    Boolean existsByUserActionId(Long userActionId);
 }
