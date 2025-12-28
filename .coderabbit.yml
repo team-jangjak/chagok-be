@@ -1,0 +1,9 @@
+language: "ko-KR"
+reviews:
+  profile: "chill"              # 리뷰 톤
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
