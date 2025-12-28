@@ -6,7 +6,6 @@ import com.jangjak.chagok.habit.dto.request.update.HabitUpdateRequestDto;
 import com.jangjak.chagok.habit.entity.Habit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 

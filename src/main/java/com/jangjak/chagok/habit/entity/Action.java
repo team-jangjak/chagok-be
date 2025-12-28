@@ -47,7 +47,7 @@ public class Action extends BaseTimeEntity {
         private String content;
         private Integer freqSeq;
         private LocalDateTime validStartAt;
-        private LocalDateTime validEndAt;
+        private LocalDateTime validEndAt = LocalDateTime.MAX;
 
         public Action build() {
             return new Action(

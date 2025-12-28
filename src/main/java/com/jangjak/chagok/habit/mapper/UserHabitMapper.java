@@ -20,7 +20,7 @@ public class UserHabitMapper {
                 .startDate(reqDto.getHabitStartDate())   // 습관 시작일
                 .endDate(reqDto.getHabitEndDate())       // 습관 종료일
                 .isPublic(reqDto.getIsPublic() ? YN.Y : YN.N)
-                .state(!LocalDate.now(ZoneId.of("Asia/Seoul")).isAfter(reqDto.getHabitStartDate()) ? HabitState.IN_PROGRESS : HabitState.PENDING)
+                .state(!LocalDate.now(ZoneId.of("Asia/Seoul")).isAfter(reqDto.getHabitStartDate()) ? HabitState.PENDING : HabitState.IN_PROGRESS)
                 .build();
     }
 }

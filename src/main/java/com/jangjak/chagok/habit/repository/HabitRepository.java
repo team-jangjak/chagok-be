@@ -3,6 +3,7 @@ package com.jangjak.chagok.habit.repository;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.entity.Habit;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public interface HabitRepository extends JpaRepository<Habit, Long> {
 
     Optional<Habit> findByIdHabitId(Long habitId);
 
+    @Modifying
     @Query(value = """
         UPDATE habit
         SET valid_end_at = :validStDt

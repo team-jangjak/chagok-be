@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -26,7 +27,7 @@ public class HabitUpdateService {
 
     @Transactional
     public Long updateHabit(Long userId, HabitUpdateRequestDto reqDto) {
-        LocalDateTime validStDt = LocalDateTime.now();
+        LocalDateTime validStDt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
         // 기존 습관 조회 및 만료
         // TODO : 내가 만든 습관이 아니라면 수정이 불가능해야함.
@@ -35,11 +36,12 @@ public class HabitUpdateService {
 
         // 이미지 관련 변경사항 처리
         if (reqDto.getHabitImage() != null) {
+            // 새로운 이미지 등록
+            String imageUrl = s3ImageService.registerImage(reqDto.getHabitImage());
+
             // 기존 이미지 삭제
             s3ImageService.deleteImage(existing.getImage());
 
-            // 새로운 이미지 등록
-            String imageUrl = s3ImageService.registerImage(reqDto.getHabitImage());
             reqDto.setHabitImage(imageUrl);
         }
 

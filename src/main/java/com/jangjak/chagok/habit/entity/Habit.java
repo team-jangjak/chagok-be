@@ -57,7 +57,7 @@ public class Habit extends BaseTimeEntity {
         private Integer freqCount;
         private String image;
         private LocalDateTime validStartAt;
-        private LocalDateTime validEndAt;
+        private LocalDateTime validEndAt = LocalDateTime.MAX;
         private YN isTemplate;
 
         Builder() {}

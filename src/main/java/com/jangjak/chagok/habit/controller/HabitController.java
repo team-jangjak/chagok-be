@@ -20,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -70,16 +70,15 @@ public class HabitController implements HabitControllerDocs {
      * 습관 삭제
      * 영구 삭제가 아닌 유효기간 만료를 통한 삭제
      * @param userInfo 토큰에서 받아온 값
-     * @param reqDto 습관 삭제 DTO
      * @return habitId
      */
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteHabit(
             @AuthenticationPrincipal TokenUserInfo userInfo,
-            @Valid @RequestBody HabitDeleteRequestDto reqDto
+            @PathVariable Long habitId
     ) {
-       habitDeleteService.deleteHabit(userInfo.getId(), reqDto);
-       return CommonResponse.toRes(reqDto.getId(), "습관이 성공적으로 삭제되었습니다.");
+       habitDeleteService.deleteHabit(userInfo.getId(), habitId);
+       return CommonResponse.toRes(habitId, "습관이 성공적으로 삭제되었습니다.");
     }
 
     /**

@@ -17,9 +17,8 @@ public class HabitDeleteService {
     private final HabitQuery habitQuery;
 
     @Transactional
-    public void deleteHabit(Long userId, HabitDeleteRequestDto reqDto) {
+    public void deleteHabit(Long userId, Long habitId) {
         LocalDateTime validStDt = LocalDateTime.now();
-        Long habitId = reqDto.getId();
 
         // 습관 만료
         // TODO : 본인의 습관이 맞는 지 확인

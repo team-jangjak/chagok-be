@@ -76,6 +76,10 @@ public class HabitCreateService {
 
     // 사용자 습관 생성
     private Long createUserHabit(HabitCreateRequestDto reqDto, HabitCreationInfo habitInfo, Long userId) {
+        // UserHabit을 DB에 저장하고 생성된 ID 반환
+        UserHabit userHabit = UserHabitMapper.toEntity(habitInfo, userId, reqDto);
+        Long userHabitId = habitQuery.saveUserHabit(userHabit);
+
         // 오래된 순 actionDto 정렬
         List<ActionCreateRequestDto> requestActions = reqDto.getActions().stream()
                 .sorted(Comparator.comparing(ActionCreateRequestDto::getActionDate))
@@ -86,9 +90,7 @@ public class HabitCreateService {
                 .sorted(Comparator.comparing(action -> action.getSequence() * 1000 + action.getFreqSeq()))
                 .toList();
 
-        // UserHabit을 DB에 저장하고 생성된 ID 반환
-        UserHabit userHabit = UserHabitMapper.toEntity(habitInfo, userId, reqDto);
-        Long userHabitId = habitQuery.saveUserHabit(userHabit);
+        if (requestActions.size() != actions.size()) throw new CustomException(ErrorCode.BAD_REQUEST);
 
         // UserAction 생성 및 저장
         List<UserAction> userActions = new ArrayList<>();

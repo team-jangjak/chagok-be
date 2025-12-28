@@ -39,7 +39,7 @@ public class CheckMethodDetail {
         private String value;
         private Long methodOrder;
         private LocalDateTime validStartAt;
-        private LocalDateTime validEndAt;
+        private LocalDateTime validEndAt = LocalDateTime.MAX;
 
         public CheckMethodDetail build() {
             return new CheckMethodDetail(

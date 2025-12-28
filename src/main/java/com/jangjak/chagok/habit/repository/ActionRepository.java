@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.habit.entity.Action;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -25,6 +26,7 @@ public interface ActionRepository extends JpaRepository<Action, Long> {
     );
     boolean existsByCheckMethodId(Long checkMethodId);
 
+    @Modifying
     @Query(
             value = """
                 UPDATE action
