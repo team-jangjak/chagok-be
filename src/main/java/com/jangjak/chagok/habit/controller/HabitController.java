@@ -75,7 +75,7 @@ public class HabitController implements HabitControllerDocs {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteHabit(
             @AuthenticationPrincipal TokenUserInfo userInfo,
-            @PathVariable Long habitId
+            @PathVariable(name = "id") Long habitId
     ) {
        habitDeleteService.deleteHabit(userInfo.getId(), habitId);
        return CommonResponse.toRes(habitId, "습관이 성공적으로 삭제되었습니다.");
