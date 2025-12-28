@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table
 @Getter
-@Builder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,4 +43,82 @@ public class Habit extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime validStartAt;
 
+
+    public static Habit.Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long habitId = null;
+        private Long category;
+        private String title;
+        private Integer frequency;
+        private Integer freqUnit;
+        private Integer freqCount;
+        private String image;
+        private LocalDateTime validStartAt;
+        private LocalDateTime validEndAt = LocalDateTime.MAX;
+        private YN isTemplate;
+
+        Builder() {}
+
+        public Builder category(Long category) {
+            this.category = category;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder frequency(Integer frequency) {
+            this.frequency = frequency;
+            return this;
+        }
+
+        public Builder freqUnit(Integer freqUnit) {
+            this.freqUnit = freqUnit;
+            return this;
+        }
+
+        public Builder freqCount(Integer freqCount) {
+            this.freqCount = freqCount;
+            return this;
+        }
+
+        public Builder image(String image) {
+            this.image = image;
+            return this;
+        }
+
+        public Builder validStartAt(LocalDateTime validStartAt) {
+            this.validStartAt = validStartAt;
+            return this;
+        }
+
+        public Builder validEndAt(LocalDateTime validEndAt) {
+            this.validEndAt = validEndAt;
+            return this;
+        }
+
+        public Builder isTemplate(YN isTemplate) {
+            this.isTemplate = isTemplate;
+            return this;
+        }
+
+        public Habit build() {
+            return new Habit(
+                    new HabitCompositeKey(habitId, validEndAt),
+                    category,
+                    title,
+                    frequency,
+                    freqUnit,
+                    freqCount,
+                    image,
+                    isTemplate,
+                    validStartAt
+            );
+        }
+    }
 }

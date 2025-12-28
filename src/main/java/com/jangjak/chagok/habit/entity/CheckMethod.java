@@ -32,4 +32,45 @@ public class CheckMethod extends BaseTimeEntity {
     public void updateTitle(String title) {
         this.title = title;
     }
+
+    public static CheckMethod.Builder builder() {
+        return new CheckMethod.Builder();
+    }
+
+    public static class Builder {
+        private Long checkMethodId = null;
+        private Long userId;
+        private String title;
+        private LocalDateTime validStartAt;
+        private LocalDateTime validEndAt;
+
+        public CheckMethod build() {
+            return new CheckMethod(
+                    new CheckMethodCompositeKey(checkMethodId, validEndAt),
+                    userId,
+                    title,
+                    validStartAt
+            );
+        }
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder validStartAt(LocalDateTime validStartAt) {
+            this.validStartAt = validStartAt;
+            return this;
+        }
+
+        public Builder validEndAt(LocalDateTime validEndAt) {
+            this.validEndAt = validEndAt;
+            return this;
+        }
+    }
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +28,12 @@ public class HabitQuery {
     private final QueryRepository queryRepository;
 
     public Habit getHabitById(Long habitId) {
-        return habitRepository.findById(habitId)
+        return habitRepository.findByIdHabitId(habitId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 
-    public List<Action> getActionsByHabitId(Long habitId) {
-        return actionRepository.getActionsByHabitId(habitId);
+    public List<Action> getActionsByHabitId(LocalDateTime now, Long habitId) {
+        return actionRepository.getActionsByHabitId(now, habitId);
     }
 
     public Long saveUserHabit(UserHabit userHabit) {
@@ -133,4 +134,13 @@ public class HabitQuery {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 
+    public void expireHabit(Long habitId, LocalDateTime validStDt) {
+        LocalDateTime max = LocalDateTime.MAX;
+        habitRepository.expireHabit(habitId, validStDt, max);
+    }
+
+    public void expireActions(Long habitId, LocalDateTime validStDt) {
+        LocalDateTime max = LocalDateTime.MAX;
+        actionRepository.expireActions(habitId, validStDt, max);
+    }
 }

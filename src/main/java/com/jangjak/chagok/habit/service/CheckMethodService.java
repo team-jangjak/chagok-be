@@ -68,13 +68,8 @@ public class CheckMethodService {
         // checkMethodDetail: checkMethodId, order, type, value
         List<CheckMethodDetail> detailEntities = requestDto.getDetails().stream()
                 .map(detailDto -> CheckMethodDetail.builder()
-                        .id(
-                                CheckMethodDetailCompositeKey.builder()
-                                        .checkMethodId(savedCheckMethod.getId().getCheckMethodId())
-                                        .methodOrder(detailDto.getMethodOrder())
-                                        // TODO
-                                        .build()
-                        )
+                        .checkMethodId(savedCheckMethod.getId().getCheckMethodId())
+                        .methodOrder(detailDto.getMethodOrder())
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
                         .build())
@@ -119,12 +114,8 @@ public class CheckMethodService {
         // 새 detail 생성
         List<CheckMethodDetail> newDetails = requestDto.getDetails().stream()
                 .map(dto -> CheckMethodDetail.builder()
-                        .id(CheckMethodDetailCompositeKey.builder()
-                                .checkMethodId(checkMethodId)
-                                .methodOrder(dto.getMethodOrder())
-                                // TODO
-                                .build()
-                        )
+                        .checkMethodId(checkMethodId)
+                        .methodOrder(dto.getMethodOrder())
                         .type(dto.getType())
                         .value(dto.getValue())
                         .build())

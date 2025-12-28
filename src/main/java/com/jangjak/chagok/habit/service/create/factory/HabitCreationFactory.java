@@ -1,4 +1,4 @@
-package com.jangjak.chagok.habit.service.creation;
+package com.jangjak.chagok.habit.service.create.factory;
 
 import com.jangjak.chagok.habit.enums.HabitCreationType;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,9 @@ public class HabitCreationFactory {
     private final ModifyHabitCreation modifyHabitCreation;
     private final TemplateHabitCreation templateHabitCreation;
 
-    public HabitCreation getHabitCreation(HabitCreationType type) {
-        return switch (type) {
+    public HabitCreation getHabitCreation(Integer type) {
+        HabitCreationType habitCreationType = HabitCreationType.fromValue(type);
+        return switch (habitCreationType) {
             case NEW -> newHabitCreation;
             case MODIFY -> modifyHabitCreation;
             case TEMPLATE -> templateHabitCreation;
