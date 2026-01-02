@@ -99,10 +99,6 @@ public class HabitQuery {
         return userActionRepository.findProgressRates(userHabitIds, isCompleted);
     }
 
-    public Action findActionById(Long actionId) {
-        return actionRepository.findById(actionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-    }
-
     public UserAction getUserActionById(Long userActionId) {
         return userActionRepository.findById(userActionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
@@ -129,7 +125,7 @@ public class HabitQuery {
     }
 
 
-    public Action findActionById(Long actionId, LocalDateTime createdAt) {
+    public Action findByActionIdAndCreatedAt(Long actionId, LocalDateTime createdAt) {
         return queryRepository.findByActionIdAndCreatedAt(actionId, createdAt)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }

@@ -1,7 +1,5 @@
 package com.jangjak.chagok.habit.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
@@ -11,7 +9,6 @@ import com.jangjak.chagok.habit.dto.response.CheckMethodDetailRestDto;
 import com.jangjak.chagok.habit.dto.response.CheckMethodResDto;
 import com.jangjak.chagok.habit.dto.response.VerifyOfActionResDto;
 import com.jangjak.chagok.habit.entity.*;
-import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import com.jangjak.chagok.habit.mapper.ActionVerifyMapper;
 import com.jangjak.chagok.habit.repository.*;
 import com.jangjak.chagok.habit.service.read.HabitReadService;
@@ -39,8 +36,6 @@ public class CheckMethodService {
     private final HabitReadService habitReadService;
     private final QueryRepository queryRepository;
 
-    private final ObjectMapper objectMapper;
-
 
     /**
      * 새로운 인증 템플릿 생성
@@ -61,6 +56,8 @@ public class CheckMethodService {
         CheckMethod checkMethod = CheckMethod.builder()
                 .userId(id)
                 .title(requestDto.getTitle())
+                .validStartAt(LocalDateTime.now())
+                .validEndAt(LocalDateTime.MAX)
                 .build();
 
         CheckMethod savedCheckMethod = checkMethodRepository.save(checkMethod);
@@ -72,6 +69,8 @@ public class CheckMethodService {
                         .methodOrder(detailDto.getMethodOrder())
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
+                        .validStartAt(LocalDateTime.now())
+                        .validEndAt(LocalDateTime.MAX)
                         .build())
                 .toList();
 
@@ -81,7 +80,7 @@ public class CheckMethodService {
     }
 
     /**
-     * 인증 템플릿 전체 수정
+     * TODO: 인증 템플릿 전체 수정
      */
     @Transactional
     public Long modifyCheckMethod(Long id, Long checkMethodId, @Valid CreateCheckMethodRequestDto requestDto) {
@@ -138,7 +137,7 @@ public class CheckMethodService {
         validateActionAvailability(userAction);
 
         // action에서 checkMethodId 가져오기
-        Action actionById = habitQuery.findActionById(userAction.getActionId(), userAction.getCreatedAt());
+        Action actionById = habitQuery.findByActionIdAndCreatedAt(userAction.getActionId(), userAction.getCreatedAt());
 
         // 인증 템플릿 구조 가져오기
         CheckMethodResDto checkMethodResDto = getCheckMethodResDto(actionById.getCheckMethodId(), actionById.getCreatedAt());
@@ -172,8 +171,8 @@ public class CheckMethodService {
     }
 
     private List<ActionVerify> toEntityList(Long userActionId, Long checkMethodId,
-                                                      CheckMethodResDto checkMethodResDto,
-                                                      List<ActionVerifyRequestDto> requestDto) {
+                                            CheckMethodResDto checkMethodResDto,
+                                            List<ActionVerifyRequestDto> requestDto) {
 
         List<CheckMethodDetailRestDto> details = checkMethodResDto.getDetails();
 
@@ -203,12 +202,12 @@ public class CheckMethodService {
      */
     public CheckMethodResDto checkMethodOfAction(Long id, Long userActionId) {
         UserAction userAction = habitQuery.getUserActionById(userActionId);
-        Action actionById = habitQuery.findActionById(userAction.getActionId(), userAction.getCreatedAt());
+        Action actionById = habitQuery.findByActionIdAndCreatedAt(userAction.getActionId(), userAction.getCreatedAt());
 
         return getCheckMethodResDto(actionById.getCheckMethodId(), actionById.getCreatedAt());
     }
 
-    private CheckMethodResDto getCheckMethodResDto(Long checkMethodId, LocalDateTime createdAt) {
+    private CheckMethodResDto getCheckMethodResDto(Long checkMethodId, LocalDateTime createdAt) {  // action의 createdAt
         CheckMethod checkMethod = queryRepository.findByCheckMethodIdAndCreatedAt(checkMethodId, createdAt).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND));
 
@@ -241,39 +240,37 @@ public class CheckMethodService {
     public VerifyOfActionResDto getVerifyOfAction(Long id, Long userActionId) {
         // action content, 인증 날짜, 상세 내역
         UserAction userAction = habitReadService.validate(id, userActionId);
-        ActionVerify actionVerify = actionVerifyRepository.findById(userActionId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        List<ActionVerify> verifyList = actionVerifyRepository.findAllByUserActionId(userActionId);
 
-        // 인증 템플릿 구조 가져오기
-        Action action = habitQuery.findActionById(userAction.getActionId());
+        // 인증 방식 구조 가져오기
+        Action action = habitQuery.findByActionIdAndCreatedAt(userAction.getActionId(), userAction.getCreatedAt());
         CheckMethodResDto checkMethodResDto = getCheckMethodResDto(action.getCheckMethodId(), action.getCreatedAt());
 
-        Map<Long, String> answerMap;
-        try {
-            answerMap = objectMapper.readValue(
-                    actionVerify.getValue(),
-                    new TypeReference<Map<Long, String>>() {
-                    }
-            );
-        } catch (JsonProcessingException e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
+        log.info("조회된 인증방식: {}", checkMethodResDto);
 
-        List<CheckMethodDetailRestDto> verifyList = checkMethodResDto.getDetails().stream()
-                .sorted(Comparator.comparing(CheckMethodDetailRestDto::getMethodOrder))
-                .map(d -> CheckMethodDetailRestDto.builder()
-                        .methodOrder(d.getMethodOrder())
-                        .type(d.getType())
-                        .value(d.getValue())
-                        .answer(answerMap.get(d.getMethodOrder()))
-                        .build()
-                )
-                .toList();
+        Map<Integer, String> verifyMap = verifyList.stream()
+                .collect(Collectors.toMap(
+                        ActionVerify::getMethodOrder,
+                        ActionVerify::getValue
+                ));
+
+        List<CheckMethodDetailRestDto> detailRestDtoList =
+                checkMethodResDto.getDetails().stream()
+                        .sorted(Comparator.comparing(CheckMethodDetailRestDto::getMethodOrder))
+                        .map(detailRestDto -> CheckMethodDetailRestDto.builder()
+                                .methodOrder(detailRestDto.getMethodOrder())
+                                .type(detailRestDto.getType())
+                                .value(detailRestDto.getValue()) // 질문
+                                .answer(verifyMap.get(detailRestDto.getMethodOrder()))
+                                .build()
+                        )
+                        .toList();
 
 
         return VerifyOfActionResDto.builder()
                 .content(action.getContent())
-                .verifyDate(actionVerify.getVerifyDate())
-                .details(verifyList)
+                .verifyDate(verifyList.isEmpty() ? null : verifyList.get(0).getVerifyDate())
+                .details(detailRestDtoList)
                 .build();
     }
 }

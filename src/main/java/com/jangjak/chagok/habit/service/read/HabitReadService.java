@@ -160,7 +160,7 @@ public class HabitReadService {
     public HabitDetailResDto getHabitDetail(Long id, Long userActionId) {
         UserAction userAction = validate(id, userActionId);
 
-        Action action = habitQuery.findActionById(userAction.getActionId());
+        Action action = habitQuery.findByActionIdAndCreatedAt(userAction.getActionId(), userAction.getCreatedAt());
         Habit habit = habitQuery.getHabitById(action.getHabitId());
         CheckMethod checkMethod = checkMethodRepository.findById(action.getCheckMethodId()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND));
