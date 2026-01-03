@@ -25,6 +25,7 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                     ua.user_habit_id,
                     ua.action_date,
                     ua.delay_count,
+                    ua.created_at,
                     a."sequence"       AS action_sequence,
                     a."freq_seq"       AS action_freq_seq,
                     a."content"        AS action_content,
@@ -34,6 +35,8 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                     ) AS rn
                 FROM user_action ua
                 JOIN "action" a ON a.action_id = ua.action_id
+                AND a.valid_start_at <= ua.created_at
+                AND ua.created_at < a.valid_end_at
                 WHERE ua.user_habit_id IN (:userHabitIds)
                   AND ua.is_completed = 'N'
                   AND ua.action_date >= CURRENT_DATE

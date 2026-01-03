@@ -57,7 +57,7 @@ public class CheckMethodService {
                 .userId(id)
                 .title(requestDto.getTitle())
                 .validStartAt(LocalDateTime.now())
-                .validEndAt(LocalDateTime.MAX)
+                .validEndAt(LocalDateTime.of(9999, 12, 31, 23, 59, 59))
                 .build();
 
         CheckMethod savedCheckMethod = checkMethodRepository.save(checkMethod);
@@ -70,7 +70,7 @@ public class CheckMethodService {
                         .type(detailDto.getType())
                         .value(detailDto.getValue())
                         .validStartAt(LocalDateTime.now())
-                        .validEndAt(LocalDateTime.MAX)
+                        .validEndAt(LocalDateTime.of(9999, 12, 31, 23, 59, 59))
                         .build())
                 .toList();
 

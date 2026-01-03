@@ -46,10 +46,10 @@ public class HabitReadService {
     /**
      * 사용자 습관 대시보드 조회
      */
-    public List<HabitDashboardResDto> getHabitDashboard(Long id) {
+    public List<HabitDashboardResDto> getHabitDashboard(Long userId) {
         //habit, 시간 가장 가까운 action, user_action 정보, user_habit 가져오기
         // 진행 중인 userHabit 조회
-        List<UserHabit> userHabitList = getUserHabits(id, HabitState.IN_PROGRESS);
+        List<UserHabit> userHabitList = getUserHabits(userId, HabitState.IN_PROGRESS);
 
         if (userHabitList.isEmpty()) {
             return Collections.emptyList();
@@ -58,14 +58,29 @@ public class HabitReadService {
         List<Long> userHabitIds = userHabitList.stream().map(UserHabit::getUserHabitId).toList();
         List<Long> habitIds = userHabitList.stream().map(UserHabit::getHabitId).distinct().toList();
 
+        log.info("userHabitIds: {} habitIds: {}",userHabitIds, habitIds);
+
         // 관련된 모든 버전의 Habit을 한꺼번에 조회
         List<Habit> allHabitVersions = habitQuery.findAllByHabitId(habitIds);
         Map<Long, List<Habit>> habitVersionsByHabitId = allHabitVersions.stream()
-                .sorted(Comparator.comparing(Habit::getValidStartAt).reversed())
-                .collect(Collectors.groupingBy(h -> h.getId().getHabitId()));
+                .collect(Collectors.groupingBy(
+                        h -> h.getId().getHabitId(),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> {
+                                    list.sort(Comparator.comparing(Habit::getValidStartAt).reversed());
+                                    return list;
+                                }
+                        )
+                ));
+
+        log.info("allHabitVersions: {}",allHabitVersions);
+        log.info("habitVersionsByHabitId: {}",habitVersionsByHabitId);
 
         // 가장 가까운 action 조회
         List<ActionAndUserActionView> upcomingActions = habitQuery.findNextUpcomingPerUserHabit(userHabitIds);
+
+        log.info("upcomingActions: {}",upcomingActions);
 
         if (upcomingActions.isEmpty()) {
             return Collections.emptyList();
@@ -74,12 +89,10 @@ public class HabitReadService {
         // 진행률 계산
         Map<Long, Integer> progressRateMap = getProgressRateMap(habitQuery.findProgressRates(userHabitIds, YN.Y));
 
-
         Map<Long, UserHabit> userHabitMap = userHabitList.stream()
                 .collect(Collectors.toMap(UserHabit::getUserHabitId, Function.identity()));
 
-//        log.info("userHabitMap: {}", userHabitMap);
-
+        log.info("progressRateMap: {} userHabitMap: {}",progressRateMap, userHabitMap);
 
         return upcomingActions.stream()
                 .map(r -> {
@@ -130,10 +143,6 @@ public class HabitReadService {
 
     private List<UserHabit> getUserHabits(Long id, HabitState... states) {
         List<UserHabit> userHabitList = queryRepository.findByUserIdAndStates(id, Arrays.asList(states));
-
-        if (userHabitList.isEmpty()) {
-            throw new CustomException(ErrorCode.NOT_FOUND);
-        }
         return userHabitList;
     }
 
