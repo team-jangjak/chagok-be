@@ -277,6 +277,7 @@ public class CheckMethodService {
                 .build();
     }
 
+    @Transactional
     public void deleteCheckMethod(Long userId, Long checkMethodId) {
         LocalDateTime validStDt = LocalDateTime.now();
 
