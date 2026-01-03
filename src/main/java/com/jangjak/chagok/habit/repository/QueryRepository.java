@@ -81,7 +81,11 @@ public class QueryRepository {
                         userAction.isCompleted
                 ))
                 .from(userAction)
-                .join(action).on(action.id.actionId.eq(userAction.actionId))
+                .join(action).on(
+                        action.id.actionId.eq(userAction.actionId),
+                        action.validStartAt.loe(userAction.createdAt),
+                        action.id.validEndAt.gt(userAction.createdAt)
+                )
                 .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))
                 .where(builder)
                 .orderBy(

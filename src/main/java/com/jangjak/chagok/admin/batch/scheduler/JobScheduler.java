@@ -21,8 +21,8 @@ public class JobScheduler {
     private final Job userHabitStatsJob;
     private final Job streakCalculationJob;
 
-//    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정
-    @Scheduled(fixedDelay = 500000) // 테스트용
+    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정
+//    @Scheduled(fixedDelay = 500000) // 테스트용
     public void runJob() throws Exception {
         LocalDate baseDate = LocalDate.now().minusDays(1); // 어제 기준
 
