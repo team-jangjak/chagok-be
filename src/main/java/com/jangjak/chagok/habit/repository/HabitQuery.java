@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -78,9 +77,9 @@ public class HabitQuery {
         return userHabitRepository.findByUserIdAndState(userId, habitState);
     }
 
-    public List<Habit> findAllById(List<Long> habitIds) {
-        return habitRepository.findAllById(habitIds);
-    }
+//    public List<Habit> findAllById(List<Long> habitIds) {
+//        return habitRepository.findAllById(habitIds);
+//    }
 
     public List<ActionAndUserActionView> findNextUpcomingPerUserHabit(List<Long> userHabitIds) {
         return userActionRepository.findNextUpcomingPerUserHabit(userHabitIds);
@@ -138,5 +137,9 @@ public class HabitQuery {
     public void expireActions(Long habitId, LocalDateTime validStDt) {
         LocalDateTime max = LocalDateTime.MAX;
         actionRepository.expireActions(habitId, validStDt, max);
+    }
+
+    public List<Habit> findAllByHabitId(List<Long> habitIds) {
+        return habitRepository.findAllByIdHabitIdIn(habitIds);
     }
 }

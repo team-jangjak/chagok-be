@@ -23,11 +23,8 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                 SELECT 
                     ua.user_action_id,
                     ua.user_habit_id,
-                    ua.action_id,
                     ua.action_date,
-                    ua.is_completed,
                     ua.delay_count,
-                    a.habit_id,
                     a."sequence"       AS action_sequence,
                     a."freq_seq"       AS action_freq_seq,
                     a."content"        AS action_content,
@@ -42,24 +39,17 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
                   AND ua.action_date >= CURRENT_DATE
             )
             SELECT
-                h.freq_unit                  AS frequencyUnit,
-                b.user_action_id                         AS userActionId,   
-                b.user_habit_id              AS userHabitId,
-                h.image                      AS image,
-            
-                b.action_content             AS actionContent,
-                b.action_sequence            AS actionSequence,
-                b.action_freq_seq            AS actionFreqSeq,
-            
-                b.action_date                AS actionDate,
-                b.delay_count                AS delayCount
+                b.user_action_id,
+                b.user_habit_id,
+                b.action_content,
+                b.action_sequence,
+                b.action_freq_seq,
+                b.action_date,
+                b.delay_count
             FROM base b
-            JOIN habit h ON h.habit_id = b.habit_id
             WHERE b.rn = 1
             """, nativeQuery = true)
-    List<ActionAndUserActionView> findNextUpcomingPerUserHabit(
-            @Param("userHabitIds") List<Long> userHabitIds
-    );
+    List<ActionAndUserActionView> findNextUpcomingPerUserHabit(@Param("userHabitIds") List<Long> userHabitIds);
 
     /**
      * 습관의 진행률 조회 (총 횟수 + 완료 횟수만 반환)
@@ -80,8 +70,8 @@ public interface UserActionRepository extends JpaRepository<UserAction, Long> {
     List<ProgressRateInfo> findProgressRates(@Param("userHabitIds") List<Long> userHabitIds, @Param("isCompleted") YN isCompleted);
 
 
-
     int countByUserHabitId(Long userHabitId);
+
     int countByUserHabitIdAndIsCompleted(Long userHabitId, YN isCompleted);
 
 }

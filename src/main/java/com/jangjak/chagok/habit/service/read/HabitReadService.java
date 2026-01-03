@@ -4,6 +4,7 @@ import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.response.*;
+import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
 import com.jangjak.chagok.habit.entity.*;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,60 +48,74 @@ public class HabitReadService {
      */
     public List<HabitDashboardResDto> getHabitDashboard(Long id) {
         //habit, 시간 가장 가까운 action, user_action 정보, user_habit 가져오기
+        // 진행 중인 userHabit 조회
         List<UserHabit> userHabitList = getUserHabits(id, HabitState.IN_PROGRESS);
 
-        List<Long> userHabitIds = userHabitList.stream()
-                .map(UserHabit::getUserHabitId)
-                .toList();
+        if (userHabitList.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-        List<Long> habitIds = userHabitList.stream()
-                .map(UserHabit::getHabitId)
-                .toList();
+        List<Long> userHabitIds = userHabitList.stream().map(UserHabit::getUserHabitId).toList();
+        List<Long> habitIds = userHabitList.stream().map(UserHabit::getHabitId).distinct().toList();
 
-        log.info("UserHabitIds: {}, habitIds: {}", userHabitIds, habitIds);
+        // 관련된 모든 버전의 Habit을 한꺼번에 조회
+        List<Habit> allHabitVersions = habitQuery.findAllByHabitId(habitIds);
+        Map<Long, List<Habit>> habitVersionsByHabitId = allHabitVersions.stream()
+                .sorted(Comparator.comparing(Habit::getValidStartAt).reversed())
+                .collect(Collectors.groupingBy(h -> h.getId().getHabitId()));
 
-        // 사용자가 진행하고 있는 습관들
-        List<Habit> habitList = habitQuery.findAllById(habitIds);
+        // 가장 가까운 action 조회
+        List<ActionAndUserActionView> upcomingActions = habitQuery.findNextUpcomingPerUserHabit(userHabitIds);
 
-
-        // 방법 1. userHabitId -> habitId 맵
-        Map<Long, Long> userHabitToHabitId = userHabitList.stream()
-                .collect(Collectors.toMap(UserHabit::getUserHabitId, UserHabit::getHabitId));
-
-        Map<Long, Habit> habitMap = habitList.stream()
-                .collect(Collectors.toMap(e -> e.getId().getHabitId(), Function.identity()));
+        if (upcomingActions.isEmpty()) {
+            return Collections.emptyList();
+        }
 
         // 진행률 계산
-        List<ProgressRateInfo> rawList = habitQuery.findProgressRates(userHabitIds, YN.Y);
-        Map<Long, Integer> progressRateMap = getProgressRateMap(rawList);
+        Map<Long, Integer> progressRateMap = getProgressRateMap(habitQuery.findProgressRates(userHabitIds, YN.Y));
 
 
-//        log.info("habitMap: {}", habitMap);
+        Map<Long, UserHabit> userHabitMap = userHabitList.stream()
+                .collect(Collectors.toMap(UserHabit::getUserHabitId, Function.identity()));
 
-        return habitQuery.findNextUpcomingPerUserHabit(userHabitIds).stream()
+//        log.info("userHabitMap: {}", userHabitMap);
+
+
+        return upcomingActions.stream()
                 .map(r -> {
-                    Long habitId = userHabitToHabitId.get(r.getUserHabitId()); //userHabitId
-                    Habit h = habitMap.get(habitId);
-                    HabitCategory categoryName = HabitCategory.fromValue(h.getCategory().intValue());
-                    if (categoryName == HabitCategory.NONE) categoryName = HabitCategory.OTHER;
+                    UserHabit userHabit = userHabitMap.get(r.getUserHabitId());
+                    if (userHabit == null) return null;
+
+                    LocalDateTime createdAt = userHabit.getCreatedAt();
+                    List<Habit> versions = habitVersionsByHabitId.getOrDefault(userHabit.getHabitId(), List.of());
+
+                    Habit matchedHabit = versions.stream()
+                            .filter(h -> !createdAt.isBefore(h.getValidStartAt())
+                                         && createdAt.isBefore(h.getId().getValidEndAt()))
+                            .findFirst()
+                            .orElse(null);
+
+                    HabitCategory categoryName = HabitCategory.OTHER;
+                    if (matchedHabit != null) {
+                        categoryName = HabitCategory.fromValue(matchedHabit.getCategory().intValue());
+                        if (categoryName == HabitCategory.NONE) categoryName = HabitCategory.OTHER;
+                    }
 
                     return HabitDashboardResDto.builder()
-                            .frequencyUnit(r.getFrequencyUnit())
-                            .id(r.getUserActionId()) //userActionId
-                            .image(r.getImage())
-                            .categoryName(categoryName)
-
+                            .id(r.getUserActionId())
+                            .actionDate(r.getActionDate())
                             .actionContent(r.getActionContent())
                             .actionSequence(r.getActionSequence())
                             .actionFreqSeq(r.getActionFreqSeq())
-
-                            .actionDate(r.getActionDate())
                             .delayCount(r.getDelayCount())
-
-                            //진행률
                             .progressRate(progressRateMap.getOrDefault(r.getUserHabitId(), 0))
+                            // Habit에서 가져와야 하는 정보
+                            .frequencyUnit(matchedHabit != null ? matchedHabit.getFreqUnit() : null)
+                            .image(matchedHabit != null ? matchedHabit.getImage() : null)
+                            .categoryName(categoryName)
                             .build();
                 })
+                .filter(Objects::nonNull)
                 .toList();
 
     }

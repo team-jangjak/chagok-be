@@ -1,5 +1,6 @@
 package com.jangjak.chagok.habit.entity;
 
+import com.jangjak.chagok.common.dto.BaseTimeEntity;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.enums.HabitState;
 import jakarta.persistence.*;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table
-public class UserHabit {
+public class UserHabit extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userHabitId;
 
