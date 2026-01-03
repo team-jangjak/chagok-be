@@ -5,13 +5,9 @@ import java.time.LocalDate;
 // 읽기 전용 Projection
 public interface ActionAndUserActionView {
 
-    String getHabitTitle();
-
     Integer getFrequency();
 
     Long getHabitId();
-
-    Integer getCategoryId();
 
     // action
     Long getActionId();
@@ -26,8 +22,6 @@ public interface ActionAndUserActionView {
     String getIsCompleted();
 
     // HabitDashboardResDto
-    Integer getFrequencyUnit();
-
     String getImage();
 
     String getActionContent();
