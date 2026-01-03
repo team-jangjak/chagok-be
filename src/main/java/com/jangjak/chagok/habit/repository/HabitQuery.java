@@ -142,4 +142,9 @@ public class HabitQuery {
     public List<Habit> findAllByHabitId(List<Long> habitIds) {
         return habitRepository.findAllByIdHabitIdIn(habitIds);
     }
+
+    public Habit findByHabitIdAndCreatedAt(Long habitId, LocalDateTime createdAt) {
+        return queryRepository.findByHabitIdAndCreatedAt(habitId, createdAt)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
 }

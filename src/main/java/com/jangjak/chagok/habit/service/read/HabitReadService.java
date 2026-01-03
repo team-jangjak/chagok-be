@@ -177,8 +177,8 @@ public class HabitReadService {
         UserAction userAction = validate(id, userActionId);
 
         Action action = habitQuery.findByActionIdAndCreatedAt(userAction.getActionId(), userAction.getCreatedAt());
-        Habit habit = habitQuery.getHabitById(action.getHabitId());
-        CheckMethod checkMethod = checkMethodRepository.findById(action.getCheckMethodId()).orElseThrow(
+        Habit habit = habitQuery.findByHabitIdAndCreatedAt(action.getHabitId(), userAction.getCreatedAt());
+        CheckMethod checkMethod = queryRepository.findByCheckMethodIdAndCreatedAt(action.getCheckMethodId(), action.getCreatedAt()).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND));
 
 
