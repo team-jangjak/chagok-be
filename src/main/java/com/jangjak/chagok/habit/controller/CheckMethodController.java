@@ -57,8 +57,9 @@ public class CheckMethodController {
 
     /**
      * Action 인증
+     *
      * @return {
-     *     id : userActionId (기존 verifyId가 사라져 userActionId 반환 추후 반환값 논의 필요)
+     * id : userActionId (기존 verifyId가 사라져 userActionId 반환 추후 반환값 논의 필요)
      * }
      */
     @PostMapping("/{userActionId}")
@@ -75,5 +76,14 @@ public class CheckMethodController {
     public ResponseEntity<?> getVerifyOfAction(@AuthenticationPrincipal TokenUserInfo userInfo, @PathVariable Long userActionId) {
         VerifyOfActionResDto verifyOfAction = checkMethodService.getVerifyOfAction(userInfo.getId(), userActionId);
         return CommonResponse.toRes(verifyOfAction, "인증 내역이 조회되었습니다.");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCheckMethod(
+            @AuthenticationPrincipal TokenUserInfo userInfo,
+            @PathVariable(name = "id") Long checkMethodId
+    ) {
+        checkMethodService.deleteCheckMethod(userInfo.getId(), checkMethodId);
+        return CommonResponse.toRes(checkMethodId, "인증 방식이 성공적으로 삭제되었습니다.");
     }
 }
