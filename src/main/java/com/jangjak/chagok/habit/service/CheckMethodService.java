@@ -276,4 +276,25 @@ public class CheckMethodService {
                 .details(verifyList)
                 .build();
     }
+
+    @Transactional
+    public void deleteCheckMethod(Long userId, Long checkMethodId) {
+        LocalDateTime validStDt = LocalDateTime.now();
+
+        // 인증 방식 조회
+        CheckMethod checkMethod = checkMethodRepository.findByCheckMethodId(validStDt, checkMethodId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND)
+        );
+
+        // 사용자가 생성한 인증 방식이 맞는 지 확인
+        if (!checkMethod.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 인증 방식 만료
+        checkMethodRepository.expireCheckMethod(checkMethodId, validStDt, LocalDateTime.MAX);
+
+        // 인증 방식 세부 사항 만료
+        checkMethodDetailRepository.expireCheckMethodDetail(checkMethodId, validStDt, LocalDateTime.MAX);
+    }
 }
