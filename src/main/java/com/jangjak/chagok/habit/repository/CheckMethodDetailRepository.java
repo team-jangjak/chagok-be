@@ -7,11 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface CheckMethodDetailRepository extends JpaRepository<CheckMethodDetail, Long> {
-     List<CheckMethodDetail> findByIdCheckMethodIdOrderByIdMethodOrderAsc(Long checkMethodId);
-     void deleteAllByIdCheckMethodId(Long checkMethodId);
 
     @Modifying
     @Query(

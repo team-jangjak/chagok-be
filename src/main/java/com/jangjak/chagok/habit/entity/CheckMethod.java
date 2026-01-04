@@ -53,6 +53,11 @@ public class CheckMethod extends BaseTimeEntity {
             );
         }
 
+        public Builder checkMethodId(Long checkMethodId) {
+            this.checkMethodId = checkMethodId;
+            return this;
+        }
+
         public Builder userId(Long userId) {
             this.userId = userId;
             return this;

@@ -1,10 +1,7 @@
 package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
-import com.jangjak.chagok.habit.entity.Action;
-import com.jangjak.chagok.habit.entity.CheckMethod;
-import com.jangjak.chagok.habit.entity.CheckMethodDetail;
-import com.jangjak.chagok.habit.entity.UserHabit;
+import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -20,6 +17,7 @@ import java.util.Optional;
 
 import static com.jangjak.chagok.habit.entity.QCheckMethod.checkMethod;
 import static com.jangjak.chagok.habit.entity.QCheckMethodDetail.checkMethodDetail;
+import static com.jangjak.chagok.habit.entity.QHabit.habit;
 import static com.jangjak.chagok.habit.entity.QUserHabit.userHabit;
 import static com.jangjak.chagok.habit.entity.QUserAction.userAction;
 import static com.jangjak.chagok.habit.entity.QAction.action;
@@ -83,7 +81,11 @@ public class QueryRepository {
                         userAction.isCompleted
                 ))
                 .from(userAction)
-                .join(action).on(action.id.actionId.eq(userAction.actionId))
+                .join(action).on(
+                        action.id.actionId.eq(userAction.actionId),
+                        action.validStartAt.loe(userAction.createdAt),
+                        action.id.validEndAt.gt(userAction.createdAt)
+                )
                 .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))
                 .where(builder)
                 .orderBy(
@@ -101,7 +103,20 @@ public class QueryRepository {
                         .where(
                                 action.id.actionId.eq(actionId),
                                 action.validStartAt.loe(createdAt),
-                                action.id.validEndAt.goe(createdAt)
+                                action.id.validEndAt.gt(createdAt)
+                        )
+                        .fetchOne()
+        );
+    }
+
+    public Optional<Habit> findByHabitIdAndCreatedAt(Long habitId, LocalDateTime createdAt) {
+        return Optional.ofNullable(
+                factory
+                        .selectFrom(habit)
+                        .where(
+                                habit.id.habitId.eq(habitId),
+                                habit.validStartAt.loe(createdAt),
+                                habit.id.validEndAt.gt(createdAt)
                         )
                         .fetchOne()
         );
@@ -114,7 +129,7 @@ public class QueryRepository {
                         .where(
                                 checkMethod.id.checkMethodId.eq(checkMethodId),
                                 checkMethod.validStartAt.loe(createdAt),
-                                checkMethod.id.validEndAt.goe(createdAt)
+                                checkMethod.id.validEndAt.gt(createdAt)
                         )
                         .fetchOne()
         );
@@ -126,7 +141,7 @@ public class QueryRepository {
                 .where(
                         checkMethodDetail.id.checkMethodId.eq(checkMethodId),
                         checkMethodDetail.validStartAt.loe(createdAt),
-                        checkMethodDetail.id.validEndAt.goe(createdAt)
+                        checkMethodDetail.id.validEndAt.gt(createdAt)
                 )
                 .orderBy(checkMethodDetail.id.methodOrder.asc())
                 .fetch();

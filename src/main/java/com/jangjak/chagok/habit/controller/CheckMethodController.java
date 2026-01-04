@@ -4,6 +4,7 @@ import com.jangjak.chagok.common.dto.CommonResponse;
 import com.jangjak.chagok.common.dto.TokenUserInfo;
 import com.jangjak.chagok.habit.dto.request.create.ActionVerifyRequestDto;
 import com.jangjak.chagok.habit.dto.request.create.CreateCheckMethodRequestDto;
+import com.jangjak.chagok.habit.dto.request.update.CheckMethodUpdateRequestDto;
 import com.jangjak.chagok.habit.dto.response.CheckMethodResDto;
 import com.jangjak.chagok.habit.dto.response.VerifyOfActionResDto;
 import com.jangjak.chagok.habit.service.CheckMethodService;
@@ -36,10 +37,10 @@ public class CheckMethodController {
     /**
      * 인증 방식(check method) 수정
      */
-    @PutMapping("/modify/{checkMethodId}")
+    @PatchMapping("/modify/{checkMethodId}")
     public ResponseEntity<?> modifyCheckMethod(
             @AuthenticationPrincipal TokenUserInfo userInfo,
-            @PathVariable Long checkMethodId, @Valid @RequestBody CreateCheckMethodRequestDto requestDto) {
+            @PathVariable Long checkMethodId, @Valid @RequestBody CheckMethodUpdateRequestDto requestDto) {
         Long updatedId = checkMethodService.modifyCheckMethod(userInfo.getId(), checkMethodId, requestDto);
         return CommonResponse.toRes(updatedId, "인증 템플릿 수정이 완료되었습니다.");
     }
@@ -56,8 +57,9 @@ public class CheckMethodController {
 
     /**
      * Action 인증
+     *
      * @return {
-     *     id : userActionId (기존 verifyId가 사라져 userActionId 반환 추후 반환값 논의 필요)
+     * id : userActionId (기존 verifyId가 사라져 userActionId 반환 추후 반환값 논의 필요)
      * }
      */
     @PostMapping("/{userActionId}")
