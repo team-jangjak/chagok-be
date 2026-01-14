@@ -9,6 +9,7 @@ import com.jangjak.chagok.habit.dto.request.update.HabitUpdateRequestDto;
 import com.jangjak.chagok.habit.dto.response.CalendarViewResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDashboardResDto;
 import com.jangjak.chagok.habit.dto.response.HabitDetailResDto;
+import com.jangjak.chagok.habit.dto.value.PublicHabitInfo;
 import com.jangjak.chagok.habit.enums.HabitState;
 import com.jangjak.chagok.habit.service.create.HabitCreateService;
 import com.jangjak.chagok.habit.service.delete.HabitDeleteService;
@@ -117,5 +118,13 @@ public class HabitController implements HabitControllerDocs {
         return CommonResponse.toRes(actionDetail,"습관 상세 정보가 조회되었습니다.");
     }
 
+    /**
+     * 타인 습관 조회
+     * */
+    @GetMapping("/others")
+    public ResponseEntity<?> getOtherHabits(@AuthenticationPrincipal TokenUserInfo userInfo, @RequestParam Integer page, @RequestParam Integer size, @RequestParam String category) {
+        List<PublicHabitInfo> otherHabits = habitReadService.getOtherHabits(page, size, category);
+        return CommonResponse.toRes(otherHabits, "사랑방 습관 정보가 성공적으로 조회되었습니다.");
+    }
 
 }

@@ -5,7 +5,9 @@ import com.jangjak.chagok.common.exception.CustomException;
 import com.jangjak.chagok.common.exception.ErrorCode;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
+import com.jangjak.chagok.habit.dto.value.PublicHabitInfo;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.enums.HabitState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,5 +148,10 @@ public class HabitQuery {
     public Habit findByHabitIdAndCreatedAt(Long habitId, LocalDateTime createdAt) {
         return queryRepository.findByHabitIdAndCreatedAt(habitId, createdAt)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    public List<PublicHabitInfo> findPublicHabit(Integer page, Integer size, HabitCategory habitCategory) {
+        if (page <= 0) throw new CustomException(ErrorCode.BAD_PAGE_REQUEST);
+        return queryRepository.findPublicHabit(page, size, habitCategory);
     }
 }
