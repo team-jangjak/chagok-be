@@ -159,6 +159,7 @@ public class QueryRepository {
                 .select(
                         Projections.constructor(
                                 PublicHabitInfo.class,
+                                userHabit.userHabitId,
                                 habit.image, habit.freqCount, habit.freqUnit, habit.frequency, habit.title,
                                 userHabit.startDate, userHabit.endDate,
                                 user.name, user.profileImage
