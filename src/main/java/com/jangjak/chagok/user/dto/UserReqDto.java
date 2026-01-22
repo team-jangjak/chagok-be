@@ -40,7 +40,7 @@ public class UserReqDto {
     @NotNull(message = "성향 점수는 필수 입니다.")
     private Integer tendency;
 
-    @Schema(description = "성별", example = "MALE", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "성별", example = "M", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "성별은 필수 입니다.")
     private String gender;
 }
