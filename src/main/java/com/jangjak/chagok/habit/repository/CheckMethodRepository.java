@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.habit.entity.CheckMethod;
+import com.jangjak.chagok.habit.entity.keys.CheckMethodCompositeKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public interface CheckMethodRepository extends JpaRepository<CheckMethod, Long> {
+public interface CheckMethodRepository extends JpaRepository<CheckMethod, CheckMethodCompositeKey> {
     List<CheckMethod> getCheckMethodsByIdCheckMethodIdIn(Collection<Long> ids);
 
 
