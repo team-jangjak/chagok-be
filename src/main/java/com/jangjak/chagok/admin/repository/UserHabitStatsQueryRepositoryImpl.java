@@ -3,6 +3,7 @@ package com.jangjak.chagok.admin.repository;
 import com.jangjak.chagok.admin.dto.info.HabitProgressDto;
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.enums.HabitState;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -47,15 +48,15 @@ public class UserHabitStatsQueryRepositoryImpl implements UserHabitStatsQueryRep
                         .otherwise(0L);
 
         return queryFactory
-                .select(com.querydsl.core.types.Projections.constructor(
+                .select(Projections.constructor(
                         HabitProgressDto.class,
                         userHabit.userHabitId,                    // userHabitId
                         userHabit.userId,               // userId
                         userHabit.state,                 // habitState
                         userAction.userActionId.count(),           // totalCount
-                        totalCompleted.sum(),        // totalCompleted
-                        untilBaseCount.sum(),        // untilBaseCount
-                        untilBaseCompleted.sum()     // untilBaseCompleted
+                        totalCompleted.sumLong(),        // totalCompleted
+                        untilBaseCount.sumLong(),        // untilBaseCount
+                        untilBaseCompleted.sumLong()     // untilBaseCompleted
                 ))
                 .from(userAction)
                 .join(userHabit).on(userHabit.userHabitId.eq(userAction.userHabitId))

@@ -2,6 +2,7 @@ package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.entity.Habit;
+import com.jangjak.chagok.habit.entity.UserHabit;
 import com.jangjak.chagok.habit.entity.keys.HabitCompositeKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

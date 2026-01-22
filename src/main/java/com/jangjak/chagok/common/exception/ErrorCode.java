@@ -16,6 +16,7 @@ public enum ErrorCode {
     AI_RESPONSE_ERROR("AI 응답이 비어 있습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     AI_RESPONSE_MAPPING_ERROR("AI 계획 생성 실패: 결과가 비어 있습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     AI_REQUEST_ERROR("AI 계획 생성 중 오류 발생", HttpStatus.INTERNAL_SERVER_ERROR),
+    BAD_PAGE_REQUEST("페이징 관련 변수에 잘못된 값이 요청되었습니다.", HttpStatus.BAD_REQUEST),
     ;
 
     final String message;

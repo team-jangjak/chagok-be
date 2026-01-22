@@ -1,7 +1,10 @@
 package com.jangjak.chagok.habit.repository;
 
+import com.jangjak.chagok.common.enums.YN;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
+import com.jangjak.chagok.habit.dto.value.PublicHabitInfo;
 import com.jangjak.chagok.habit.entity.*;
+import com.jangjak.chagok.habit.enums.HabitCategory;
 import com.jangjak.chagok.habit.enums.HabitState;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -21,6 +24,7 @@ import static com.jangjak.chagok.habit.entity.QHabit.habit;
 import static com.jangjak.chagok.habit.entity.QUserHabit.userHabit;
 import static com.jangjak.chagok.habit.entity.QUserAction.userAction;
 import static com.jangjak.chagok.habit.entity.QAction.action;
+import static com.jangjak.chagok.user.entity.QUser.user;
 
 @Component
 @RequiredArgsConstructor
@@ -147,4 +151,35 @@ public class QueryRepository {
                 .fetch();
     }
 
+    public List<PublicHabitInfo> findPublicHabit(Integer page, Integer size, HabitCategory category) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        if (category != HabitCategory.NONE) predicate = predicate.and(habit.category.eq(category.value()));
+
+        return factory
+                .select(
+                        Projections.constructor(
+                                PublicHabitInfo.class,
+                                userHabit.userHabitId,
+                                habit.image, habit.freqCount, habit.freqUnit, habit.frequency, habit.title,
+                                userHabit.startDate, userHabit.endDate,
+                                user.name, user.profileImage
+                        )
+                )
+                .from(userHabit)
+                .join(habit).on(
+                        habit.id.habitId.eq(userHabit.habitId),
+                        habit.id.validEndAt.gt(userHabit.createdAt),
+                        habit.validStartAt.loe(userHabit.createdAt)
+                )
+                .join(user).on(user.userId.eq(userHabit.userId))
+                .where(
+                        userHabit.isPublic.eq(YN.Y),
+                        userHabit.state.eq(HabitState.IN_PROGRESS),
+                        userHabit.startDate.loe(LocalDate.now()),
+                        predicate
+                )
+                .offset((long) (page - 1) * size)
+                .limit(size)
+                .fetch();
+    }
 }

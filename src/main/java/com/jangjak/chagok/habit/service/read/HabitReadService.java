@@ -7,6 +7,7 @@ import com.jangjak.chagok.habit.dto.response.*;
 import com.jangjak.chagok.habit.dto.value.ActionAndUserActionView;
 import com.jangjak.chagok.habit.dto.value.CalendarInfo;
 import com.jangjak.chagok.habit.dto.value.ProgressRateInfo;
+import com.jangjak.chagok.habit.dto.value.PublicHabitInfo;
 import com.jangjak.chagok.habit.entity.*;
 import com.jangjak.chagok.habit.enums.HabitState;
 import com.jangjak.chagok.habit.repository.CheckMethodRepository;
@@ -251,5 +252,9 @@ public class HabitReadService {
             return 0;
         }
         return (int) Math.floor((completed * 100.0) / total);
+    }
+
+    public List<PublicHabitInfo> getOtherHabits(Integer page, Integer size, String category) {
+        return habitQuery.findPublicHabit(page, size, HabitCategory.fromName(category));
     }
 }
