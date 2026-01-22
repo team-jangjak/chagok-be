@@ -1,6 +1,7 @@
 package com.jangjak.chagok.habit.repository;
 
 import com.jangjak.chagok.habit.entity.CheckMethodDetail;
+import com.jangjak.chagok.habit.entity.keys.CheckMethodDetailCompositeKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
-public interface CheckMethodDetailRepository extends JpaRepository<CheckMethodDetail, Long> {
+public interface CheckMethodDetailRepository extends JpaRepository<CheckMethodDetail, CheckMethodDetailCompositeKey> {
 
     @Modifying
     @Query(
